@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MediTrack.Frontend.Vistas.PantallaRegistro"
+             BackgroundColor="#3b71ff"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid>
+        <!-- Patrón de fondo -->
+        <Image Source="logo_patron.png"
+               Aspect="Fill"
+               Opacity="0.4"
+               HorizontalOptions="FillAndExpand"
+               VerticalOptions="FillAndExpand" />
+
+        <ScrollView>
+            <VerticalStackLayout Padding="30" Spacing="20">
+
+                <!-- Título -->
+                <Frame BackgroundColor="#4d82ff"
+                       CornerRadius="20"
+                       Padding="20"
+                       HorizontalOptions="Center"
+                       HasShadow="False">
+                    <VerticalStackLayout>
+                        <Label Text="Registrarse"
+                               FontSize="22"
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Si usted aún no tiene cuenta regístrese aquí"
+                               FontSize="14"
+                               TextColor="White"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,5,0,0" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Formulario -->
+                <Frame BackgroundColor="White"
+                       CornerRadius="30"
+                       Padding="25"
+                       HasShadow="False"
+                       Margin="0,10,0,0">
+                    <VerticalStackLayout Spacing="20">
+
+                        <!-- Nombre -->
+                        <VerticalStackLayout>
+                            <Label Text="Nombre"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="Black" />
+                            <Frame Padding="10" CornerRadius="10" BackgroundColor="#F3F3F3" HasShadow="False">
+                                <Entry Placeholder="Nombre"
+                                       BackgroundColor="Transparent"
+                                       HeightRequest="45" />
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <!-- Apellidos -->
+                        <VerticalStackLayout>
+                            <Label Text="Apellidos"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="Black" />
+                            <Frame Padding="10" CornerRadius="10" BackgroundColor="#F3F3F3" HasShadow="False">
+                                <Entry Placeholder="Apellidos"
+                                       BackgroundColor="Transparent"
+                                       HeightRequest="45" />
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <!-- Correo -->
+                        <VerticalStackLayout>
+                            <Label Text="Correo Electrónico"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="Black" />
+                            <Frame Padding="10" CornerRadius="10" BackgroundColor="#F3F3F3" HasShadow="False">
+                                <Entry Placeholder="correo@ejemplo.com"
+                                       BackgroundColor="Transparent"
+                                       HeightRequest="45" />
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <!-- Contraseña -->
+                        <VerticalStackLayout>
+                            <Label Text="Contraseña"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="Black" />
+                            <Frame Padding="10" CornerRadius="10" BackgroundColor="#F3F3F3" HasShadow="False">
+                                <Entry Placeholder="••••••••"
+                                       IsPassword="True"
+                                       BackgroundColor="Transparent"
+                                       HeightRequest="45" />
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <!-- Botón Registrarse -->
+                        <Button Text="Registrarse"
+                                BackgroundColor="#3b71ff"
+                                TextColor="White"
+                                HeightRequest="50"
+                                CornerRadius="25"
+                                FontAttributes="Bold"
+                                FontSize="16" />
+
+                        <!-- Ir a inicio de sesión -->
+                        <HorizontalStackLayout HorizontalOptions="Center">
+                            <Label Text="¿Ya tienes una cuenta? " FontSize="12" />
+                            <Label Text="Iniciar sesión"
+                                   FontSize="12"
+                                   TextColor="#3b71ff"
+                                   FontAttributes="Bold">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="IrAInicioSesion" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </HorizontalStackLayout>
+
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,1 +1,41 @@
-.vs/ 
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+
+# Rider
+.idea/
+
+# MonoDevelop
+*.userprefs
+
+# ASP.NET
+*.publish.xml
+publish/
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+ehthumbs.db
+.DS_Store
+Icon?
+
+# Node.js
+node_modules/
+
+# Otros
+*.dbmdl
+*.vspx
+*.pidb
+*.sdf
+*.cache

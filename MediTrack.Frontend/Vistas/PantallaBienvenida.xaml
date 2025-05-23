@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MediTrack.Frontend.Vistas.PantallaBienvenida"
+    BackgroundColor="#3b71ff"
+    NavigationPage.HasNavigationBar="False">
+
+    <Grid>
+
+        <!-- Fondo con patrón -->
+        <Image Source="logo_patron.png"
+               Aspect="Fill"
+               Opacity="0.5"
+               HorizontalOptions="FillAndExpand"
+               VerticalOptions="FillAndExpand" />
+
+        <!-- Grid principal -->
+        <Grid RowDefinitions="Auto,*,Auto" Padding="30,0,30,30">
+
+            <!-- Logo -->
+            <Image Grid.Row="0"
+                   Source="logo_meditrack.png"
+                   WidthRequest="240"
+                   HeightRequest="180"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Center"
+                   Margin="0,60,0,20" />
+
+            <!-- Cuadro blanco con contenido -->
+            <Frame Grid.Row="2"
+                   BackgroundColor="White"
+                   CornerRadius="60"
+                   Margin="-30,-120,-30,80"
+                   Padding="25,40,25,40"
+                   HasShadow="False"
+                   HorizontalOptions="FillAndExpand"
+                   HeightRequest="450"
+                   VerticalOptions="End">
+
+                <!-- Usar Grid en lugar de VerticalStackLayout para mejor posicionamiento -->
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="20">
+
+                    <!-- Textos en la parte superior -->
+                    <VerticalStackLayout Grid.Row="0" Spacing="20">
+                        <Label Text="MediTrack"
+                               FontSize="28"
+                               FontAttributes="Bold"
+                               TextColor="#3b71ff"
+                               HorizontalTextAlignment="Center" />
+
+                        <Label Text="Mantén el control de tu medicación"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#3b71ff"
+                               HorizontalTextAlignment="Center" />
+
+                        <Label Text="Controla tus medicamentos, programa recordatorios, recibe alertas personalizadas y gestiona toda tu información médica en un solo lugar"
+                               FontSize="14"
+                               TextColor="Black"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- Espacio flexible en el medio -->
+                    <ContentView Grid.Row="1" HeightRequest="50" />
+
+                    <!-- Botones en la parte inferior -->
+                    <Grid Grid.Row="2" ColumnSpacing="10" VerticalOptions="End" Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Text="Iniciar sesión"
+                        Grid.Column="0"
+                        BackgroundColor="#FF8C3B"
+                        TextColor="White"
+                        BorderColor="#FF8C3B"
+                        BorderWidth="1"
+                        CornerRadius="30"
+                        HeightRequest="70"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        Clicked="IrAInicioSesion" />
+
+                        <Button Text="Registrarse"
+                        Grid.Column="1"
+                        BackgroundColor="#3b71ff"
+                        TextColor="White"
+                        CornerRadius="30"
+                        HeightRequest="70"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        Clicked="IrARegistro" />
+                    </Grid>
+                </Grid>
+            </Frame>
+        </Grid>
+    </Grid>
+</ContentPage>

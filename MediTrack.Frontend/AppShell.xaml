@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="MediTrack.Frontend.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vistas="clr-namespace:MediTrack.Frontend.Vistas"
+    Shell.FlyoutBehavior="Disabled"
+    Title="MediTrack">
+
+    <!-- Pantallas disponibles -->
+    <ShellContent Route="pantalla-carga" ContentTemplate="{DataTemplate vistas:PantallaCarga}" />
+    <ShellContent Route="bienvenida" ContentTemplate="{DataTemplate vistas:PantallaBienvenida}" />
+    <ShellContent Route="inicio-sesion" ContentTemplate="{DataTemplate vistas:PantallaInicioSesion}" />
+    <ShellContent Route="registro" ContentTemplate="{DataTemplate vistas:PantallaRegistro}" />
+
+</Shell>

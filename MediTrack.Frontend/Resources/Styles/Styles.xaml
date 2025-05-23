@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="MediTrack.Frontend.Estilos.Styles">
+
+	<!-- Colores principales -->
+	<Color x:Key="ColorPrimario">#3b71ff</Color>
+	<Color x:Key="ColorFondoClaro">#F3F3F3</Color>
+	<Color x:Key="ColorTexto">#000000</Color>
+	<Color x:Key="ColorTextoSecundario">#666666</Color>
+	<Color x:Key="ColorBlanco">#FFFFFF</Color>
+	<Color x:Key="ColorFondoTarjeta">#4d82ff</Color>
+
+	<!-- Fuente general -->
+	<Style TargetType="Label">
+		<Setter Property="TextColor" Value="{StaticResource ColorTexto}" />
+		<Setter Property="FontSize" Value="14" />
+	</Style>
+
+	<!-- Entrada de texto general -->
+	<Style TargetType="Entry">
+		<Setter Property="BackgroundColor" Value="{StaticResource ColorFondoClaro}" />
+		<Setter Property="HeightRequest" Value="45" />
+		<Setter Property="TextColor" Value="{StaticResource ColorTexto}" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="Margin" Value="0" />
+	</Style>
+
+	<!-- Botón primario -->
+	<Style x:Key="BotonPrimario" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource ColorPrimario}" />
+		<Setter Property="TextColor" Value="White" />
+		<Setter Property="CornerRadius" Value="25" />
+		<Setter Property="HeightRequest" Value="50" />
+		<Setter Property="FontSize" Value="16" />
+		<Setter Property="FontAttributes" Value="Bold" />
+	</Style>
+
+	<!-- Frame blanco para formularios -->
+	<Style x:Key="FrameFormulario" TargetType="Frame">
+		<Setter Property="BackgroundColor" Value="White" />
+		<Setter Property="CornerRadius" Value="30" />
+		<Setter Property="Padding" Value="25" />
+		<Setter Property="HasShadow" Value="False" />
+	</Style>
+
+	<!-- Frame azul para encabezado -->
+	<Style x:Key="FrameEncabezado" TargetType="Frame">
+		<Setter Property="BackgroundColor" Value="{StaticResource ColorFondoTarjeta}" />
+		<Setter Property="CornerRadius" Value="20" />
+		<Setter Property="Padding" Value="20" />
+		<Setter Property="HorizontalOptions" Value="Center" />
+		<Setter Property="HasShadow" Value="False" />
+	</Style>
+
+</ResourceDictionary>
