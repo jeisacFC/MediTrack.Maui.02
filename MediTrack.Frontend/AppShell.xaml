@@ -3,14 +3,29 @@
     x:Class="MediTrack.Frontend.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vistas="clr-namespace:MediTrack.Frontend.Vistas"
+    xmlns:pantallasInicio="clr-namespace:MediTrack.Frontend.Vistas.PantallasInicio"
+    xmlns:pantallasPrincipales="clr-namespace:MediTrack.Frontend.Vistas.PantallasPrincipales"
     Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
     Title="MediTrack">
+    
+    <!-- Rutas de PantallasInicio -->
+ 
+    <ShellContent Route="pantallaCarga"
+                  ContentTemplate="{DataTemplate pantallasInicio:PantallaCarga}" />
 
-    <!-- Pantallas disponibles -->
-    <ShellContent Route="pantalla-carga" ContentTemplate="{DataTemplate vistas:PantallaCarga}" />
-    <ShellContent Route="bienvenida" ContentTemplate="{DataTemplate vistas:PantallaBienvenida}" />
-    <ShellContent Route="inicio-sesion" ContentTemplate="{DataTemplate vistas:PantallaInicioSesion}" />
-    <ShellContent Route="registro" ContentTemplate="{DataTemplate vistas:PantallaRegistro}" />
+    <ShellContent Route="bienvenida"
+                  ContentTemplate="{DataTemplate pantallasInicio:PantallaBienvenida}" />
+
+    <ShellContent Route="inicioSesion"
+                  ContentTemplate="{DataTemplate pantallasInicio:PantallaInicioSesion}" />
+
+    <ShellContent Route="registro"
+                  ContentTemplate="{DataTemplate pantallasInicio:PantallaRegistro}" />
+
+
+    <!-- Rutas de Pantalla Principales -->
+    <ShellContent Route="principal"
+                  ContentTemplate="{DataTemplate pantallasPrincipales:PantallaPrincipal}" />
 
 </Shell>

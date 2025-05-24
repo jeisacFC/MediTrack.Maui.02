@@ -1,18 +1,17 @@
 using System;
 using Microsoft.Maui.Controls;
 
-namespace MediTrack.Frontend.Vistas
-{
-    public partial class PantallaRegistro : ContentPage
-    {
-        public PantallaRegistro()
-        {
-            InitializeComponent();
-        }
+namespace MediTrack.Frontend.Vistas.PantallasInicio;
 
-        private async void IrAInicioSesion(object sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("///inicio-sesion");
-        }
+public partial class PantallaRegistro : ContentPage
+{
+    public PantallaRegistro()
+    {
+        InitializeComponent();
+    }
+
+    private async void IrAInicioSesion(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//inicioSesion");
     }
 }

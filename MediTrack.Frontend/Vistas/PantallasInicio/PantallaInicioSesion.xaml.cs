@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Maui.Controls;
 
-namespace MediTrack.Frontend.Vistas;
+namespace MediTrack.Frontend.Vistas.PantallasInicio;
 
 public partial class PantallaInicioSesion : ContentPage
 {
@@ -12,7 +12,7 @@ public partial class PantallaInicioSesion : ContentPage
 
     private async void IrARegistro(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//registro");
+        await Shell.Current.GoToAsync("///registro");
     }
 
     private async void IniciarSesion(object sender, EventArgs e)

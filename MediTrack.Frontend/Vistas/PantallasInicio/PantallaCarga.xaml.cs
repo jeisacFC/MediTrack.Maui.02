@@ -1,4 +1,4 @@
-namespace MediTrack.Frontend.Vistas;
+namespace MediTrack.Frontend.Vistas.PantallasInicio;
 
 public partial class PantallaCarga : ContentPage
 {

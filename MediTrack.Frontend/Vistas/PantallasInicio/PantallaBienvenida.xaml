@@ -2,7 +2,7 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="MediTrack.Frontend.Vistas.PantallaBienvenida"
+    x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaBienvenida"
     BackgroundColor="#3b71ff"
     NavigationPage.HasNavigationBar="False">
 
@@ -12,8 +12,8 @@
         <Image Source="logo_patron.png"
                Aspect="Fill"
                Opacity="0.5"
-               HorizontalOptions="FillAndExpand"
-               VerticalOptions="FillAndExpand" />
+               HorizontalOptions="Center"
+               VerticalOptions="Center" />
 
         <!-- Grid principal -->
         <Grid RowDefinitions="Auto,*,Auto" Padding="30,0,30,30">
@@ -34,7 +34,7 @@
                    Margin="-30,-120,-30,80"
                    Padding="25,40,25,40"
                    HasShadow="False"
-                   HorizontalOptions="FillAndExpand"
+                   HorizontalOptions="Center"
                    HeightRequest="450"
                    VerticalOptions="End">
 

@@ -1,4 +1,4 @@
-namespace MediTrack.Frontend.Vistas;
+namespace MediTrack.Frontend.Vistas.PantallasInicio;
 
 public partial class PantallaBienvenida : ContentPage
 {
@@ -9,7 +9,7 @@ public partial class PantallaBienvenida : ContentPage
 
     private async void IrAInicioSesion(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("///inicio-sesion");
+        await Shell.Current.GoToAsync("//inicioSesion");
     }
 
     private async void IrARegistro(object sender, EventArgs e)
