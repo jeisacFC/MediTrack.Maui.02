@@ -26,6 +26,6 @@
 
     <!-- Rutas de Pantalla Principales -->
     <ShellContent Route="principal"
-                  ContentTemplate="{DataTemplate pantallasPrincipales:PantallaPrincipal}" />
+                  ContentTemplate="{DataTemplate pantallasPrincipales:PantallaInicio}" />
 
 </Shell>
