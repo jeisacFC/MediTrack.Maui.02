@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models
 {
-    class Prueba
+    class Preuba
     {
     }
 }
