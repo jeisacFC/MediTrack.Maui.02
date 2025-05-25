@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaOlvidoContrasena"
+             BackgroundColor="#3b71ff"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid>
+        <Image Source="logo_patron.png"
+               Aspect="Fill"
+               Opacity="0.3"
+               HorizontalOptions="Center"
+               VerticalOptions="Center" />
+
+        <ScrollView>
+            <VerticalStackLayout Padding="30" Spacing="25" VerticalOptions="Center">
+
+                <Frame BackgroundColor="#4d82ff"
+                       CornerRadius="20"
+                       Padding="20"
+                       HasShadow="False"
+                       HorizontalOptions="Center">
+                    <Label Text="Recuperar contraseña"
+                           FontSize="22"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center" />
+                </Frame>
+
+                <Label Text="Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña"
+                       FontSize="14"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center" />
+
+                <Frame BackgroundColor="White"
+                       CornerRadius="15"
+                       Padding="0"
+                       HasShadow="False">
+                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                        <Label FontFamily="MaterialIcons"
+                               Text="&#xe0be;"
+                               FontSize="22"
+                               TextColor="Gray"
+                               VerticalOptions="Center"
+                               Margin="10,0"/>
+                        <Entry x:Name="entryCorreo"
+                               Placeholder="correo@ejemplo.com"
+                               BackgroundColor="Transparent"
+                               HeightRequest="45"
+                               HorizontalOptions="FillAndExpand"/>
+                    </HorizontalStackLayout>
+                </Frame>
+
+                <Button Text="Enviar enlace"
+                        BackgroundColor="White"
+                        TextColor="#3b71ff"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        HeightRequest="50"
+                        CornerRadius="25"
+                        Clicked="EnviarEnlace" />
+
+                <Label Text="Volver a iniciar sesión"
+                       FontSize="12"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center"
+                       FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="VolverInicioSesion" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -17,7 +17,12 @@ public partial class PantallaInicioSesion : ContentPage
 
     private async void IniciarSesion(object sender, EventArgs e)
     {
-        // Aquí deberías validar los campos antes
-        await DisplayAlert("Inicio de sesión", "Aquí iría la lógica de inicio de sesión.", "OK");
+        // Aquí iría la validación real más adelante
+        // Por ahora, simulamos un inicio exitoso
+        await Shell.Current.GoToAsync("//inicio");
+    }
+    private async void IrAOlvidoContrasena(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//olvidoContrasena");
     }
 }

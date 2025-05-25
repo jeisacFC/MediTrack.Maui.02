@@ -53,10 +53,20 @@
                                    CornerRadius="15"
                                    Padding="0"
                                    HasShadow="False">
-                                <Entry Placeholder="correo@ejemplo.com"
-                                       BackgroundColor="Transparent"
-                                       HeightRequest="45"
-                                       Margin="10,0"/>
+                                <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                    <Label 
+                                        FontFamily="MaterialIcons"
+                                        Text="&#xe0be;" 
+                                        FontSize="22"
+                                        TextColor="Blue"
+                                        VerticalOptions="Center"
+                                        Margin="10,0"/>
+                                    <Entry 
+                                        Placeholder="correo@ejemplo.com"
+                                        BackgroundColor="Transparent"
+                                        HeightRequest="45"
+                                        HorizontalOptions="Center"/>
+                                </HorizontalStackLayout>
                             </Frame>
                         </VerticalStackLayout>
 
@@ -70,11 +80,21 @@
                                    CornerRadius="15"
                                    Padding="0"
                                    HasShadow="False">
-                                <Entry Placeholder="••••••••"
-                                       IsPassword="True"
-                                       BackgroundColor="Transparent"
-                                       HeightRequest="45"
-                                       Margin="10,0"/>
+                                <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                    <Label 
+                                        FontFamily="MaterialIcons"
+                                        Text="&#xe897;"
+                                        FontSize="22"
+                                        TextColor="Blue"
+                                        VerticalOptions="Center"
+                                        Margin="10,0"/>
+                                    <Entry 
+                                        Placeholder="••••••••"
+                                        IsPassword="True"
+                                        BackgroundColor="Transparent"
+                                        HeightRequest="45"
+                                        HorizontalOptions="Center"/>
+                                </HorizontalStackLayout>
                             </Frame>
                         </VerticalStackLayout>
 
@@ -82,16 +102,21 @@
                         <Label Text="¿Olvidó su contraseña?"
                                FontSize="12"
                                TextColor="#3b71ff"
-                               HorizontalTextAlignment="End" />
+                               HorizontalTextAlignment="End">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="IrAOlvidoContrasena" />
+                            </Label.GestureRecognizers>
+                        </Label>
 
-                        <!-- Botón -->
+                        <!-- Botón de inicio -->
                         <Button Text="Iniciar Sesión"
                                 BackgroundColor="#3b71ff"
                                 TextColor="White"
                                 HeightRequest="50"
                                 CornerRadius="25"
                                 FontAttributes="Bold"
-                                FontSize="16"/>
+                                FontSize="16"
+                                Clicked="IniciarSesion" />
 
                         <!-- Registro -->
                         <HorizontalStackLayout HorizontalOptions="Center">
@@ -105,6 +130,7 @@
                                 </Label.GestureRecognizers>
                             </Label>
                         </HorizontalStackLayout>
+
                     </VerticalStackLayout>
                 </Frame>
             </VerticalStackLayout>

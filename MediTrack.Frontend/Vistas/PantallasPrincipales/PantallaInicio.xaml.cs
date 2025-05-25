@@ -2,8 +2,8 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
 public partial class PantallaInicio : ContentPage
 {
-	public PantallaInicio()
-	{
-		InitializeComponent();
-	}
+    public PantallaInicio()
+    {
+        InitializeComponent();
+    }
 }

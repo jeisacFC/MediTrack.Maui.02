@@ -7,10 +7,12 @@
     xmlns:pantallasPrincipales="clr-namespace:MediTrack.Frontend.Vistas.PantallasPrincipales"
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
+    Shell.TabBarBackgroundColor="#f1f4ff"
+    Shell.TabBarForegroundColor="#004aad"
+    Shell.TabBarUnselectedColor="#3b71ff"
     Title="MediTrack">
-    
-    <!-- Rutas de PantallasInicio -->
- 
+
+    <!-- Pantallas de inicio -->
     <ShellContent Route="pantallaCarga"
                   ContentTemplate="{DataTemplate pantallasInicio:PantallaCarga}" />
 
@@ -23,9 +25,55 @@
     <ShellContent Route="registro"
                   ContentTemplate="{DataTemplate pantallasInicio:PantallaRegistro}" />
 
+    <ShellContent Route="olvidoContrasena"
+                  ContentTemplate="{DataTemplate pantallasInicio:PantallaOlvidoContrasena}" />
 
-    <!-- Rutas de Pantalla Principales -->
-    <ShellContent Route="principal"
-                  ContentTemplate="{DataTemplate pantallasPrincipales:PantallaInicio}" />
+    <!-- Barra inferior de navegación -->
+    <TabBar>
 
+        <ShellContent Title="Inicio" Route="inicio">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xe88a;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
+            </ShellContent.Icon>
+            <ShellContent.ContentTemplate>
+                <DataTemplate>
+                    <pantallasPrincipales:PantallaInicio />
+                </DataTemplate>
+            </ShellContent.ContentTemplate>
+        </ShellContent>
+
+        <ShellContent Title="Agenda" Route="agenda">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xe916;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
+            </ShellContent.Icon>
+            <ShellContent.ContentTemplate>
+                <DataTemplate>
+                    <pantallasPrincipales:PantallaAgenda />
+                </DataTemplate>
+            </ShellContent.ContentTemplate>
+        </ShellContent>
+
+        <ShellContent Title="Búsqueda" Route="busqueda">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xe8b6;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
+            </ShellContent.Icon>
+            <ShellContent.ContentTemplate>
+                <DataTemplate>
+                    <pantallasPrincipales:PantallaBusqueda />
+                </DataTemplate>
+            </ShellContent.ContentTemplate>
+        </ShellContent>
+
+        <ShellContent Title="Perfil" Route="perfil">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xe7fd;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
+            </ShellContent.Icon>
+            <ShellContent.ContentTemplate>
+                <DataTemplate>
+                    <pantallasPrincipales:PantallaPerfil />
+                </DataTemplate>
+            </ShellContent.ContentTemplate>
+        </ShellContent>
+
+    </TabBar>
 </Shell>

@@ -1,12 +1,126 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaInicio"
-             Title="PantallaInicio">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             BackgroundColor="White"
+             Title="Inicio">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="25">
+
+            <!-- Medicamentos para hoy -->
+            <Label Text="Medicamentos para hoy"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="Black" />
+
+            <Frame CornerRadius="20" BackgroundColor="#f1f4ff" Padding="10" HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+
+                    <!-- Tarjeta 1 -->
+                    <Frame BackgroundColor="White" CornerRadius="15" Padding="10" HasShadow="False">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Paracetamol 500mg" FontAttributes="Bold" FontSize="14" TextColor="Black"/>
+                            <Label Text="Hora: 8:00 a. m." FontSize="12" TextColor="Gray"/>
+                            <Label Text="Tomado" FontSize="12" TextColor="Green"/>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <!-- Tarjeta 2 -->
+                    <Frame BackgroundColor="White" CornerRadius="15" Padding="10" HasShadow="False">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Omeprazol 20mg" FontAttributes="Bold" FontSize="14" TextColor="Black"/>
+                            <Label Text="Hora: 5:00 p. m." FontSize="12" TextColor="Gray"/>
+                            <Label Text="Pendiente" FontSize="12" TextColor="#FF9800"/>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <!-- Tarjeta 3 -->
+                    <Frame BackgroundColor="White" CornerRadius="15" Padding="10" HasShadow="False">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Ibuprofeno 200mg" FontAttributes="Bold" FontSize="14" TextColor="Black"/>
+                            <Label Text="Hora: 12:00 m. d." FontSize="12" TextColor="Gray"/>
+                            <Label Text="Pendiente" FontSize="12" TextColor="#FF9800"/>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Escaneos recientes -->
+            <Label Text="Escaneos Recientes"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="Black" />
+
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="10">
+                    <Frame BackgroundColor="#f1f4ff" CornerRadius="15" Padding="10">
+                        <VerticalStackLayout>
+                            <Label Text="Divalproato Sódico 250mg" FontAttributes="Bold" FontSize="14"/>
+                            <Label Text="5 de Abril, 7:23 p. m." FontSize="12" TextColor="Gray"/>
+                        </VerticalStackLayout>
+                    </Frame>
+                    <Frame BackgroundColor="#f1f4ff" CornerRadius="15" Padding="10">
+                        <VerticalStackLayout>
+                            <Label Text="Amoxicilina 500mg" FontAttributes="Bold" FontSize="14"/>
+                            <Label Text="4 de Abril, 10:43 a. m." FontSize="12" TextColor="Gray"/>
+                        </VerticalStackLayout>
+                    </Frame>
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <!-- Recomendaciones inteligentes -->
+            <Label Text="Recomendaciones inteligentes"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="Black" />
+
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="15">
+                    <Frame BackgroundColor="White" CornerRadius="15" Padding="15" WidthRequest="280" HasShadow="True">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Recomendación Personalizada"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="Black" />
+                            <Label Text="Según tu historial y síntomas recientes, podrías considerar el uso de Paracetamol 500 mg cada 8 horas por 3 días."
+                                   FontSize="12"
+                                   TextColor="Gray" />
+                            <Button Text="Agregar a mi tratamiento"
+                                    BackgroundColor="#3b71ff"
+                                    TextColor="White"
+                                    CornerRadius="15"
+                                    HeightRequest="40"
+                                    FontSize="12" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <!-- Síntomas -->
+            <Label Text="Síntomas"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="Black" />
+
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Dolor de cabeza"
+                        BackgroundColor="#e0e7ff"
+                        TextColor="#3b71ff"
+                        CornerRadius="20"
+                        FontSize="12"/>
+                <Button Text="Fiebre"
+                        BackgroundColor="#e0e7ff"
+                        TextColor="#3b71ff"
+                        CornerRadius="20"
+                        FontSize="12"/>
+                <Button Text="Náuseas"
+                        BackgroundColor="#e0e7ff"
+                        TextColor="#3b71ff"
+                        CornerRadius="20"
+                        FontSize="12"/>
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
