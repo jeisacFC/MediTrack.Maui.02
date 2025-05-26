@@ -2,7 +2,6 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaBienvenida"
     BackgroundColor="#3b71ff"
     NavigationPage.HasNavigationBar="False"
@@ -10,46 +9,36 @@
 
     <Grid>
 
-        <!-- 1) Fondo con patrón, siempre en el fondo -->
+        <!-- 1) Fondo con patrón -->
         <Image Source="logo_patron.png"
            Aspect="AspectFill"
            Opacity="0.15"
            HorizontalOptions="Fill"
            VerticalOptions="Fill" />
 
-        <!-- 2) Estructura principal: logo arriba (placeholder), contenedor abajo -->
+        <!-- 2) Layout principal -->
         <Grid RowDefinitions="Auto,*">
 
-            <!-- Espacio para el logo, el Image real se declara al final con ZIndex -->
+            <!-- Placeholder para el logo -->
             <BoxView Grid.Row="0"
                HeightRequest="250"
                Opacity="0" />
 
-            <!-- Contenedor blanco con solo esquinas superiores redondeadas -->
-            <Frame
-          x:Name="ContainerFrame"
-          Grid.Row="1"
-          BackgroundColor="White"
-          Margin="0,-60,0,0"
-          Padding="30,40,30,40"
-          HasShadow="False"
-          VerticalOptions="Fill">
+            <!-- Contenedor blanco -->
+            <Frame Grid.Row="1"
+             CornerRadius="40"
+             BackgroundColor="White"
+             Margin="0,-60,0,0"
+             Padding="30,40,30,40"
+             HasShadow="False"
+             VerticalOptions="Fill"
+             HeightRequest="700">
 
-                <!-- Clip para recortar solo esquinas superiores -->
-                <Frame.Clip>
-                    <shapes:RoundRectangleGeometry
-              x:Name="ContainerClip"
-              CornerRadius="40,40,0,0"
-              Rect="0,0,1,1" />
-                </Frame.Clip>
+                <!-- Contenido interno: títulos, botones, luego espacio -->
+                <Grid RowDefinitions="Auto,Auto,*" RowSpacing="20">
 
-                <!-- Contenido interno -->
-                <Grid RowDefinitions="Auto,*,Auto"
-              RowSpacing="20">
-
-                    <!-- Títulos y descripción -->
-                    <VerticalStackLayout Grid.Row="0"
-                              Spacing="20">
+                    <!-- Títulos -->
+                    <VerticalStackLayout Grid.Row="0" Spacing="20">
                         <Label Text="MediTrack"
                    FontSize="30"
                    FontAttributes="Bold"
@@ -68,13 +57,8 @@
                    HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
 
-                    <!-- Espacio flexible -->
-                    <BoxView Grid.Row="1" />
-
-                    <!-- Botones de acción -->
-                    <Grid Grid.Row="2"
-                ColumnSpacing="20"
-                VerticalOptions="End">
+                    <!-- Botones -->
+                    <Grid Grid.Row="1" ColumnSpacing="20" Margin="0,250,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
@@ -86,7 +70,6 @@
                     TextColor="White"
                     CornerRadius="30"
                     HeightRequest="60"
-             
                     FontSize="20"
                     FontAttributes="Bold"
                     Clicked="IrAInicioSesion" />
@@ -98,37 +81,34 @@
                     TextColor="#3b71ff"
                     CornerRadius="30"
                     HeightRequest="60"
-
                     FontSize="20"
                     FontAttributes="Bold"
                     Clicked="IrARegistro" />
                     </Grid>
+
+                    <!-- Espacio flexible debajo de los botones -->
+                    <BoxView Grid.Row="2" />
                 </Grid>
             </Frame>
         </Grid>
 
-        <!-- 3) Logo principal, colocado al final para quedar por delante -->
-            <Frame
-                Padding="0"
-                BackgroundColor="White"    
-                BorderColor="White"   
-                CornerRadius="25"
-                HasShadow="False"
-                WidthRequest="130"
-                HeightRequest="130"
-                HorizontalOptions="Center"
-                VerticalOptions="Start"
-                Margin="0,40,0,0"
-                ZIndex="10">
-
-            <!-- Imagen siempre 100% opaca -->
-                  <Image Source="logo_meditrack.png"
-                 WidthRequest="200"
-                 HeightRequest="150"
-                 Aspect="AspectFit"
-                 Opacity="1.0" />
-
-           </Frame>
+        <!-- 3) Logo al frente -->
+        <Frame Padding="0"
+           BackgroundColor="White"
+           BorderColor="White"
+           CornerRadius="25"
+           HasShadow="False"
+           WidthRequest="130"
+           HeightRequest="130"
+           HorizontalOptions="Center"
+           VerticalOptions="Start"
+           Margin="0,20,0,0"
+           ZIndex="10">
+            <Image Source="logo_meditrack.png"
+             WidthRequest="200"
+             HeightRequest="150"
+             Aspect="AspectFit" />
+        </Frame>
 
     </Grid>
 </ContentPage>
