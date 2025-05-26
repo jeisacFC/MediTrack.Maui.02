@@ -2,99 +2,133 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaBienvenida"
     BackgroundColor="#3b71ff"
-    NavigationPage.HasNavigationBar="False">
+    NavigationPage.HasNavigationBar="False"
+    Title="Bienvenida">
 
     <Grid>
 
-        <!-- Fondo con patrón -->
+        <!-- 1) Fondo con patrón, siempre en el fondo -->
         <Image Source="logo_patron.png"
-               Aspect="Fill"
-               Opacity="0.5"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
+           Aspect="AspectFill"
+           Opacity="0.15"
+           HorizontalOptions="Fill"
+           VerticalOptions="Fill" />
 
-        <!-- Grid principal -->
-        <Grid RowDefinitions="Auto,*,Auto" Padding="30,0,30,30">
+        <!-- 2) Estructura principal: logo arriba (placeholder), contenedor abajo -->
+        <Grid RowDefinitions="Auto,*">
 
-            <!-- Logo -->
-            <Image Grid.Row="0"
-                   Source="logo_meditrack.png"
-                   WidthRequest="240"
-                   HeightRequest="180"
-                   Aspect="AspectFit"
-                   HorizontalOptions="Center"
-                   Margin="0,60,0,20" />
+            <!-- Espacio para el logo, el Image real se declara al final con ZIndex -->
+            <BoxView Grid.Row="0"
+               HeightRequest="250"
+               Opacity="0" />
 
-            <!-- Cuadro blanco con contenido -->
-            <Frame Grid.Row="2"
-                   BackgroundColor="White"
-                   CornerRadius="60"
-                   Margin="-30,-120,-30,80"
-                   Padding="25,40,25,40"
-                   HasShadow="False"
-                   HorizontalOptions="Center"
-                   HeightRequest="450"
-                   VerticalOptions="End">
+            <!-- Contenedor blanco con solo esquinas superiores redondeadas -->
+            <Frame
+          x:Name="ContainerFrame"
+          Grid.Row="1"
+          BackgroundColor="White"
+          Margin="0,-60,0,0"
+          Padding="30,40,30,40"
+          HasShadow="False"
+          VerticalOptions="Fill">
 
-                <!-- Usar Grid en lugar de VerticalStackLayout para mejor posicionamiento -->
-                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="20">
+                <!-- Clip para recortar solo esquinas superiores -->
+                <Frame.Clip>
+                    <shapes:RoundRectangleGeometry
+              x:Name="ContainerClip"
+              CornerRadius="40,40,0,0"
+              Rect="0,0,1,1" />
+                </Frame.Clip>
 
-                    <!-- Textos en la parte superior -->
-                    <VerticalStackLayout Grid.Row="0" Spacing="20">
+                <!-- Contenido interno -->
+                <Grid RowDefinitions="Auto,*,Auto"
+              RowSpacing="20">
+
+                    <!-- Títulos y descripción -->
+                    <VerticalStackLayout Grid.Row="0"
+                              Spacing="20">
                         <Label Text="MediTrack"
-                               FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="#3b71ff"
-                               HorizontalTextAlignment="Center" />
+                   FontSize="30"
+                   FontAttributes="Bold"
+                   TextColor="#3b71ff"
+                   HorizontalTextAlignment="Center" />
 
                         <Label Text="Mantén el control de tu medicación"
-                               FontSize="18"
-                               FontAttributes="Bold"
-                               TextColor="#3b71ff"
-                               HorizontalTextAlignment="Center" />
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="#3b71ff"
+                   HorizontalTextAlignment="Center" />
 
                         <Label Text="Controla tus medicamentos, programa recordatorios, recibe alertas personalizadas y gestiona toda tu información médica en un solo lugar"
-                               FontSize="14"
-                               TextColor="Black"
-                               HorizontalTextAlignment="Center" />
+                   FontSize="15"
+                   TextColor="Gray"
+                   HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
 
-                    <!-- Espacio flexible en el medio -->
-                    <ContentView Grid.Row="1" HeightRequest="50" />
+                    <!-- Espacio flexible -->
+                    <BoxView Grid.Row="1" />
 
-                    <!-- Botones en la parte inferior -->
-                    <Grid Grid.Row="2" ColumnSpacing="10" VerticalOptions="End" Margin="0,0,0,5">
+                    <!-- Botones de acción -->
+                    <Grid Grid.Row="2"
+                ColumnSpacing="20"
+                VerticalOptions="End">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <Button Text="Iniciar sesión"
-                        Grid.Column="0"
-                        BackgroundColor="#FF8C3B"
-                        TextColor="White"
-                        BorderColor="#FF8C3B"
-                        BorderWidth="1"
-                        CornerRadius="30"
-                        HeightRequest="70"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        Clicked="IrAInicioSesion" />
+                    Grid.Column="0"
+                    BackgroundColor="#3b71ff"
+                    TextColor="White"
+                    CornerRadius="30"
+                    HeightRequest="60"
+             
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    Clicked="IrAInicioSesion" />
 
                         <Button Text="Registrarse"
-                        Grid.Column="1"
-                        BackgroundColor="#3b71ff"
-                        TextColor="White"
-                        CornerRadius="30"
-                        HeightRequest="70"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        Clicked="IrARegistro" />
+                    Grid.Column="1"
+                    BackgroundColor="White"
+                    BorderColor="#3b71ff"
+                    TextColor="#3b71ff"
+                    CornerRadius="30"
+                    HeightRequest="60"
+
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    Clicked="IrARegistro" />
                     </Grid>
                 </Grid>
             </Frame>
         </Grid>
+
+        <!-- 3) Logo principal, colocado al final para quedar por delante -->
+            <Frame
+                Padding="0"
+                BackgroundColor="White"    
+                BorderColor="White"   
+                CornerRadius="25"
+                HasShadow="False"
+                WidthRequest="130"
+                HeightRequest="130"
+                HorizontalOptions="Center"
+                VerticalOptions="Start"
+                Margin="0,40,0,0"
+                ZIndex="10">
+
+            <!-- Imagen siempre 100% opaca -->
+                  <Image Source="logo_meditrack.png"
+                 WidthRequest="200"
+                 HeightRequest="150"
+                 Aspect="AspectFit"
+                 Opacity="1.0" />
+
+           </Frame>
+
     </Grid>
 </ContentPage>

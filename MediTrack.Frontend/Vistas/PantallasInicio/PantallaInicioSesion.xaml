@@ -2,138 +2,126 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaInicioSesion"
-             BackgroundColor="#3b71ff"
+             BackgroundColor="#3B71FF"
              NavigationPage.HasNavigationBar="False">
 
-    <Grid>
-        <!-- Fondo con patrón -->
-        <Image Source="logo_patron.png"
-               Aspect="Fill"
-               Opacity="0.4"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
+    <Grid RowDefinitions="*,3*">
 
-        <ScrollView>
-            <VerticalStackLayout Padding="30" Spacing="20">
+        <!-- Fondo patrón -->
+        <Grid Grid.Row="0">
+            <Image Source="fondo_patron.png"
+                   Aspect="AspectFill"
+                   Opacity="0.1"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Fill"/>
+        </Grid>
 
-                <!-- Título -->
-                <Frame BackgroundColor="#4d82ff"
-                       CornerRadius="20"
-                       Padding="20"
-                       HorizontalOptions="Center"
-                       HasShadow="False">
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Iniciar Sesión"
-                               FontSize="22"
-                               TextColor="White"
-                               FontAttributes="Bold"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="Ingrese su correo electrónico y contraseña"
-                               FontSize="14"
-                               TextColor="White"
-                               HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Frame>
+        <!-- Contenedor -->
+        <Frame Grid.Row="1"
+               CornerRadius="40"
+               BackgroundColor="White"
+               HasShadow="True"
+               Margin="0"
+               Padding="35"
+               VerticalOptions="FillAndExpand">
 
-                <!-- Formulario -->
-                <Frame BackgroundColor="White"
-                       CornerRadius="30"
-                       Padding="25"
-                       HasShadow="False"
-                       Margin="0,10,0,0">
-                    <VerticalStackLayout Spacing="20">
+            <ScrollView>
+                <VerticalStackLayout Spacing="25">
 
-                        <!-- Correo -->
-                        <VerticalStackLayout>
-                            <Label Text="Correo Electrónico"
-                                   FontAttributes="Bold"
-                                   FontSize="14"
-                                   TextColor="Black" />
-                            <Frame BackgroundColor="#F3F3F3"
-                                   CornerRadius="15"
-                                   Padding="0"
-                                   HasShadow="False">
-                                <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
-                                    <Label 
-                                        FontFamily="MaterialIcons"
-                                        Text="&#xe0be;" 
-                                        FontSize="22"
-                                        TextColor="Blue"
-                                        VerticalOptions="Center"
-                                        Margin="10,0"/>
-                                    <Entry 
-                                        Placeholder="correo@ejemplo.com"
-                                        BackgroundColor="Transparent"
-                                        HeightRequest="45"
-                                        HorizontalOptions="Center"/>
-                                </HorizontalStackLayout>
-                            </Frame>
-                        </VerticalStackLayout>
+                    <!-- Logo -->
+                    <Image Source="logo_meditrack.png"
+                           HeightRequest="90"
+                           HorizontalOptions="Center"
+                           Margin="0,10"/>
 
-                        <!-- Contraseña -->
-                        <VerticalStackLayout>
-                            <Label Text="Contraseña"
-                                   FontAttributes="Bold"
-                                   FontSize="14"
-                                   TextColor="Black" />
-                            <Frame BackgroundColor="#F3F3F3"
-                                   CornerRadius="15"
-                                   Padding="0"
-                                   HasShadow="False">
-                                <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
-                                    <Label 
-                                        FontFamily="MaterialIcons"
-                                        Text="&#xe897;"
-                                        FontSize="22"
-                                        TextColor="Blue"
-                                        VerticalOptions="Center"
-                                        Margin="10,0"/>
-                                    <Entry 
-                                        Placeholder="••••••••"
-                                        IsPassword="True"
-                                        BackgroundColor="Transparent"
-                                        HeightRequest="45"
-                                        HorizontalOptions="Center"/>
-                                </HorizontalStackLayout>
-                            </Frame>
-                        </VerticalStackLayout>
+                    <!-- Título -->
+                    <Label Text="Iniciar Sesión"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="#3B71FF"
+                           HorizontalOptions="Center"/>
 
-                        <!-- Olvidó su contraseña -->
-                        <Label Text="¿Olvidó su contraseña?"
-                               FontSize="12"
-                               TextColor="#3b71ff"
-                               HorizontalTextAlignment="End">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="IrAOlvidoContrasena" />
-                            </Label.GestureRecognizers>
-                        </Label>
-
-                        <!-- Botón de inicio -->
-                        <Button Text="Iniciar Sesión"
-                                BackgroundColor="#3b71ff"
-                                TextColor="White"
-                                HeightRequest="50"
-                                CornerRadius="25"
-                                FontAttributes="Bold"
-                                FontSize="16"
-                                Clicked="IniciarSesion" />
-
-                        <!-- Registro -->
-                        <HorizontalStackLayout HorizontalOptions="Center">
-                            <Label Text="¿Aún no tiene cuenta? " FontSize="12" />
-                            <Label Text="Registrarse"
-                                   FontSize="12"
-                                   TextColor="#3b71ff"
-                                   FontAttributes="Bold">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="IrARegistro" />
-                                </Label.GestureRecognizers>
-                            </Label>
+                    <!-- Correo -->
+                    <Frame CornerRadius="12"
+                           BackgroundColor="#F8F8F8"
+                           HasShadow="False"
+                           Padding="10">
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE0BE;"
+                                                     FontFamily="MaterialIcons"
+                                                     Color="#3B71FF"
+                                                     Size="20"/>
+                                </Image.Source>
+                            </Image>
+                            <Entry Placeholder="Correo electrónico"
+                                   Keyboard="Email"
+                                   PlaceholderColor="#A0A0A0"
+                                   TextColor="Black"
+                                   Margin="10,0"/>
                         </HorizontalStackLayout>
+                    </Frame>
 
-                    </VerticalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
-        </ScrollView>
+                    <!-- Contraseña -->
+                    <Frame CornerRadius="12"
+                           BackgroundColor="#F8F8F8"
+                           HasShadow="False"
+                           Padding="10">
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE897;"
+                                                     FontFamily="MaterialIcons"
+                                                     Color="#3B71FF"
+                                                     Size="20"/>
+                                </Image.Source>
+                            </Image>
+                            <Entry Placeholder="Contraseña"
+                                   IsPassword="True"
+                                   PlaceholderColor="#A0A0A0"
+                                   TextColor="Black"
+                                   Margin="10,0"/>
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- Botón Iniciar -->
+                    <Button Text="Ingresar"
+                            FontSize="18"
+                            BackgroundColor="#3B71FF"
+                            TextColor="White"
+                            CornerRadius="12"
+                            HeightRequest="50"
+                            Clicked="IniciarSesion"/>
+
+                    <!-- ¿Olvidaste tu contraseña? -->
+                    <Label Text="¿Olvidaste tu contraseña?"
+                           TextColor="#3B71FF"
+                           FontAttributes="Italic"
+                           HorizontalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="IrAOlvidoContrasena" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                    <!-- Divider -->
+                    <BoxView HeightRequest="1"
+                             BackgroundColor="#E0E0E0"/>
+
+                    <!-- Registro -->
+                    <HorizontalStackLayout HorizontalOptions="Center">
+                        <Label Text="¿No tienes cuenta?"
+                               TextColor="Gray"/>
+                        <Button Text="Regístrate"
+                                BackgroundColor="Transparent"
+                                TextColor="#3B71FF"
+                                FontAttributes="Bold"
+                                Clicked="IrARegistro"/>
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+
+        </Frame>
     </Grid>
 </ContentPage>

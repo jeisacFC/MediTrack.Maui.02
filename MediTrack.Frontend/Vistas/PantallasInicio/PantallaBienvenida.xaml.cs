@@ -1,19 +1,31 @@
-namespace MediTrack.Frontend.Vistas.PantallasInicio;
+using Microsoft.Maui.Controls.Shapes;
+using Microsoft.Maui.Graphics;
 
-public partial class PantallaBienvenida : ContentPage
+namespace MediTrack.Frontend.Vistas.PantallasInicio
 {
-    public PantallaBienvenida()
+    public partial class PantallaBienvenida : ContentPage
     {
-        InitializeComponent();
-    }
+        public PantallaBienvenida()
+        {
+            InitializeComponent();
 
-    private async void IrAInicioSesion(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("//inicioSesion");
-    }
+            ContainerFrame.SizeChanged += (s, e) =>
+            {
+                if (ContainerFrame.Width > 0 && ContainerFrame.Height > 0)
+                {
+                    ContainerClip.Rect = new Rect(
+                        0, 0,
+                        ContainerFrame.Width,
+                        ContainerFrame.Height
+                    );
+                }
+            };
+        }
 
-    private async void IrARegistro(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("///registro");
+        private async void IrAInicioSesion(object sender, EventArgs e)
+            => await Shell.Current.GoToAsync("//inicioSesion");
+
+        private async void IrARegistro(object sender, EventArgs e)
+            => await Shell.Current.GoToAsync("//registro");
     }
 }
