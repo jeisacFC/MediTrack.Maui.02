@@ -14,12 +14,12 @@ public class MainApplication : MauiApplication
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 
-    public override void OnCreate()
-    {
-        base.OnCreate(); // Importante mantener esta línea
+    //public override void OnCreate()
+    //{
+    //    base.OnCreate(); // Importante mantener esta línea
 
-        // Inicializa ZXing para Android
-        ZXing.Mobile.MobileBarcodeScanner.Initialize(Application);
-    }
+    //    // Inicializa ZXing para Android
+    //    ZXing.Mobile.MobileBarcodeScanner.Initialize(Application);
+    //}
 
 }

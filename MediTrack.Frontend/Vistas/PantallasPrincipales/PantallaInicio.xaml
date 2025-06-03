@@ -82,6 +82,9 @@
                    FontAttributes="Bold"
                    TextColor="Black" />
 
+            <Button Text="Escanear Medicamento" Clicked="BotonEscanear_Clicked" />
+
+
             <HorizontalStackLayout Spacing="10"
                                    BindableLayout.ItemsSource="{Binding Sintomas}">
                 <BindableLayout.ItemTemplate>

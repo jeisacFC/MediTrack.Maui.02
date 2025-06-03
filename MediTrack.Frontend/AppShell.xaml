@@ -3,8 +3,11 @@
     x:Class="MediTrack.Frontend.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    
     xmlns:pantallasInicio="clr-namespace:MediTrack.Frontend.Vistas.PantallasInicio"
     xmlns:pantallasPrincipales="clr-namespace:MediTrack.Frontend.Vistas.PantallasPrincipales"
+    xmlns:pantallasFuncionales="clr-namespace:MediTrack.Frontend.Vistas.PantallasFuncionales"
+    
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
     Shell.TabBarBackgroundColor="#f1f4ff"
@@ -27,6 +30,11 @@
 
     <ShellContent Route="olvidoContrasena"
                   ContentTemplate="{DataTemplate pantallasInicio:PantallaOlvidoContrasena}" />
+
+
+    <ShellContent Route="pantallaScan"
+              Title="Escanear"
+              ContentTemplate="{DataTemplate pantallasFuncionales:PantallaScan}" />
 
     <!-- Barra inferior de navegación -->
     <TabBar>

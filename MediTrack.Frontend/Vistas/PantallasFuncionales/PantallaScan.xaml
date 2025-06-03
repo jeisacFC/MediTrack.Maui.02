@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:MediTrack.Frontend.ViewModels"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
              x:Class="MediTrack.Frontend.Vistas.PantallasFuncionales.PantallaScan"
-             Title="Escanear Medicamento">
+             Title="Escanear Código de Barras">
 
-    <ContentPage.BindingContext>
-        <vm:ScanViewModels />
-    </ContentPage.BindingContext>
+    <Grid RowDefinitions="Auto, *, Auto">
 
-    <VerticalStackLayout Padding="20" Spacing="20">
-        <Button Text="INICIAR ESCANEO" 
-                Command="{Binding ScanCommand}"
-                BackgroundColor="#0078D7"
-                TextColor="White"
-                HeightRequest="60"/>
+        <StackLayout Grid.Row="0" BackgroundColor="LightGray" Padding="15">
+            <Label Text="Apunte al código de barras del medicamento"
+                   HorizontalOptions="Center"
+                   FontSize="Medium"/>
+        </StackLayout>
 
-        <Label Text="{Binding ScanResult}"
-               FontSize="18"
-               HorizontalOptions="Center"/>
-    </VerticalStackLayout>
+        <zxing:CameraBarcodeReaderView
+            Grid.Row="1"
+            x:Name="barcodeReader"
+            IsDetecting="True"
+            BarcodesDetected="barcodeReader_BarcodesDetected" />
+        
+        
+        <!--<StackLayout Grid.Row="2" BackgroundColor="LightGray" Padding="15">
+            <Button Text="Cancelar" Clicked="Cancelar_Clicked" HorizontalOptions="Fill"/>
+        </StackLayout>-->
+
+    </Grid>
 </ContentPage>

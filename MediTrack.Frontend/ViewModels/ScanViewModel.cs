@@ -1,50 +1,50 @@
-﻿using System;
-using System.ComponentModel; // Para INotifyPropertyChanged
-using System.Runtime.CompilerServices; // Para CallerMemberName
-using System.Windows.Input; // Para ICommand
-using MediTrack.Frontend.Services; // Para IBarcodeScannerService
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ZXing; // Añade esta línea
-using ZXing.Mobile;
+﻿//using System;
+//using System.ComponentModel; // Para INotifyPropertyChanged
+//using System.Runtime.CompilerServices; // Para CallerMemberName
+//using System.Windows.Input; // Para ICommand
+//using MediTrack.Frontend.Services; // Para IBarcodeScannerService
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using ZXing; // Añade esta línea
+//using ZXing.Mobile;
 
-namespace MediTrack.Frontend.ViewModels
-{
-    public class ScanViewModels : INotifyPropertyChanged
-    {
-        private readonly IBarcodeScannerService _scanner;
+//namespace MediTrack.Frontend.ViewModels;
 
-        private string _scanResult;
-        public string ScanResult
-        {
-            get => _scanResult;
-            set
-            {
-                _scanResult = value;
-                OnPropertyChanged();
-            }
-        }
 
-        public ICommand ScanCommand { get; }
+//public class ScanViewModel : INotifyPropertyChanged
+//{
+//    private readonly IBarcodeScannerService _scanner;
 
-        public ScanViewModels(IBarcodeScannerService scanner)
-        {
-            _scanner = scanner;
-            ScanCommand = new Command(async () => await ScanBarcode());
-        }
+//    private string _scanResult;
+//    public string ScanResult
+//    {
+//        get => _scanResult;
+//        set
+//        {
+//            _scanResult = value;
+//            OnPropertyChanged();
+//        }
+//    }
 
-        private async Task ScanBarcode()
-        {
-            ScanResult = "Escaneando...";
-            ScanResult = await _scanner.ScanBarcodeAsync();
-        }
+//    public ICommand ScanCommand { get; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-    }
-}
+//    public ScanViewModel(IBarcodeScannerService scanner)
+//    {
+//        _scanner = scanner;
+//        ScanCommand = new Command(async () => await ScanBarcode());
+//    }
+
+//    private async Task ScanBarcode()
+//    {
+//        ScanResult = "Escaneando...";
+//        ScanResult = await _scanner.ScanBarcodeAsync();
+//    }
+
+//    public event PropertyChangedEventHandler PropertyChanged;
+//    protected void OnPropertyChanged([CallerMemberName] string name = null)
+//    {
+//        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+//    }
+//}
