@@ -1,12 +1,10 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediTrack.Frontend.Models; // Para tus clases modelo
-using MediTrack.Frontend.Services; // Para IBarcodeScannerService
-
+using MediTrack.Frontend.Models; 
+using MediTrack.Frontend.Services; 
 using System.Linq;
 using System.Threading.Tasks;
-// using System.Windows.Input; // ICommand está en CommunityToolkit.Mvvm.Input o System.Windows.Input
 using ZXing.Net.Maui; // Para BarcodeResult y BarcodeReaderOptions
 using System.Diagnostics; // Para Debug.WriteLine
 
@@ -148,7 +146,7 @@ namespace MediTrack.Frontend.ViewModels
             Debug.WriteLine("ViewModel: Ejecutando SIMULACIÓN de escaneo...");
 
             // Crea un resultado de código de barras simulado
-            var codigoSimulado = "1234567890123"; // Un código de barras de prueba que tu mock service pueda reconocer
+            var codigoSimulado = "1234567890120"; // Un código de barras de prueba que tu mock service pueda reconocer
             var formatoSimulado = BarcodeFormats.OneDimensional; // O el formato que quieras simular
 
             var simulatedResults = new List<BarcodeResult>

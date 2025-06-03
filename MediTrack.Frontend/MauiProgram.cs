@@ -25,23 +25,9 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
             });
-        //#region
-        //    .ConfigureMauiHandlers(h =>
-        //    {
-        //        h.AddHandler(typeof
-        //            (ZXing.Net.Maui.Controls.CameraBarcodeReaderView),
-        //            typeof(CameraBarcodeReaderViewHandIer));
-        //        h.AddHandter(typeof
-        //            (ZXing.Net.Maui.Controls.CameraView), typeof
-        //            (CameraViewHandIer));
-        //        h.AddHandter(typeof
-        //            (ZXing.Net.Maui.Controls.BarcodeGeneratorView),
-        //            typeof(BarcodeGeneratorViewHandIer));
-        //    });
-        //#endregion
-
 
         //// Registro de servicios (DEBE ir después de UseMauiApp)
+        
         builder.Services.AddSingleton<IBarcodeScannerService, BarcodeScannerService>();
         builder.Services.AddTransient<ScanViewModel>();
         builder.Services.AddTransient<PantallaScan>();
