@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui; // Necesario para CalendarView
+using MediTrack.Frontend.Services; 
+using MediTrack.Frontend.ViewModels; 
 
 namespace MediTrack.Frontend;
 
@@ -18,6 +20,10 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
             });
+
+        // Registro de servicios (DEBE ir después de UseMauiApp)
+        builder.Services.AddSingleton<IBarcodeScannerService, BarcodeScannerService>();
+        builder.Services.AddTransient<ScanViewModels>();
 
 #if DEBUG
         builder.Logging.AddDebug();

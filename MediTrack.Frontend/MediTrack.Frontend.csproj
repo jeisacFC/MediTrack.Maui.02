@@ -58,7 +58,8 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Include="Models\Preuba.cs" />
-	  <Compile Include="Services\Preuba.cs" />
+	  <Compile Include="Services\BarcodeScannerService.cs" />
+	  <Compile Include="Services\IBarcodeScannerService.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="5.0.0" />
@@ -66,6 +67,7 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+		<PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />
 		<!-- LÍNEA ELIMINADA: <MauiXaml Include="Vistas/*.xaml" /> -->
 	</ItemGroup>
 	<ItemGroup>
@@ -90,5 +92,10 @@
 	  <MauiXaml Update="Vistas\PantallasPrincipales\PantallaPerfil.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Vistas\PantallasFuncionales\PantallaScan.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </None>
 	</ItemGroup>
 </Project>

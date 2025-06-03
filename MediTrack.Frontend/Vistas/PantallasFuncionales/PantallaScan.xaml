@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MediTrack.Frontend.ViewModels"
+             x:Class="MediTrack.Frontend.Vistas.PantallasFuncionales.PantallaScan"
+             Title="Escanear Medicamento">
+
+    <ContentPage.BindingContext>
+        <vm:ScanViewModels />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+        <Button Text="INICIAR ESCANEO" 
+                Command="{Binding ScanCommand}"
+                BackgroundColor="#0078D7"
+                TextColor="White"
+                HeightRequest="60"/>
+
+        <Label Text="{Binding ScanResult}"
+               FontSize="18"
+               HorizontalOptions="Center"/>
+    </VerticalStackLayout>
+</ContentPage>

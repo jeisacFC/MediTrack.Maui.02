@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Services
 {
-    class Preuba
+    public interface IBarcodeScannerService
     {
+        Task<string> ScanBarcodeAsync();
     }
 }
