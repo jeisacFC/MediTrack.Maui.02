@@ -58,34 +58,44 @@
                     </VerticalStackLayout>
 
                     <!-- Botones -->
-                    <Grid Grid.Row="1" ColumnSpacing="20" Margin="0,250,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <VerticalStackLayout Grid.Row="1" Spacing="15" Margin="0,200,0,0">
+                        <Grid ColumnSpacing="20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <Button Text="Iniciar sesión"
-                    Grid.Column="0"
-                    BackgroundColor="#3b71ff"
-                    TextColor="White"
-                    CornerRadius="30"
-                    HeightRequest="60"
-                    FontSize="20"
-                    FontAttributes="Bold"
-                    Clicked="IrAInicioSesion" />
+                            <Button Text="Iniciar sesión"
+                                Grid.Column="0"
+                                BackgroundColor="#3b71ff" 
+                                TextColor="White"
+                                CornerRadius="30"
+                                HeightRequest="60"
+                                FontSize="20"
+                                FontAttributes="Bold"
+                                Clicked="IrAInicioSesion" />
 
-                        <Button Text="Registrarse"
-                    Grid.Column="1"
-                    BackgroundColor="White"
-                    BorderColor="#3b71ff"
-                    TextColor="#3b71ff"
-                    CornerRadius="30"
-                    HeightRequest="60"
-                    FontSize="20"
-                    FontAttributes="Bold"
-                    Clicked="IrARegistro" />
-                    </Grid>
+                            <Button Text="Registrarse"
+                                Grid.Column="1"
+                                BackgroundColor="White"
+                                BorderColor="#3b71ff"
+                                TextColor="#3b71ff"
+                                CornerRadius="30"
+                                HeightRequest="60"
+                                FontSize="20"
+                                FontAttributes="Bold"
+                                Clicked="IrARegistro" />
+                        </Grid>
 
+                        <Button Text="Probar Escaneo (Temporal)"
+                            BackgroundColor="DarkOrange" 
+                            TextColor="White"
+                            CornerRadius="30"
+                            HeightRequest="60"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            Clicked="IrAPantallaEscaneo" />
+                    </VerticalStackLayout>
                     <!-- Espacio flexible debajo de los botones -->
                     <BoxView Grid.Row="2" />
                 </Grid>

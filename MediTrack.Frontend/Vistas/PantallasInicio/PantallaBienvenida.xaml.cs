@@ -15,5 +15,13 @@ namespace MediTrack.Frontend.Vistas.PantallasInicio
 
         private async void IrARegistro(object sender, EventArgs e)
             => await Shell.Current.GoToAsync("//registro");
+
+        // NUEVO MÉTODO para el botón de escaneo
+        private async void IrAPantallaEscaneo(object sender, EventArgs e)
+        {
+            // "pantalla-escaneo" debe ser el nombre de la RUTA (Route)
+            // que definiste para PantallaScan.xaml en tu AppShell.xaml
+            await Shell.Current.GoToAsync("//pantallaEscaneo");
+        }
     }
 }
