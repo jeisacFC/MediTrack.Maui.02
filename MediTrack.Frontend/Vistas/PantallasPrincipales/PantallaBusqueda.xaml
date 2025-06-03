@@ -1,13 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaBusqueda"
-             Title="Búsqueda"
-             BackgroundColor="White">
+             BackgroundColor="White"
+             Title="Buscar">
 
-    <StackLayout Padding="20" VerticalOptions="Center">
-        <Label Text="Buscar medicamentos"
-               FontSize="24"
-               FontAttributes="Bold"
-               HorizontalOptions="Center" />
-    </StackLayout>
+    <VerticalStackLayout Padding="20" Spacing="20">
+
+        <!-- Barra de búsqueda -->
+        <Frame CornerRadius="20" BackgroundColor="#f1f4ff" Padding="10">
+            <HorizontalStackLayout>
+                <Label FontFamily="MaterialIcons"
+                       Text="&#xe8b6;"
+                       FontSize="20"
+                       TextColor="Gray"
+                       VerticalOptions="Center" />
+                <Entry Placeholder="Buscar medicamentos..."
+                       BackgroundColor="Transparent"
+                       HorizontalOptions="FillAndExpand" />
+            </HorizontalStackLayout>
+        </Frame>
+
+        <!-- Resultados simulados -->
+        <CollectionView>
+            <CollectionView.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Paracetamol 500mg</x:String>
+                    <x:String>Omeprazol 20mg</x:String>
+                    <x:String>Ibuprofeno 200mg</x:String>
+                </x:Array>
+            </CollectionView.ItemsSource>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BackgroundColor="#f1f4ff" CornerRadius="15" Padding="10" Margin="0,5">
+                        <Label Text="{Binding}" FontAttributes="Bold" FontSize="14" />
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
 </ContentPage>

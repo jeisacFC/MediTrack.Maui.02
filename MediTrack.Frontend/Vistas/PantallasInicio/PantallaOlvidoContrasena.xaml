@@ -1,76 +1,109 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaOlvidoContrasena"
-             BackgroundColor="#3b71ff"
-             NavigationPage.HasNavigationBar="False">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaOlvidoContrasena"
+    NavigationPage.HasNavigationBar="False">
 
     <Grid>
+
+        <!-- Patrón de fondo (mismo que otras pantallas) -->
         <Image Source="logo_patron.png"
-               Aspect="Fill"
-               Opacity="0.3"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
+           Aspect="AspectFill"
+           Opacity="0.7"
+           HorizontalOptions="Fill"
+           VerticalOptions="Fill"
+           ZIndex="0"/>
 
-        <ScrollView>
-            <VerticalStackLayout Padding="30" Spacing="25" VerticalOptions="Center">
+        <!-- Distribución en dos filas -->
+        <Grid RowDefinitions="*,3*"
+          ZIndex="1">
 
-                <Frame BackgroundColor="#4d82ff"
-                       CornerRadius="20"
-                       Padding="20"
-                       HasShadow="False"
-                       HorizontalOptions="Center">
-                    <Label Text="Recuperar contraseña"
-                           FontSize="22"
-                           TextColor="White"
-                           FontAttributes="Bold"
-                           HorizontalTextAlignment="Center" />
-                </Frame>
+            <!-- Fila superior vacía (solo el patrón) -->
+            <Grid Grid.Row="0"/>
 
-                <Label Text="Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña"
-                       FontSize="14"
-                       TextColor="White"
-                       HorizontalTextAlignment="Center" />
+            <!-- Fila inferior: contenedor blanco -->
+            <Frame Grid.Row="1"
+             CornerRadius="40"
+             BackgroundColor="White"
+             HasShadow="True"
+             Padding="35"
+             VerticalOptions="Fill"
+             HeightRequest="700">
 
-                <Frame BackgroundColor="White"
-                       CornerRadius="15"
-                       Padding="0"
-                       HasShadow="False">
-                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
-                        <Label FontFamily="MaterialIcons"
-                               Text="&#xe0be;"
-                               FontSize="22"
-                               TextColor="Gray"
-                               VerticalOptions="Center"
-                               Margin="10,0"/>
-                        <Entry x:Name="entryCorreo"
-                               Placeholder="correo@ejemplo.com"
-                               BackgroundColor="Transparent"
-                               HeightRequest="45"
-                               HorizontalOptions="FillAndExpand"/>
-                    </HorizontalStackLayout>
-                </Frame>
+                <ScrollView>
+                    <VerticalStackLayout Spacing="25">
 
-                <Button Text="Enviar enlace"
-                        BackgroundColor="White"
-                        TextColor="#3b71ff"
-                        FontAttributes="Bold"
-                        FontSize="16"
-                        HeightRequest="50"
-                        CornerRadius="25"
-                        Clicked="EnviarEnlace" />
+                        <!-- Título en azul corporativo -->
+                        <Label Text="Recuperar contraseña"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="#3B71FF"
+                   HorizontalOptions="Center"/>
 
-                <Label Text="Volver a iniciar sesión"
-                       FontSize="12"
-                       TextColor="White"
-                       HorizontalTextAlignment="Center"
-                       FontAttributes="Bold">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="VolverInicioSesion" />
-                    </Label.GestureRecognizers>
-                </Label>
+                        <Label Text="Ingresa tu correo y te enviaremos un enlace para restablecer la contraseña."
+                   FontSize="14"
+                   TextColor="Gray"
+                   HorizontalTextAlignment="Center"/>
 
-            </VerticalStackLayout>
-        </ScrollView>
+                        <!-- Entrada de correo con icono -->
+                        <Frame CornerRadius="12"
+                   BackgroundColor="#F8F8F8"
+                   HasShadow="False"
+                   Padding="10">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image>
+                                    <Image.Source>
+                                        <FontImageSource Glyph="&#xE0BE;"
+                                     FontFamily="MaterialIcons"
+                                     Color="#3B71FF"
+                                     Size="20"/>
+                                    </Image.Source>
+                                </Image>
+                                <Entry x:Name="entryCorreo"
+                       Placeholder="correo@ejemplo.com"
+                       Keyboard="Email"
+                       PlaceholderColor="#A0A0A0"
+                       TextColor="Black"
+                       HeightRequest="45"/>
+                            </HorizontalStackLayout>
+                        </Frame>
+
+                        <!-- Botón principal en azul -->
+                        <Button Text="Enviar enlace"
+                    BackgroundColor="#3B71FF"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    CornerRadius="12"
+                    HeightRequest="50"
+                    Clicked="EnviarEnlace"/>
+
+                        <!-- Volver a inicio de sesión -->
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="¿Recordaste tu contraseña?"
+                     TextColor="Gray"
+                     VerticalOptions="Center"
+                     Grid.Column="0"/>
+
+                            <Button Text="Iniciar sesión"
+                      BackgroundColor="Transparent"
+                      TextColor="#3B71FF"
+                      FontAttributes="Bold"
+                      VerticalOptions="Center"
+                      Grid.Column="1"
+                      Clicked="VolverInicioSesion"/>
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </ScrollView>
+
+            </Frame>
+        </Grid>
     </Grid>
 </ContentPage>

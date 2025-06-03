@@ -7,9 +7,9 @@ using System.Windows.Input;
 
 namespace MediTrack.Frontend.ViewModels;
 
-public class PantallaCargaViewModel
+public class CargaViewModel
 {
-    public PantallaCargaViewModel()
+    public CargaViewModel()
     {
         IniciarTransicion();
     }

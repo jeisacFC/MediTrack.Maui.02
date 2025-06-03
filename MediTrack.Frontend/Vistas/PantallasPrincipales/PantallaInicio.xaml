@@ -1,8 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MediTrack.Frontend.ViewModels"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaInicio"
+             x:Name="Pagina"
              BackgroundColor="White"
              Title="Inicio">
+
+    <ContentPage.BindingContext>
+        <vm:InicioViewModel />
+    </ContentPage.BindingContext>
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="25">
@@ -16,63 +23,145 @@
             <CollectionView ItemsSource="{Binding MedicamentosHoy}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BackgroundColor="#f1f4ff" CornerRadius="15" Padding="15" Margin="0,5">
-                            <VerticalStackLayout>
-                                <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="14" TextColor="Black"/>
-                                <Label Text="{Binding Hora}" FontSize="12" TextColor="Gray"/>
-                                <Label Text="{Binding Tomado, Converter={StaticResource TomadoEstadoConverter}}" 
-                                       FontSize="12" 
-                                       TextColor="{Binding Tomado, Converter={StaticResource TomadoColorConverter}}" />
-                            </VerticalStackLayout>
+                        <Frame BackgroundColor="#f1f4ff"
+                               CornerRadius="15"
+                               Padding="10"
+                               Margin="0,5"
+                               HasShadow="True">
+                            <Grid ColumnDefinitions="*,Auto"
+                                  RowDefinitions="Auto,Auto">
+                                <!-- Nombre y hora -->
+                                <StackLayout Grid.RowSpan="2">
+                                    <Label Text="{Binding Nombre}"
+                                           FontAttributes="Bold"
+                                           FontSize="14"
+                                           TextColor="Black" />
+                                    <Label Text="{Binding Hora}"
+                                           FontSize="12"
+                                           TextColor="Gray" />
+                                </StackLayout>
+
+                                <!-- Estado -->
+                                <Label Text="{Binding Tomado, Converter={StaticResource BoolATextoConverter}}"
+                                       TextColor="{Binding Tomado, Converter={StaticResource BoolAColorConverter}}"
+                                       FontSize="12"
+                                       HorizontalTextAlignment="End"
+                                       Grid.Column="1" />
+
+                                <!-- Botón para cambiar estado -->
+                                <Button Text="Tomado"
+                                        FontSize="12"
+                                        Padding="5,2"
+                                        BackgroundColor="#3b71ff"
+                                        TextColor="White"
+                                        CornerRadius="15"
+                                        Command="{Binding BindingContext.CambiarEstadoCommand, Source={x:Reference Pagina}}"
+                                        CommandParameter="{Binding .}"
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        HorizontalOptions="End">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                     Binding="{Binding Tomado}"
+                                                     Value="True">
+                                            <Setter Property="IsVisible"
+                                                    Value="False" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </Grid>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <!-- Escaneos recientes -->
+            <!-- Escaneos recientes (ahora con scroll horizontal explícito) -->
             <Label Text="Escaneos Recientes"
                    FontSize="18"
                    FontAttributes="Bold"
                    TextColor="Black" />
 
-            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                <HorizontalStackLayout Spacing="10"
-                                       BindableLayout.ItemsSource="{Binding EscaneosRecientes}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <Frame BackgroundColor="#f1f4ff" CornerRadius="15" Padding="10">
-                                <Label Text="{Binding}" FontSize="12" TextColor="Black"/>
-                            </Frame>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
+            <ScrollView Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Always"
+                        HeightRequest="120">
+                <HorizontalStackLayout Spacing="10" Padding="0,5">
+                    <Frame BackgroundColor="#f1f4ff"
+                           CornerRadius="15"
+                           Padding="10"
+                           WidthRequest="200"
+                           HasShadow="True">
+                        <VerticalStackLayout>
+                            <Label Text="Divalproato Sódico 250mg"
+                                   FontAttributes="Bold"
+                                   FontSize="14"/>
+                            <Label Text="5 de Abril, 7:23 p. m."
+                                   FontSize="12"
+                                   TextColor="Gray"/>
+                        </VerticalStackLayout>
+                    </Frame>
+                    <Frame BackgroundColor="#f1f4ff"
+                           CornerRadius="15"
+                           Padding="10"
+                           WidthRequest="200"
+                           HasShadow="True">
+                        <VerticalStackLayout>
+                            <Label Text="Amoxicilina 500mg"
+                                   FontAttributes="Bold"
+                                   FontSize="14"/>
+                            <Label Text="4 de Abril, 10:43 a. m."
+                                   FontSize="12"
+                                   TextColor="Gray"/>
+                        </VerticalStackLayout>
+                    </Frame>
+                    <!-- Agrega más marcos aquí y desliza horizontalmente -->
                 </HorizontalStackLayout>
             </ScrollView>
 
-            <!-- Recomendaciones inteligentes -->
-            <Label Text="Recomendaciones inteligentes"
+            <!-- Hábitos saludables -->
+            <Label Text="Hábitos saludables"
                    FontSize="18"
                    FontAttributes="Bold"
                    TextColor="Black" />
 
-            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                <HorizontalStackLayout Spacing="10"
-                                       BindableLayout.ItemsSource="{Binding Recomendaciones}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <Frame BackgroundColor="White" CornerRadius="15" Padding="15" WidthRequest="280" HasShadow="True">
-                                <VerticalStackLayout Spacing="10">
-                                    <Label Text="{Binding Titulo}" FontAttributes="Bold" FontSize="14" TextColor="Black" />
-                                    <Label Text="{Binding Descripcion}" FontSize="12" TextColor="Gray" />
-                                    <Button Text="Agregar a mi tratamiento"
-                                            BackgroundColor="#3b71ff"
-                                            TextColor="White"
-                                            CornerRadius="15"
-                                            HeightRequest="40"
-                                            FontSize="12"/>
-                                </VerticalStackLayout>
-                            </Frame>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
+            <ScrollView Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never"
+                        HeightRequest="140">
+                <HorizontalStackLayout Spacing="15" Padding="0,5">
+                    <!-- Hábito de ejemplo: hidratación -->
+                    <Frame BackgroundColor="White"
+                           CornerRadius="15"
+                           Padding="15"
+                           WidthRequest="280"
+                           HasShadow="True">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Beber al menos 8 vasos de agua al día"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="Black" />
+                            <Label Text="Mantenerte hidratado ayuda a tu organismo a funcionar mejor."
+                                   FontSize="12"
+                                   TextColor="Gray" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <!-- Hábito de ejemplo: actividad física -->
+                    <Frame BackgroundColor="White"
+                           CornerRadius="15"
+                           Padding="15"
+                           WidthRequest="280"
+                           HasShadow="True">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Caminar 30 minutos diarios"
+                                   FontAttributes="Bold"
+                                   FontSize="14"
+                                   TextColor="Black" />
+                            <Label Text="El ejercicio ligero mejora tu salud cardiovascular."
+                                   FontSize="12"
+                                   TextColor="Gray" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <!-- Puedes añadir más hábitos aquí -->
                 </HorizontalStackLayout>
             </ScrollView>
 
@@ -82,20 +171,22 @@
                    FontAttributes="Bold"
                    TextColor="Black" />
 
-            <!--<Button Text="Escanear Medicamento" Clicked="BotonEscanear_Clicked" />-->
-
-
-            <HorizontalStackLayout Spacing="10"
-                                   BindableLayout.ItemsSource="{Binding Sintomas}">
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate>
-                        <Button Text="{Binding Nombre}"
-                                BackgroundColor="{Binding Seleccionado, Converter={StaticResource SintomaColorConverter}}"
-                                TextColor="#3b71ff"
-                                CornerRadius="20"
-                                FontSize="12" />
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Dolor de cabeza"
+                        BackgroundColor="#e0e7ff"
+                        TextColor="#3b71ff"
+                        CornerRadius="20"
+                        FontSize="12"/>
+                <Button Text="Fiebre"
+                        BackgroundColor="#e0e7ff"
+                        TextColor="#3b71ff"
+                        CornerRadius="20"
+                        FontSize="12"/>
+                <Button Text="Náuseas"
+                        BackgroundColor="#e0e7ff"
+                        TextColor="#3b71ff"
+                        CornerRadius="20"
+                        FontSize="12"/>
             </HorizontalStackLayout>
 
         </VerticalStackLayout>

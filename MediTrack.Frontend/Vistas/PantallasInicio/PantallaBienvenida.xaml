@@ -4,97 +4,111 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaBienvenida"
     BackgroundColor="#3b71ff"
-    NavigationPage.HasNavigationBar="False">
+    NavigationPage.HasNavigationBar="False"
+    Title="Bienvenida">
 
     <Grid>
 
-        <!-- Fondo con patrón -->
+        <!-- 1) Fondo con patrón -->
         <Image Source="logo_patron.png"
-               Aspect="Fill"
-               Opacity="0.5"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
+           Aspect="AspectFill"
+           Opacity="0.15"
+           HorizontalOptions="Fill"
+           VerticalOptions="Fill" />
 
-        <!-- Grid principal -->
-        <Grid RowDefinitions="Auto,*,Auto" Padding="30,0,30,30">
+        <!-- 2) Layout principal -->
+        <Grid RowDefinitions="Auto,*">
 
-            <!-- Logo -->
-            <Image Grid.Row="0"
-                   Source="logo_meditrack.png"
-                   WidthRequest="240"
-                   HeightRequest="180"
-                   Aspect="AspectFit"
-                   HorizontalOptions="Center"
-                   Margin="0,60,0,20" />
+            <!-- Placeholder para el logo -->
+            <BoxView Grid.Row="0"
+               HeightRequest="250"
+               Opacity="0" />
 
-            <!-- Cuadro blanco con contenido -->
-            <Frame Grid.Row="2"
-                   BackgroundColor="White"
-                   CornerRadius="60"
-                   Margin="-30,-120,-30,80"
-                   Padding="25,40,25,40"
-                   HasShadow="False"
-                   HorizontalOptions="Center"
-                   HeightRequest="450"
-                   VerticalOptions="End">
+            <!-- Contenedor blanco -->
+            <Frame Grid.Row="1"
+             CornerRadius="40"
+             BackgroundColor="White"
+             Margin="0,-60,0,0"
+             Padding="30,40,30,40"
+             HasShadow="False"
+             VerticalOptions="Fill"
+             HeightRequest="700">
 
-                <!-- Usar Grid en lugar de VerticalStackLayout para mejor posicionamiento -->
-                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="20">
+                <!-- Contenido interno: títulos, botones, luego espacio -->
+                <Grid RowDefinitions="Auto,Auto,*" RowSpacing="20">
 
-                    <!-- Textos en la parte superior -->
+                    <!-- Títulos -->
                     <VerticalStackLayout Grid.Row="0" Spacing="20">
                         <Label Text="MediTrack"
-                               FontSize="28"
-                               FontAttributes="Bold"
-                               TextColor="#3b71ff"
-                               HorizontalTextAlignment="Center" />
+                   FontSize="30"
+                   FontAttributes="Bold"
+                   TextColor="#3b71ff"
+                   HorizontalTextAlignment="Center" />
 
                         <Label Text="Mantén el control de tu medicación"
-                               FontSize="18"
-                               FontAttributes="Bold"
-                               TextColor="#3b71ff"
-                               HorizontalTextAlignment="Center" />
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="#3b71ff"
+                   HorizontalTextAlignment="Center" />
 
                         <Label Text="Controla tus medicamentos, programa recordatorios, recibe alertas personalizadas y gestiona toda tu información médica en un solo lugar"
-                               FontSize="14"
-                               TextColor="Black"
-                               HorizontalTextAlignment="Center" />
+                   FontSize="15"
+                   TextColor="Gray"
+                   HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
 
-                    <!-- Espacio flexible en el medio -->
-                    <ContentView Grid.Row="1" HeightRequest="50" />
-
-                    <!-- Botones en la parte inferior -->
-                    <Grid Grid.Row="2" ColumnSpacing="10" VerticalOptions="End" Margin="0,0,0,5">
+                    <!-- Botones -->
+                    <Grid Grid.Row="1" ColumnSpacing="20" Margin="0,250,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <Button Text="Iniciar sesión"
-                        Grid.Column="0"
-                        BackgroundColor="#FF8C3B"
-                        TextColor="White"
-                        BorderColor="#FF8C3B"
-                        BorderWidth="1"
-                        CornerRadius="30"
-                        HeightRequest="70"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        Clicked="IrAInicioSesion" />
+                    Grid.Column="0"
+                    BackgroundColor="#3b71ff"
+                    TextColor="White"
+                    CornerRadius="30"
+                    HeightRequest="60"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    Clicked="IrAInicioSesion" />
 
                         <Button Text="Registrarse"
-                        Grid.Column="1"
-                        BackgroundColor="#3b71ff"
-                        TextColor="White"
-                        CornerRadius="30"
-                        HeightRequest="70"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        Clicked="IrARegistro" />
+                    Grid.Column="1"
+                    BackgroundColor="White"
+                    BorderColor="#3b71ff"
+                    TextColor="#3b71ff"
+                    CornerRadius="30"
+                    HeightRequest="60"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    Clicked="IrARegistro" />
                     </Grid>
+
+                    <!-- Espacio flexible debajo de los botones -->
+                    <BoxView Grid.Row="2" />
                 </Grid>
             </Frame>
         </Grid>
+
+        <!-- 3) Logo al frente -->
+        <Frame Padding="0"
+           BackgroundColor="White"
+           BorderColor="White"
+           CornerRadius="25"
+           HasShadow="False"
+           WidthRequest="130"
+           HeightRequest="130"
+           HorizontalOptions="Center"
+           VerticalOptions="Start"
+           Margin="0,20,0,0"
+           ZIndex="10">
+            <Image Source="logo_meditrack.png"
+             WidthRequest="200"
+             HeightRequest="150"
+             Aspect="AspectFit" />
+        </Frame>
+
     </Grid>
 </ContentPage>

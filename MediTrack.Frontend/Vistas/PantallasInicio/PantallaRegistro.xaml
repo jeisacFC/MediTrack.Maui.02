@@ -1,127 +1,172 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaRegistro"
-             BackgroundColor="#3b71ff"
-             NavigationPage.HasNavigationBar="False">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaRegistro"
+    NavigationPage.HasNavigationBar="False"
+    Title="Registrarse">
 
     <Grid>
-        <!-- Patrón de fondo -->
+
+        <!-- Fondo con patrón -->
         <Image Source="logo_patron.png"
-               Aspect="Fill"
-               Opacity="0.4"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
+               Aspect="AspectFill"
+               Opacity="0.8"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"
+               ZIndex="0" />
 
-        <ScrollView>
-            <VerticalStackLayout Padding="30" Spacing="20">
+        <!-- Layout principal -->
+        <Grid RowDefinitions="*,3*"
+              ZIndex="1">
 
-                <!-- Título -->
-                <Frame BackgroundColor="#4d82ff"
-                       CornerRadius="20"
-                       Padding="20"
-                       HorizontalOptions="Center"
-                       HasShadow="False">
-                    <VerticalStackLayout>
-                        <Label Text="Registrarse"
-                               FontSize="22"
-                               TextColor="White"
+            <Grid Grid.Row="0" />
+            <!-- Espacio superior -->
+
+            <Frame Grid.Row="1"
+                   CornerRadius="40"
+                   BackgroundColor="White"
+                   HasShadow="True"
+                   Padding="35"
+                   VerticalOptions="Fill"
+                   HeightRequest="900">
+
+                <ScrollView>
+                    <VerticalStackLayout Spacing="25">
+
+                        <!-- Logo -->
+                        <Image Source="logo_meditrack.png"
+                               HeightRequest="100"
+                               HorizontalOptions="Center"
+                               Margin="0,10"/>
+
+                        <!-- Título -->
+                        <Label Text="Regístrate"
+                               FontSize="28"
                                FontAttributes="Bold"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="Si usted aún no tiene cuenta regístrese aquí"
-                               FontSize="14"
-                               TextColor="White"
-                               HorizontalTextAlignment="Center"
-                               Margin="0,5,0,0" />
-                    </VerticalStackLayout>
-                </Frame>
+                               TextColor="#3B71FF"
+                               HorizontalOptions="Center"/>
 
-                <!-- Formulario -->
-                <Frame BackgroundColor="White"
-                       CornerRadius="30"
-                       Padding="25"
-                       HasShadow="False"
-                       Margin="0,10,0,0">
-                    <VerticalStackLayout Spacing="20">
-
-                        <!-- Nombre -->
-                        <VerticalStackLayout>
-                            <Label Text="Nombre"
-                                   FontAttributes="Bold"
-                                   FontSize="14"
-                                   TextColor="Black" />
-                            <Frame Padding="10" CornerRadius="10" BackgroundColor="#F3F3F3" HasShadow="False">
+                        <!-- Nombre con icono -->
+                        <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="10">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image>
+                                    <Image.Source>
+                                        <FontImageSource Glyph="&#xE7FD;"
+                                                         FontFamily="MaterialIcons"
+                                                         Color="#3B71FF"
+                                                         Size="20"/>
+                                    </Image.Source>
+                                </Image>
                                 <Entry Placeholder="Nombre"
-                                       BackgroundColor="Transparent"
-                                       HeightRequest="45" />
-                            </Frame>
-                        </VerticalStackLayout>
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       HeightRequest="45"/>
+                            </HorizontalStackLayout>
+                        </Frame>
 
-                        <!-- Apellidos -->
-                        <VerticalStackLayout>
-                            <Label Text="Apellidos"
-                                   FontAttributes="Bold"
-                                   FontSize="14"
-                                   TextColor="Black" />
-                            <Frame Padding="10" CornerRadius="10" BackgroundColor="#F3F3F3" HasShadow="False">
+                        <!-- Apellidos con icono -->
+                        <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="10">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image>
+                                    <Image.Source>
+                                        <FontImageSource Glyph="&#xE7FD;"
+                                                         FontFamily="MaterialIcons"
+                                                         Color="#3B71FF"
+                                                         Size="20"/>
+                                    </Image.Source>
+                                </Image>
                                 <Entry Placeholder="Apellidos"
-                                       BackgroundColor="Transparent"
-                                       HeightRequest="45" />
-                            </Frame>
-                        </VerticalStackLayout>
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       HeightRequest="45"/>
+                            </HorizontalStackLayout>
+                        </Frame>
 
-                        <!-- Correo -->
-                        <VerticalStackLayout>
-                            <Label Text="Correo Electrónico"
-                                   FontAttributes="Bold"
-                                   FontSize="14"
-                                   TextColor="Black" />
-                            <Frame Padding="10" CornerRadius="10" BackgroundColor="#F3F3F3" HasShadow="False">
-                                <Entry Placeholder="correo@ejemplo.com"
-                                       BackgroundColor="Transparent"
-                                       HeightRequest="45" />
-                            </Frame>
-                        </VerticalStackLayout>
+                        <!-- Correo electrónico -->
+                        <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="10">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image>
+                                    <Image.Source>
+                                        <FontImageSource Glyph="&#xE0BE;"
+                                                         FontFamily="MaterialIcons"
+                                                         Color="#3B71FF"
+                                                         Size="20"/>
+                                    </Image.Source>
+                                </Image>
+                                <Entry Placeholder="Correo electrónico"
+                                       Keyboard="Email"
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       HeightRequest="45"/>
+                            </HorizontalStackLayout>
+                        </Frame>
 
                         <!-- Contraseña -->
-                        <VerticalStackLayout>
-                            <Label Text="Contraseña"
-                                   FontAttributes="Bold"
-                                   FontSize="14"
-                                   TextColor="Black" />
-                            <Frame Padding="10" CornerRadius="10" BackgroundColor="#F3F3F3" HasShadow="False">
-                                <Entry Placeholder="••••••••"
+                        <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="10">
+                            <HorizontalStackLayout Spacing="10">
+                                <Image>
+                                    <Image.Source>
+                                        <FontImageSource Glyph="&#xE897;"
+                                                         FontFamily="MaterialIcons"
+                                                         Color="#3B71FF"
+                                                         Size="20"/>
+                                    </Image.Source>
+                                </Image>
+                                <Entry Placeholder="Contraseña"
                                        IsPassword="True"
-                                       BackgroundColor="Transparent"
-                                       HeightRequest="45" />
-                            </Frame>
-                        </VerticalStackLayout>
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       HeightRequest="45"/>
+                            </HorizontalStackLayout>
+                        </Frame>
 
                         <!-- Botón Registrarse -->
                         <Button Text="Registrarse"
-                                BackgroundColor="#3b71ff"
+                                FontSize="18"
+                                BackgroundColor="#3B71FF"
                                 TextColor="White"
+                                CornerRadius="12"
                                 HeightRequest="50"
-                                CornerRadius="25"
-                                FontAttributes="Bold"
-                                FontSize="16" />
+                                Clicked="OnRegistrarseClicked"/>
 
-                        <!-- Ir a inicio de sesión -->
-                        <HorizontalStackLayout HorizontalOptions="Center">
-                            <Label Text="¿Ya tienes una cuenta? " FontSize="12" />
-                            <Label Text="Iniciar sesión"
-                                   FontSize="12"
-                                   TextColor="#3b71ff"
-                                   FontAttributes="Bold">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="IrAInicioSesion" />
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </HorizontalStackLayout>
+                        <!-- ¿Ya tienes cuenta? -->
+                        <Grid Margin="60,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="¿Ya tienes una cuenta?"
+                                   TextColor="Gray"
+                                   VerticalOptions="Center"
+                                   Grid.Column="0" />
+
+                            <Button Text="Iniciar sesión"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#3B71FF"
+                                    FontAttributes="Bold"
+                                    VerticalOptions="Center"
+                                    Grid.Column="1"
+                                    Clicked="IrAInicioSesion"/>
+                        </Grid>
 
                     </VerticalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
-        </ScrollView>
+                </ScrollView>
+
+            </Frame>
+        </Grid>
     </Grid>
 </ContentPage>

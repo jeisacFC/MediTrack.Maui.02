@@ -7,10 +7,11 @@
     NavigationPage.HasNavigationBar="False">
 
     <Grid>
-        <Image Source="logo_meditrack.png"
-               WidthRequest="200"
-               HeightRequest="200"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
+        <Image x:Name="logo"
+           Source="logo_meditrack.png"
+           WidthRequest="200"
+           HeightRequest="200"
+           HorizontalOptions="Center"
+           VerticalOptions="Center" />
     </Grid>
 </ContentPage>

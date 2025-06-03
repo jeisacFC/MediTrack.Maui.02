@@ -73,9 +73,12 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Compile Include="Models\Preuba.cs" />
+	  
 	  <Compile Include="Services\BarcodeScannerService.cs" />
 	  <Compile Include="Services\IBarcodeScannerService.cs" />
+	  <Compile Include="Models\ElementoSeleccionable.cs" />
+	  <Compile Include="Models\MedicamentoModel.cs" />
+	 
 	</ItemGroup>
 	
 	<ItemGroup>
