@@ -21,7 +21,7 @@ namespace MediTrack.Frontend.Vistas.PantallasInicio
         {
             // "pantalla-escaneo" debe ser el nombre de la RUTA (Route)
             // que definiste para PantallaScan.xaml en tu AppShell.xaml
-            await Shell.Current.GoToAsync("//pantallaEscaneo");
+            await Shell.Current.GoToAsync("//pantallaScan");
         }
     }
 }

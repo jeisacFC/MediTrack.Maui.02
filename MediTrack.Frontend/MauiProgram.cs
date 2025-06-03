@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui; // Necesario para el Community Toolkit
-//using MediTrack.Frontend.Services;
+using MediTrack.Frontend.Services;
+using MediTrack.Frontend.Vistas.PantallasFuncionales;
 using MediTrack.Frontend.ViewModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Hosting;
@@ -38,13 +39,13 @@ public static class MauiProgram
         //            typeof(BarcodeGeneratorViewHandIer));
         //    });
         //#endregion
-        
+
 
         //// Registro de servicios (DEBE ir después de UseMauiApp)
-        //builder.Services.AddSingleton<IBarcodeScannerService, BarcodeScannerService>();
-        //builder.Services.AddTransient<ScanViewModel>();
+        builder.Services.AddSingleton<IBarcodeScannerService, BarcodeScannerService>();
+        builder.Services.AddTransient<ScanViewModel>();
+        builder.Services.AddTransient<PantallaScan>();
 
-     
 
 #if DEBUG
         builder.Logging.AddDebug();

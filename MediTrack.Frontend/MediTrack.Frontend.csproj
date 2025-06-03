@@ -74,6 +74,14 @@
 	
 	<ItemGroup>
 	  
+	  <Compile Include="Models\EfectosSecundariosCategorizados.cs" />
+	  
+	  <Compile Include="Models\Error.cs" />
+	  
+	  <Compile Include="Models\ReqEscanearMedicamento.cs" />
+	  
+	  <Compile Include="Models\ResEscanearMedicamento.cs" />
+	  
 	  <Compile Include="Services\BarcodeScannerService.cs" />
 	  <Compile Include="Services\IBarcodeScannerService.cs" />
 	  <Compile Include="Models\ElementoSeleccionable.cs" />

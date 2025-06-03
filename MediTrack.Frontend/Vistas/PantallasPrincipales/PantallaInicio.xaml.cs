@@ -10,8 +10,5 @@ public partial class PantallaInicio : ContentPage
         BindingContext = new InicioViewModel();
     }
 
-    //private async void BotonEscanear_Clicked(object sender, EventArgs e)
-    //{
-    //    await Shell.Current.GoToAsync("pantallaScan"); // Usa la ruta definida en AppShell
-    //}
+    
 }
