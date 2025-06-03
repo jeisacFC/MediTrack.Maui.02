@@ -82,7 +82,7 @@
                    FontAttributes="Bold"
                    TextColor="Black" />
 
-            <Button Text="Escanear Medicamento" Clicked="BotonEscanear_Clicked" />
+            <!--<Button Text="Escanear Medicamento" Clicked="BotonEscanear_Clicked" />-->
 
 
             <HorizontalStackLayout Spacing="10"
