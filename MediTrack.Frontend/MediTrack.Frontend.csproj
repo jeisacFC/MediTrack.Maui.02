@@ -20,7 +20,20 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<!-- Tus propiedades existentes -->
+		<UseAndroidX>true</UseAndroidX>
+		<EnableLLVM>false</EnableLLVM>
+
+		<!-- AGREGAR ESTAS LÍNEAS -->
+		<AndroidUseAndroidX>true</AndroidUseAndroidX>
+		<AndroidXMigration>true</AndroidXMigration>
+		<AndroidLinkMode>None</AndroidLinkMode>
 	</PropertyGroup>
+	
+	<ItemGroup>
+		<AndroidXMigration Include="@(AndroidXMigration)" />
+	</ItemGroup>
+	
 	<ItemGroup>
 		<!-- Ícono personalizado -->
 		<MauiIcon Include="Resources/AppIcon/logo_meditrack_appicon.png" ForegroundFile="Resources/AppIcon/logo_meditrack_appicon.png" />
@@ -35,6 +48,8 @@
 		<!-- Otros recursos -->
 		<MauiAsset Include="Resources/Raw/**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
+	
+	
 	<ItemGroup>
 		<!-- Evita incluir carpetas innecesarias, sin excluir Vistas -->
 		<AndroidResource Remove="Models/**" />
@@ -56,11 +71,13 @@
 		<None Remove="Services/**" />
 		<None Remove="ViewsModels/**" />
 	</ItemGroup>
+	
 	<ItemGroup>
 	  <Compile Include="Models\Preuba.cs" />
 	  <Compile Include="Services\BarcodeScannerService.cs" />
 	  <Compile Include="Services\IBarcodeScannerService.cs" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
@@ -68,9 +85,10 @@
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
 		<PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />
-		<PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />
+		
 		<!-- LÍNEA ELIMINADA: <MauiXaml Include="Vistas/*.xaml" /> -->
 	</ItemGroup>
+	
 	<ItemGroup>
 	  <MauiXaml Update="Resources\Styles\Styles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
@@ -94,9 +112,11 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+	
 	<ItemGroup>
 	  <None Update="Vistas\PantallasFuncionales\PantallaScan.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </None>
 	</ItemGroup>
+	
 </Project>
