@@ -13,16 +13,12 @@
 
     <Grid RowDefinitions="Auto, *, Auto">
 
-
-        <!------ HEADER ------>
-        <StackLayout Grid.Row="0" BackgroundColor="{StaticResource PrimaryLight}" Padding="15">
+        <StackLayout Grid.Row="0" BackgroundColor="{StaticResource White}" Padding="15">
             <Label Text="Apunte al código de barras del medicamento"
                    HorizontalOptions="Center" VerticalOptions="Center"
                    TextColor="{StaticResource PrimaryTextColor}" FontSize="Medium"/>
         </StackLayout>
 
-
-        <!------ VISTA DE CÁMARA Y ESCÁNER ------>
         <zxing:CameraBarcodeReaderView
             Grid.Row="1"
             x:Name="barcodeView"
@@ -34,10 +30,7 @@
                     Command="{Binding ProcesarCodigosDetectadosCommand}" />
             </zxing:CameraBarcodeReaderView.Behaviors>
         </zxing:CameraBarcodeReaderView>
-
-
-
-        <!------ FOOTER ------>
+ 
          <StackLayout Grid.Row="2" Padding="20" BackgroundColor="{StaticResource PageBackgroundColor}">
             <Button Text="Cancelar"
                     Command="{Binding CancelarEscaneoCommand}"
