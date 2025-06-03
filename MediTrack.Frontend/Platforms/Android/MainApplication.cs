@@ -1,6 +1,6 @@
 ﻿using Android.App;
 using Android.Runtime;
-using ZXing.Mobile; // Añade este using
+/*using ZXing.Mobile;*/ // Añade este using
 
 namespace MediTrack.Frontend;
 
