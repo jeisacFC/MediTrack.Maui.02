@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MediTrack.Frontend.Popups.InstruccionesEscaneoPopup"
+               Color="Transparent">
+    
+    <Frame CornerRadius="15" Padding="25" Margin="30"
+           BackgroundColor="White"
+           VerticalOptions="Center" HorizontalOptions="Center"
+           WidthRequest="300">
+        
+        <VerticalStackLayout Spacing="20">
+            <Image Source="barcode_scan_icon.png" HeightRequest="80"
+                   WidthRequest="80"
+                   HorizontalOptions="Center"/>
+            <Label Text="Alinea el código de barras dentro del recuadro para identificar tu medicamento."
+                   HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource PrimaryTextColor}"
+                   FontSize="Body"/>
+            <Button Text="Entendido"
+                    Clicked="Entendido_Clicked"
+                    Style="{StaticResource ButtonPrimaryStyle}" />
+        </VerticalStackLayout>
+        
+    </Frame>
+</toolkit:Popup>
