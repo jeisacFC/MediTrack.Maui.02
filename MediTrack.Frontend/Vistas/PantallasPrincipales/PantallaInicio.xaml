@@ -75,7 +75,7 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <!-- Escaneos recientes (ahora con scroll horizontal explícito) -->
+            <!-- Escaneos recientes (DATOS HARDCODEADOS RESTAURADOS) -->
             <Label Text="Escaneos Recientes"
                    FontSize="18"
                    FontAttributes="Bold"
@@ -113,11 +113,10 @@
                                    TextColor="Gray"/>
                         </VerticalStackLayout>
                     </Frame>
-                    <!-- Agrega más marcos aquí y desliza horizontalmente -->
                 </HorizontalStackLayout>
             </ScrollView>
 
-            <!-- Hábitos saludables -->
+            <!-- Hábitos saludables (RESTAURADOS) -->
             <Label Text="Hábitos saludables"
                    FontSize="18"
                    FontAttributes="Bold"
@@ -160,12 +159,10 @@
                                    TextColor="Gray" />
                         </VerticalStackLayout>
                     </Frame>
-
-                    <!-- Puedes añadir más hábitos aquí -->
                 </HorizontalStackLayout>
             </ScrollView>
 
-            <!-- Síntomas -->
+            <!-- Síntomas (RESTAURADOS) -->
             <Label Text="Síntomas"
                    FontSize="18"
                    FontAttributes="Bold"

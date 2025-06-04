@@ -16,6 +16,12 @@
             <!-- Converters -->
             <converters:BoolATextoColorConverter x:Key="BoolATextoConverter" />
             <converters:BoolAColorConverter x:Key="BoolAColorConverter" />
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+            <converters:BoolToCheckConverter x:Key="BoolToCheckConverter" />
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:CompletedEventsCountConverter x:Key="CompletedEventsCountConverter" />
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

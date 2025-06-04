@@ -58,7 +58,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Include="Models\ElementoSeleccionable.cs" />
+	  <Compile Include="Models\EventoAgenda.cs" />
 	  <Compile Include="Models\MedicamentoModel.cs" />
+	  <Compile Include="Services\GoogleCalendarService.cs" />
 	  <Compile Include="Services\Preuba.cs" />
 	</ItemGroup>
 	<ItemGroup>
@@ -67,7 +69,9 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-		<!-- LÍNEA ELIMINADA: <MauiXaml Include="Vistas/*.xaml" /> -->
+		<PackageReference Include="Syncfusion.Maui.Calendar" Version="24.2.8" />
+		<PackageReference Include="Syncfusion.Maui.Core" Version="24.2.8" />
+		<PackageReference Include="Syncfusion.Maui.Scheduler" Version="24.2.8" />
 	</ItemGroup>
 	<ItemGroup>
 	  <MauiXaml Update="Resources\Styles\Styles.xaml">

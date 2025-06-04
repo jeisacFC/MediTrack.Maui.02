@@ -6,45 +6,78 @@ namespace MediTrack.Frontend.Vistas.PantallasInicio
 {
     public partial class PantallaCarga : ContentPage
     {
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource? _cts;
 
         public PantallaCarga()
         {
             InitializeComponent();
+            // ELIMINAR: logo.EnableAnimations = true; ← Esta línea causaba el error
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            _cts = new CancellationTokenSource();
 
-            _cts = new();
-            _ = AnimarLatido(_cts.Token);  // lanza sin bloquear
-            _ = CargarDatos();             // simulación de carga
+            // Ejecutar animación y carga por separado para mejor control
+            _ = AnimarLatidoOptimizado(_cts.Token);
+            _ = InicializarAppRapido();
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            _cts?.Cancel();                // detiene la animación si salgo antes
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
         }
 
-        /// <summary>Escala el logo de 1.0 → 1.15 → 1.0 en bucle.</summary>
-        private async Task AnimarLatido(CancellationToken token)
+        private async Task AnimarLatidoOptimizado(CancellationToken token)
         {
-            const uint dur = 450;          // ms por medio ciclo
+            const uint duracion = 600; // Duración más suave
 
-            while (!token.IsCancellationRequested)
+            try
             {
-                await logo.ScaleTo(1.15, dur, Easing.SinInOut);
-                await logo.ScaleTo(1.00, dur, Easing.SinInOut);
+                while (!token.IsCancellationRequested)
+                {
+                    // Animación más suave con easing mejorado
+                    await logo.ScaleTo(1.08, duracion, Easing.CubicInOut);
+                    if (token.IsCancellationRequested) break;
+
+                    await logo.ScaleTo(1.0, duracion, Easing.CubicInOut);
+                    if (token.IsCancellationRequested) break;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Esperado cuando se cancela la animación
+            }
+            catch (Exception ex)
+            {
+                // Log cualquier otro error
+                System.Diagnostics.Debug.WriteLine($"Error en animación: {ex.Message}");
             }
         }
 
-        /// <summary>Simula carga y navega a la pantalla de bienvenida.</summary>
-        private async Task CargarDatos()
+        private async Task InicializarAppRapido()
         {
-            await Task.Delay(3000);                         // aquí tu lógica real
-            await Shell.Current.GoToAsync("//bienvenida");  // ruta de ejemplo
+            try
+            {
+                // Delay reducido para carga más rápida
+                await Task.Delay(600);
+
+                // Navegar en el hilo principal
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await Shell.Current.GoToAsync("//bienvenida");
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error en inicialización: {ex.Message}");
+                // Fallback: intentar navegar directamente
+                await Shell.Current.GoToAsync("//bienvenida");
+            }
         }
     }
 }
