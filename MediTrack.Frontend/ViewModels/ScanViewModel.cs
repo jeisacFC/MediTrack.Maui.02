@@ -7,6 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZXing.Net.Maui; // Para BarcodeResult y BarcodeReaderOptions
 using System.Diagnostics; // Para Debug.WriteLine
+using CommunityToolkit.Maui.Views; // Para Popup
+using MediTrack.Frontend.Popups; // Para InfoMedicamentoPopup (que crearemos después)
+
+
 
 namespace MediTrack.Frontend.ViewModels
 {
@@ -21,15 +25,17 @@ namespace MediTrack.Frontend.ViewModels
         [ObservableProperty]
         private string _scanResultText;
 
-        // ---------------------------------------------------------------------- //
+        // ----------------------------------  COMANDOS  ------------------------------------ //
         public BarcodeReaderOptions BarcodeReaderOptions { get; private set; }
         public IAsyncRelayCommand<BarcodeDetectionEventArgs> ProcesarCodigosDetectadosCommand { get; }
         public IAsyncRelayCommand CancelarEscaneoCommand { get; }
         public IAsyncRelayCommand SimularEscaneoCommand { get; }
+        public IAsyncRelayCommand BuscarManualCommand { get; }
+
+
 
         // Usamos la interfaz para permitir la Inyección de Dependencias
         private readonly IBarcodeScannerService _barcodeScannerService;
-
 
 
         // ---------------------------------------------------------------------- //
@@ -52,6 +58,7 @@ namespace MediTrack.Frontend.ViewModels
             ProcesarCodigosDetectadosCommand = new AsyncRelayCommand<BarcodeDetectionEventArgs>(EjecutarProcesarCodigosDetectados);
             CancelarEscaneoCommand = new AsyncRelayCommand(EjecutarCancelarEscaneo);
             SimularEscaneoCommand = new AsyncRelayCommand(EjecutarSimulacionEscaneo); // <--- INICIALIZA EL NUEVO COMANDO
+            BuscarManualCommand = new AsyncRelayCommand(EjecutarBuscarManual);
 
             ScanResultText = "Apunte la cámara al código de barras...";
         }
@@ -70,105 +77,82 @@ namespace MediTrack.Frontend.ViewModels
 
             var primerResultado = args.Results[0];
             string codigoEscaneado = primerResultado.Value;
-            // string formatoCodigo = primerResultado.Format.ToString(); // Puedes usarlo si lo necesitas
-
             Debug.WriteLine($"ViewModel: Código Detectado: {codigoEscaneado}");
             ScanResultText = $"Detectado: {codigoEscaneado}";
 
             try
             {
-                // LLAMAMOS AL MÉTODO CORRECTO DEL SERVICIO
                 ResEscanearMedicamento infoMedicamento = await _barcodeScannerService.ObtenerDatosMedicamentoAsync(codigoEscaneado);
 
                 if (infoMedicamento != null && infoMedicamento.resultado)
                 {
-                    // LÓGICA PARA MOSTRAR EL MODAL (siguiente paso)
+                    // LÓGICA PARA MOSTRAR EL MODAL CON infoMedicamento
+                    // Esto lo haremos en el siguiente gran paso.
+                    // Por ahora, solo una alerta para confirmar que llegamos aquí.
                     await Application.Current.MainPage.DisplayAlert(
                        infoMedicamento.NombreComercial ?? "Medicamento Escaneado",
-                       $"Principio Activo: {infoMedicamento.PrincipioActivo ?? "N/A"}\nDosis: {infoMedicamento.Dosis ?? "N/A"}",
+                       $"Código: {codigoEscaneado}\nPrincipio: {infoMedicamento.PrincipioActivo ?? "N/A"}",
                        "OK");
 
-                    // Volvemos a la página anterior después de la alerta/modal
-                    await EjecutarCancelarEscaneo();
+                    // Después del modal (o alerta), podrías querer reactivar el escaneo o navegar.
+                    // Por ahora, no navegaremos automáticamente hacia atrás desde aquí.
+                    // IsDetecting = true; // Si quieres seguir escaneando
                 }
                 else
                 {
-                    string errorMsg = infoMedicamento?.errores?.FirstOrDefault()?.Message ?? "Medicamento no encontrado o error desconocido.";
+                    string errorMsg = infoMedicamento?.errores?.FirstOrDefault()?.Message ?? "Medicamento no encontrado.";
                     await Application.Current.MainPage.DisplayAlert("Error", errorMsg, "OK");
                     IsDetecting = true; // Permitir reintentar
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error procesando código de barras en ViewModel: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}"); // Añade esto para más detalles del error
+                Debug.WriteLine($"Error procesando en ViewModel: {ex.Message}\n{ex.StackTrace}");
                 await Application.Current.MainPage.DisplayAlert("Error del Sistema", "Ocurrió un error procesando la información.", "OK");
-                IsDetecting = true; // Permitir reintentar
+                IsDetecting = true;
             }
             finally
             {
                 IsProcessingResult = false;
             }
         }
-
+       
         private async Task EjecutarCancelarEscaneo()
         {
             IsDetecting = false;
-
-            // Navegar hacia atrás si estamos en la página de escaneo
-            // Es importante verificar si la página actual es la que esperamos antes de navegar ".."
-            // para evitar errores si ya se navegó o si el shell está en un estado inesperado.
-            var currentPageRoute = Shell.Current.CurrentState?.Location?.OriginalString;
-            string rutaPantallaScan = "pantallaScan";
-            if (currentPageRoute != null && currentPageRoute.EndsWith("/" + rutaPantallaScan, StringComparison.OrdinalIgnoreCase) || currentPageRoute.EndsWith("pantallaScan", StringComparison.OrdinalIgnoreCase))
+            // Navegar a la página anterior (o a la página principal si es más apropiado)
+            if (Shell.Current.Navigation.NavigationStack.Count > 1)
             {
-                try
-                {
-                    await Shell.Current.GoToAsync("..", true);
-                }
-                catch (Exception navEx)
-                {
-                    Debug.WriteLine($"Error al navegar hacia atrás: {navEx.Message}");
-                    // Considera una ruta de fallback si ".." falla, como ir a la página principal
-                    // await Shell.Current.GoToAsync("//rutaPaginaPrincipal");
-                }
+                await Shell.Current.GoToAsync("..", true);
             }
             else
             {
-                Debug.WriteLine($"No se navegó hacia atrás, página actual no es PantallaScan o ruta desconocida: {currentPageRoute}");
+                // Si no hay a dónde ir "hacia atrás", quizás ir a una página de inicio
+                // await Shell.Current.GoToAsync("//RutaPaginaPrincipal");
+                Debug.WriteLine("No se pudo navegar hacia atrás, ya estamos en la raíz o es la única página.");
             }
         }
 
-        private async Task EjecutarSimulacionEscaneo()
+        private async Task EjecutarSimulacionEscaneo() // El método de simulación sigue siendo útil
         {
+            // ... (tu lógica de simulación que llama a EjecutarProcesarCodigosDetectados)
+            // Asegúrate que cree un BarcodeDetectionEventArgs válido
             if (IsProcessingResult) return;
-
             Debug.WriteLine("ViewModel: Ejecutando SIMULACIÓN de escaneo...");
-
-            // Crea un resultado de código de barras simulado
-            var codigoSimulado = "1234567890120"; // Un código de barras de prueba que tu mock service pueda reconocer
-            var formatoSimulado = BarcodeFormats.OneDimensional; // O el formato que quieras simular
-
-            var simulatedResults = new List<BarcodeResult>
-        {
-            new BarcodeResult
-            {
-                Value = codigoSimulado,
-                Format = formatoSimulado,
-                // Otras propiedades como RawBytes, ResultPoints pueden dejarse como null o default para la simulación
-            }
-        };
-
-            // Crea los EventArgs simulados
+            var codigoSimulado = "7501055300107"; // Código de tu SP o uno que el mock service entienda
+            var formatoSimulado = BarcodeFormats.OneDimensional;
+            var simulatedResults = new List<BarcodeResult> { new BarcodeResult { Value = codigoSimulado, Format = formatoSimulado } };
             var simulatedArgs = new BarcodeDetectionEventArgs(simulatedResults.ToArray());
-
-            // Llama al método de procesamiento existente con los datos simulados
             await EjecutarProcesarCodigosDetectados(simulatedArgs);
         }
 
-
-
-
+        private async Task EjecutarBuscarManual()
+        {
+            IsDetecting = false; // Detener la cámara si estaba activa
+                                 // Navegar a la página de búsqueda manual (necesitarás crear esta página y su ruta)
+                                 // Ejemplo: await Shell.Current.GoToAsync("//PantallaBusquedaManual");
+            await Application.Current.MainPage.DisplayAlert("Navegación", "Ir a Búsqueda Manual (pendiente)", "OK");
+        }
 
     }
 }
