@@ -46,7 +46,7 @@
                             Clicked="SiguienteMes" />
                 </Grid>
 
-                <!-- Calendario Syncfusion BÁSICO (solo propiedades que existen) -->
+                <!-- Calendario Syncfusion con ESTILOS APLICADOS -->
                 <calendar:SfCalendar x:Name="CalendarioSyncfusion"
                                    View="Month"
                                    SelectedDate="{Binding FechaSeleccionada}"
@@ -59,10 +59,50 @@
                         <calendar:CalendarHeaderView Height="0" Background="Transparent" />
                     </calendar:SfCalendar.HeaderView>
 
-                    <!-- Vista del mes BÁSICA (sin propiedades problemáticas) -->
+                    <!-- Vista del mes con RECURSOS DE ESTILO -->
                     <calendar:SfCalendar.MonthView>
-                        <calendar:CalendarMonthView Background="Transparent" />
+                        <calendar:CalendarMonthView Background="Transparent">
+                            <!-- Intentar configurar TextStyle -->
+                            <calendar:CalendarMonthView.TextStyle>
+                                <calendar:CalendarTextStyle TextColor="White" FontSize="16" />
+                            </calendar:CalendarMonthView.TextStyle>
+
+                            <!-- Días deshabilitados -->
+                            <calendar:CalendarMonthView.DisabledDatesTextStyle>
+                                <calendar:CalendarTextStyle TextColor="#80FFFFFF" FontSize="16" />
+                            </calendar:CalendarMonthView.DisabledDatesTextStyle>
+
+                            <!-- Días de otros meses -->
+                            <calendar:CalendarMonthView.TrailingLeadingDatesTextStyle>
+                                <calendar:CalendarTextStyle TextColor="#60FFFFFF" FontSize="14" />
+                            </calendar:CalendarMonthView.TrailingLeadingDatesTextStyle>
+
+                            <!-- Día actual SIN fondo -->
+                            <calendar:CalendarMonthView.TodayBackground>Transparent</calendar:CalendarMonthView.TodayBackground>
+
+                            <!-- Texto del día actual -->
+                            <calendar:CalendarMonthView.TodayTextStyle>
+                                <calendar:CalendarTextStyle TextColor="White" FontSize="16" FontAttributes="Bold" />
+                            </calendar:CalendarMonthView.TodayTextStyle>
+                        </calendar:CalendarMonthView>
                     </calendar:SfCalendar.MonthView>
+
+                    <!-- ✅ INTENTAR CONFIGURAR ESTILOS GLOBALES EN EL CALENDARIO -->
+                    <calendar:SfCalendar.Resources>
+                        <ResourceDictionary>
+                            <!-- Estilo para el círculo de selección -->
+                            <SolidColorBrush x:Key="SyncfusionCalendarSelectionBackground" Color="#87CEEB" />
+                            <SolidColorBrush x:Key="CalendarSelectionBackground" Color="#87CEEB" />
+                            <SolidColorBrush x:Key="SelectionBackground" Color="#87CEEB" />
+
+                            <!-- Estilos de texto para días de semana -->
+                            <Style x:Key="CalendarViewHeaderTextStyle" TargetType="Label">
+                                <Setter Property="TextColor" Value="White" />
+                                <Setter Property="FontSize" Value="14" />
+                                <Setter Property="FontAttributes" Value="Bold" />
+                            </Style>
+                        </ResourceDictionary>
+                    </calendar:SfCalendar.Resources>
 
                 </calendar:SfCalendar>
 
@@ -73,7 +113,7 @@
         <ScrollView Grid.Row="1" Margin="20,10,20,20">
             <VerticalStackLayout Spacing="15">
 
-                <!-- Header de eventos en español -->
+                <!-- Header de eventos con BOTÓN AGREGAR EVENTO -->
                 <Grid ColumnDefinitions="*,Auto" Margin="0,10,0,10">
                     <Label Grid.Column="0"
                            Text="{Binding FechaFormateada, StringFormat='Eventos - {0}'}"
@@ -82,38 +122,33 @@
                            TextColor="Black"
                            VerticalTextAlignment="Center" />
 
-                    <HorizontalStackLayout Grid.Column="1" Spacing="10">
-                        <Button Text="Hoy"
-                                BackgroundColor="#007AFF"
-                                TextColor="White"
-                                CornerRadius="15"
-                                FontSize="14"
-                                Padding="15,8"
-                                Command="{Binding IrAHoyCommand}" />
-
-                        <Button Text="Mañana"
-                                BackgroundColor="#34C759"
-                                TextColor="White"
-                                CornerRadius="15"
-                                FontSize="14"
-                                Padding="15,8"
-                                Command="{Binding IrAMañanaCommand}" />
-                    </HorizontalStackLayout>
+                    <!-- Botón Agregar Evento siempre visible -->
+                    <Button Grid.Column="1"
+                            Text="+ Agregar Evento"
+                            BackgroundColor="#34C759"
+                            TextColor="White"
+                            CornerRadius="12"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            Padding="15,8"
+                            WidthRequest="140"
+                            HeightRequest="36"
+                            Command="{Binding AgregarEventoCommand}" />
                 </Grid>
 
-                <!-- Lista de eventos -->
+                <!-- Lista de eventos CON ALTURA REDUCIDA -->
                 <CollectionView ItemsSource="{Binding EventosDelDia}">
                     <CollectionView.EmptyView>
                         <ContentView>
-                            <VerticalStackLayout Spacing="10" Padding="20">
+                            <VerticalStackLayout Spacing="8" Padding="15">
                                 <Label FontFamily="MaterialIcons"
                                        Text="&#xe878;"
-                                       FontSize="48"
+                                       FontSize="40"
                                        TextColor="#cccccc"
                                        HorizontalTextAlignment="Center" />
                                 <Label Text="No hay eventos para este día"
                                        TextColor="Gray"
-                                       FontSize="16"
+                                       FontSize="14"
                                        HorizontalTextAlignment="Center" />
                             </VerticalStackLayout>
                         </ContentView>
@@ -122,44 +157,53 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame BackgroundColor="White"
-                                   CornerRadius="12"
+                                   CornerRadius="10"
                                    Padding="0"
-                                   Margin="0,5"
-                                   HasShadow="True">
-                                <Grid ColumnDefinitions="5,*,Auto" Padding="0">
+                                   Margin="0,3"
+                                   HasShadow="True"
+                                   HeightRequest="75">
+                                <Grid ColumnDefinitions="4,*,Auto" 
+                                      Padding="0"
+                                      HeightRequest="75">
 
-                                    <!-- Barra de color lateral -->
+                                    <!-- Barra de color lateral MÁS DELGADA -->
                                     <BoxView Grid.Column="0"
                                              BackgroundColor="{Binding Color}" />
 
-                                    <!-- Contenido del evento -->
+                                    <!-- Contenido del evento MÁS COMPACTO -->
                                     <VerticalStackLayout Grid.Column="1" 
-                                                       Padding="15"
-                                                       Spacing="5">
+                                                       Padding="12"
+                                                       Spacing="3"
+                                                       VerticalOptions="Center">
                                         <Label Text="{Binding Titulo}"
-                                               FontSize="16"
+                                               FontSize="15"
                                                FontAttributes="Bold"
-                                               TextColor="Black" />
+                                               TextColor="Black"
+                                               LineBreakMode="TailTruncation" />
 
                                         <Label Text="{Binding Descripcion}"
-                                               FontSize="14"
+                                               FontSize="13"
                                                TextColor="Gray"
+                                               LineBreakMode="TailTruncation"
                                                IsVisible="{Binding Descripcion, Converter={StaticResource StringNotEmptyConverter}}" />
 
                                         <Label Text="{Binding HoraFormateada, StringFormat='🕐 {0}'}"
-                                               FontSize="14"
+                                               FontSize="12"
                                                TextColor="#007AFF" />
                                     </VerticalStackLayout>
 
-                                    <!-- Estado del evento -->
+                                    <!-- Estado del evento MÁS PEQUEÑO -->
                                     <Button Grid.Column="2"
                                             Text="{Binding Completado, Converter={StaticResource BoolToCheckConverter}}"
                                             BackgroundColor="{Binding Completado, Converter={StaticResource BoolToColorConverter}}"
                                             TextColor="White"
-                                            CornerRadius="15"
-                                            FontSize="12"
-                                            Padding="12,6"
-                                            Margin="15"
+                                            CornerRadius="12"
+                                            FontSize="11"
+                                            Padding="8,4"
+                                            Margin="10"
+                                            WidthRequest="65"
+                                            HeightRequest="28"
+                                            VerticalOptions="Center"
                                             Command="{Binding BindingContext.MarcarCompletadoCommand, Source={x:Reference CalendarioPage}}"
                                             CommandParameter="{Binding .}" />
                                 </Grid>
@@ -167,15 +211,6 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
-                <!-- Botón agregar evento -->
-                <Button Text="+ Agregar Evento"
-                        BackgroundColor="#007AFF"
-                        TextColor="White"
-                        CornerRadius="25"
-                        FontSize="16"
-                        HeightRequest="50"
-                        Command="{Binding AgregarEventoCommand}" />
 
             </VerticalStackLayout>
         </ScrollView>

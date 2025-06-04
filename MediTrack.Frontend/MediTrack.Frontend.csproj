@@ -60,8 +60,7 @@
 	  <Compile Include="Models\ElementoSeleccionable.cs" />
 	  <Compile Include="Models\EventoAgenda.cs" />
 	  <Compile Include="Models\MedicamentoModel.cs" />
-	  <Compile Include="Services\GoogleCalendarService.cs" />
-	  <Compile Include="Services\Preuba.cs" />
+	  <Compile Include="Services\EventosService.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
@@ -81,6 +80,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Vistas\PantallasInicio\PantallaOlvidoContrasena.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Vistas\PantallasPrincipales\ModalAgregarEvento.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Vistas\PantallasPrincipales\PantallaAgenda.xaml">

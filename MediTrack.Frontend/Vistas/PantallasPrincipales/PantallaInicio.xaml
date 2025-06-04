@@ -14,66 +14,106 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="25">
 
-            <!-- Medicamentos para hoy -->
-            <Label Text="Medicamentos para hoy"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   TextColor="Black" />
+            <!-- Medicamentos para hoy - DISEÑO IGUAL QUE LA AGENDA -->
+            <VerticalStackLayout Spacing="10">
+                <!-- Header similar al de la agenda -->
+                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                    <Label Grid.Column="0"
+                           Text="{Binding FechaHoy, StringFormat='Medicamentos - {0}'}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="Black"
+                           VerticalTextAlignment="Center" />
 
-            <CollectionView ItemsSource="{Binding MedicamentosHoy}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BackgroundColor="#f1f4ff"
-                               CornerRadius="15"
-                               Padding="10"
-                               Margin="0,5"
-                               HasShadow="True">
-                            <Grid ColumnDefinitions="*,Auto"
-                                  RowDefinitions="Auto,Auto">
-                                <!-- Nombre y hora -->
-                                <StackLayout Grid.RowSpan="2">
-                                    <Label Text="{Binding Nombre}"
-                                           FontAttributes="Bold"
-                                           FontSize="14"
-                                           TextColor="Black" />
-                                    <Label Text="{Binding Hora}"
-                                           FontSize="12"
-                                           TextColor="Gray" />
-                                </StackLayout>
+                    <!-- Botón para ir a la agenda -->
+                    <Button Grid.Column="1"
+                            Text="Ver todo"
+                            BackgroundColor="#007AFF"
+                            TextColor="White"
+                            CornerRadius="10"
+                            FontSize="12"
+                            Padding="10,6"
+                            WidthRequest="70"
+                            HeightRequest="28"
+                            Command="{Binding IrAAgendaCommand}" />
+                </Grid>
 
-                                <!-- Estado -->
-                                <Label Text="{Binding Tomado, Converter={StaticResource BoolATextoConverter}}"
-                                       TextColor="{Binding Tomado, Converter={StaticResource BoolAColorConverter}}"
-                                       FontSize="12"
-                                       HorizontalTextAlignment="End"
-                                       Grid.Column="1" />
+                <!-- Lista de medicamentos CON MISMO DISEÑO QUE AGENDA -->
+                <CollectionView ItemsSource="{Binding MedicamentosHoy}">
+                    <CollectionView.EmptyView>
+                        <ContentView>
+                            <VerticalStackLayout Spacing="8" Padding="15">
+                                <Label FontFamily="MaterialIcons"
+                                       Text="&#xe1a3;"
+                                       FontSize="40"
+                                       TextColor="#cccccc"
+                                       HorizontalTextAlignment="Center" />
+                                <Label Text="No hay medicamentos para hoy"
+                                       TextColor="Gray"
+                                       FontSize="14"
+                                       HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </ContentView>
+                    </CollectionView.EmptyView>
 
-                                <!-- Botón para cambiar estado -->
-                                <Button Text="Tomado"
-                                        FontSize="12"
-                                        Padding="5,2"
-                                        BackgroundColor="#3b71ff"
-                                        TextColor="White"
-                                        CornerRadius="15"
-                                        Command="{Binding BindingContext.CambiarEstadoCommand, Source={x:Reference Pagina}}"
-                                        CommandParameter="{Binding .}"
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        HorizontalOptions="End">
-                                    <Button.Triggers>
-                                        <DataTrigger TargetType="Button"
-                                                     Binding="{Binding Tomado}"
-                                                     Value="True">
-                                            <Setter Property="IsVisible"
-                                                    Value="False" />
-                                        </DataTrigger>
-                                    </Button.Triggers>
-                                </Button>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="White"
+                                   CornerRadius="10"
+                                   Padding="0"
+                                   Margin="0,3"
+                                   HasShadow="True"
+                                   HeightRequest="75">
+                                <Grid ColumnDefinitions="4,*,Auto" 
+                                      Padding="0"
+                                      HeightRequest="75">
+
+                                    <!-- Barra de color lateral -->
+                                    <BoxView Grid.Column="0"
+                                             BackgroundColor="{Binding Color}" />
+
+                                    <!-- Contenido del medicamento -->
+                                    <VerticalStackLayout Grid.Column="1" 
+                                                       Padding="12"
+                                                       Spacing="3"
+                                                       VerticalOptions="Center">
+                                        <Label Text="{Binding Titulo}"
+                                               FontSize="15"
+                                               FontAttributes="Bold"
+                                               TextColor="Black"
+                                               LineBreakMode="TailTruncation" />
+
+                                        <Label Text="{Binding Descripcion}"
+                                               FontSize="13"
+                                               TextColor="Gray"
+                                               LineBreakMode="TailTruncation"
+                                               IsVisible="{Binding Descripcion, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                                        <Label Text="{Binding HoraFormateada, StringFormat='🕐 {0}'}"
+                                               FontSize="12"
+                                               TextColor="#007AFF" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Estado del medicamento -->
+                                    <Button Grid.Column="2"
+                                            Text="{Binding Completado, Converter={StaticResource BoolToCheckConverter}}"
+                                            BackgroundColor="{Binding Completado, Converter={StaticResource BoolToColorConverter}}"
+                                            TextColor="White"
+                                            CornerRadius="12"
+                                            FontSize="11"
+                                            Padding="8,4"
+                                            Margin="10"
+                                            WidthRequest="65"
+                                            HeightRequest="28"
+                                            VerticalOptions="Center"
+                                            Command="{Binding BindingContext.MarcarTomadoCommand, Source={x:Reference Pagina}}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
 
             <!-- Escaneos recientes (DATOS HARDCODEADOS RESTAURADOS) -->
             <Label Text="Escaneos Recientes"
