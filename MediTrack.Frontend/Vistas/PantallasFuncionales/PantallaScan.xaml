@@ -21,8 +21,8 @@
 
         <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
 
-            <Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#503b71ff">
-                <StackLayout Padding="15,25,15,20" HeightRequest="180">
+            <Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#3b71ff">
+                <StackLayout Padding="15,25,15,20" HeightRequest="150">
                     <Grid ColumnDefinitions="Auto,*,Auto" VerticalOptions="Center">
                         <Button Grid.Column="0"
                                 Text=" Cancelar"
@@ -43,12 +43,16 @@
                     </Grid>
                     <Label Text="Alinea el código de barras para identificar tu medicamento"
                            TextColor="White" Opacity="0.9" FontSize="14" HorizontalTextAlignment="Center" Margin="0,8,0,0"/>
+                    <!-- Añadir indicador de estado -->
+                    <Label Text="{Binding ScanResultText}"
+                           TextColor="White" Opacity="0.8" FontSize="12" 
+                           HorizontalTextAlignment="Center" Margin="0,4,0,0"/>
                 </StackLayout>
             </Border>
 
             <Border Grid.Row="1"
                     Stroke="White" 
-                    StrokeThickness="1"
+                    StrokeThickness="2"
                     WidthRequest="300" 
                     HeightRequest="200"
                     HorizontalOptions="Center" 
@@ -57,11 +61,18 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
+                <!-- Añadir texto de ayuda dentro del marco -->
+                <Label Text="Coloca el código aquí"
+                       TextColor="White"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       Opacity="1"/>
             </Border>
 
 
-            <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#503b71ff">
-                <StackLayout Padding="15,75,15,25" HeightRequest="180">
+            <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#3b71ff">
+                <StackLayout Padding="15,55,15,25" HeightRequest="150">
                     <Button Text="Buscar medicamento manualmente"
                             Command="{Binding BuscarManualCommand}" 
                             TextColor="White"
