@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Runtime;
+/*using ZXing.Mobile;*/ // Añade este using
 
 namespace MediTrack.Frontend;
 
@@ -12,4 +13,13 @@ public class MainApplication : MauiApplication
 	}
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+
+    //public override void OnCreate()
+    //{
+    //    base.OnCreate(); // Importante mantener esta línea
+
+    //    // Inicializa ZXing para Android
+    //    ZXing.Mobile.MobileBarcodeScanner.Initialize(Application);
+    //}
+
 }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             xmlns:viewModels="clr-namespace:MediTrack.Frontend.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="MediTrack.Frontend.Vistas.PantallasFuncionales.PantallaScan"
+             Title="Escanear código" 
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid>
+        <zxing:CameraBarcodeReaderView
+            x:Name="barcodeView"
+            IsDetecting="{Binding IsDetecting, Mode=TwoWay}"
+            Options="{Binding BarcodeReaderOptions}"
+            BarcodesDetected="OnBarcodesDetected"
+            HorizontalOptions="Fill" 
+            VerticalOptions="Fill">
+        </zxing:CameraBarcodeReaderView>
+
+
+        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
+
+            <Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#3b71ff">
+                <StackLayout Padding="15,25,15,20" HeightRequest="150">
+                    <Grid ColumnDefinitions="Auto,*,Auto" VerticalOptions="Center">
+                        <Button Grid.Column="0"
+                                Text=" Cancelar"
+                                Clicked="Cancelar_Clicked_Header"
+                                TextColor="White"
+                                BackgroundColor="Transparent"
+                                HorizontalOptions="Start"
+                                FontSize="Body"
+                                FontAttributes="Bold"
+                                Padding="0">
+                            <Button.ImageSource>
+                                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe5c4;" Color="White"
+                                                 Size="22"/>
+                            </Button.ImageSource>
+                        </Button>
+                        <Label Grid.Column="1" Text="Escanear código"
+                               TextColor="White" FontSize="22" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                    </Grid>
+                    <Label Text="Alinea el código de barras para identificar tu medicamento"
+                           TextColor="White" Opacity="0.9" FontSize="14" HorizontalTextAlignment="Center" Margin="0,8,0,0"/>
+                    <!-- Añadir indicador de estado -->
+                    <Label Text="{Binding ScanResultText}"
+                           TextColor="White" Opacity="0.8" FontSize="12" 
+                           HorizontalTextAlignment="Center" Margin="0,4,0,0"/>
+                </StackLayout>
+            </Border>
+
+            <Border Grid.Row="1"
+                    Stroke="White" 
+                    StrokeThickness="2"
+                    WidthRequest="300" 
+                    HeightRequest="200"
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Center"
+                    Opacity="0.3">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <!-- Añadir texto de ayuda dentro del marco -->
+                <Label Text="Coloca el código aquí"
+                       TextColor="White"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       Opacity="1"/>
+            </Border>
+
+
+            <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#3b71ff">
+                <StackLayout Padding="15,55,15,25" HeightRequest="150">
+                    <Button Text="Buscar medicamento manualmente"
+                            Command="{Binding BuscarManualCommand}" 
+                            TextColor="White"
+                            FontSize="Body"
+                            FontAttributes="Bold"
+                            BackgroundColor="Transparent"
+                            HorizontalOptions="Center"/>
+                </StackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

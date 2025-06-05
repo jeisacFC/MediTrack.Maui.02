@@ -2,6 +2,14 @@
 using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
 using System.Globalization;
+﻿using CommunityToolkit.Maui; // Necesario para el Community Toolkit
+using MediTrack.Frontend.Services;
+using MediTrack.Frontend.Vistas.PantallasFuncionales;
+using MediTrack.Frontend.ViewModels;
+using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Hosting;
+using ZXing.Net.Maui;
+using ZXing.Net.Maui.Controls; // <---  para ZXing.Net.MAUI
 
 namespace MediTrack.Frontend;
 
@@ -28,15 +36,24 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .ConfigureSyncfusionCore()
             .UseMauiCommunityToolkit()
+            .UseBarcodeReader()
+
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
             });
 
+        //// Registro de servicios (DEBE ir después de UseMauiApp)
+        
+        builder.Services.AddSingleton<IBarcodeScannerService, BarcodeScannerService>();
+        builder.Services.AddTransient<ScanViewModel>();
+        builder.Services.AddTransient<PantallaScan>();
+
+
 #if DEBUG
         builder.Logging.AddDebug();
-#endif
+        #endif
 
         return builder.Build();
     }

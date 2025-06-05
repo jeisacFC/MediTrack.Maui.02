@@ -9,4 +9,6 @@ public partial class PantallaInicio : ContentPage
         InitializeComponent();
         BindingContext = new InicioViewModel();
     }
+
+    
 }
