@@ -35,7 +35,7 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             try
             {
                 // Solo configurar lo básico
-                CalendarioSyncfusion.SelectionMode = CalendarSelectionMode.Single;
+                CalendarioSync.SelectionMode = CalendarSelectionMode.Single;
 
                 System.Diagnostics.Debug.WriteLine("✅ Calendario configurado");
             }
@@ -82,8 +82,8 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 _viewModel.FechaSeleccionada = nuevaFecha;
 
                 // DESPUÉS actualizar Syncfusion
-                CalendarioSyncfusion.SelectedDate = nuevaFecha;
-                CalendarioSyncfusion.DisplayDate = nuevaFecha;
+                CalendarioSync.SelectedDate = nuevaFecha;
+                CalendarioSync.DisplayDate = nuevaFecha;
 
                 System.Diagnostics.Debug.WriteLine($"Navegado a mes anterior: {nuevaFecha:yyyy-MM}");
             }
@@ -113,8 +113,8 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 _viewModel.FechaSeleccionada = nuevaFecha;
 
                 // DESPUÉS actualizar Syncfusion
-                CalendarioSyncfusion.SelectedDate = nuevaFecha;
-                CalendarioSyncfusion.DisplayDate = nuevaFecha;
+                CalendarioSync.SelectedDate = nuevaFecha;
+                CalendarioSync.DisplayDate = nuevaFecha;
 
                 System.Diagnostics.Debug.WriteLine($"Navegado a mes siguiente: {nuevaFecha:yyyy-MM}");
             }
@@ -133,8 +133,8 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 // Asegurar que el calendario esté en el mes correcto
                 if (_viewModel != null)
                 {
-                    CalendarioSyncfusion.DisplayDate = _viewModel.FechaSeleccionada;
-                    CalendarioSyncfusion.SelectedDate = _viewModel.FechaSeleccionada;
+                    CalendarioSync.DisplayDate = _viewModel.FechaSeleccionada;
+                    CalendarioSync.SelectedDate = _viewModel.FechaSeleccionada;
                     _viewModel.CargarEventosDelDia();
                 }
 
