@@ -53,6 +53,9 @@ namespace MediTrack.Frontend.ViewModels
                 TryHarder = true
             };
 
+            // En el constructor de ScanViewModel
+            Debug.WriteLine($"ScanViewModel: BarcodeReaderOptions configurado - Formats: {BarcodeReaderOptions.Formats}");
+
 
             // --------------------------------- DEFINICION DE METODOS QUE VIENEN DE "PANTALLASCAN" ------------------------------------- //
             ProcesarCodigosDetectadosCommand = new AsyncRelayCommand<BarcodeDetectionEventArgs>(EjecutarProcesarCodigosDetectados);

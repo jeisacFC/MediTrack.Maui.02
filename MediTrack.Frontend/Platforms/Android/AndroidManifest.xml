@@ -6,6 +6,8 @@
 	
 	<!-- Permisos para cámara y escaneo -->
 	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-feature android:name="android.hardware.camera" android:required="true" />
+	<uses-feature android:name="android.hardware.camera.autofocus" />
 
 	<!-- Permiso adicional recomendado para mejor rendimiento -->
 	<uses-permission android:name="android.permission.VIBRATE" />

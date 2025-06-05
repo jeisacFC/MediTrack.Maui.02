@@ -50,10 +50,6 @@ namespace MediTrack.Frontend.Services
             }
         }
 
-        // El método ScanBarcodeAsync() como lo tenías antes (que usa MobileBarcodeScanner)
-        // ya no es necesario si el escaneo se maneja directamente en la vista con ZXing.Net.MAUI.Controls.
-        // Lo mantendremos por si quieres una forma de invocar el escáner modal antiguo, pero
-        // para la vista integrada, no se usa.
         public async Task<string> ScanBarcodeAsync()
         {
             // Esta implementación usa el MobileBarcodeScanner que abre una pantalla separada.
