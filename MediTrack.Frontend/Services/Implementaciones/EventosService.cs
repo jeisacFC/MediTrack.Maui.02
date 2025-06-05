@@ -2,7 +2,12 @@
 using MediTrack.Frontend.Models;
 using System.Globalization;
 
-namespace MediTrack.Frontend.Services
+using MediTrack;
+using MediTrack.Frontend;
+using MediTrack.Frontend.Services;
+using MediTrack.Frontend.Services.Implementaciones;
+
+namespace MediTrack.Frontend.Services.Implementaciones
 {
     public class EventosService
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using MediTrack.Modelos;
 using MediTrack.Frontend.ViewModels;
 using Microsoft.Maui.Controls;
-using MediTrack.Vistas.PantallasPrincipales;
+using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {

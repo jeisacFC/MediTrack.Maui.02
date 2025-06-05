@@ -2,9 +2,10 @@
 using MediTrack.Frontend.Models; // Para ResEscanearMedicamento y ReqEscanearMedicamento
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Collections.Generic; // Para List
+using System.Collections.Generic;
+using MediTrack.Frontend.Services.Interfaces;
 
-namespace MediTrack.Frontend.Services
+namespace MediTrack.Frontend.Services.Implementaciones
 {
     public class BarcodeScannerService : IBarcodeScannerService
     {

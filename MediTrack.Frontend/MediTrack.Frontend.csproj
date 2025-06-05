@@ -82,12 +82,12 @@
 	  
 	  <Compile Include="Models\ResEscanearMedicamento.cs" />
 	  
-	  <Compile Include="Services\BarcodeScannerService.cs" />
-	  <Compile Include="Services\IBarcodeScannerService.cs" />
+	  <Compile Include="Services\Implementaciones\BarcodeScannerService.cs" />
+	  <Compile Include="Services\Interfaces\IBarcodeScannerService.cs" />
 	  <Compile Include="Models\ElementoSeleccionable.cs" />
 	  <Compile Include="Models\EventoAgenda.cs" />
 	  <Compile Include="Models\MedicamentoModel.cs" />
-	  <Compile Include="Services\EventosService.cs" />
+	  <Compile Include="Services\Implementaciones\EventosService.cs" />
 	</ItemGroup>
 	
 	<ItemGroup>

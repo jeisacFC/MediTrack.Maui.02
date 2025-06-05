@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using MediTrack.Frontend.Models;
-using MediTrack.Frontend.Services;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
 using System.Globalization;
+using MediTrack.Frontend.Services.Implementaciones;
 
 namespace MediTrack.Frontend.ViewModels
 {

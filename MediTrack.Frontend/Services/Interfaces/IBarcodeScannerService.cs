@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using MediTrack.Frontend.Models; // Para ResEscanearMedicamento
 using System.Threading.Tasks;
-namespace MediTrack.Frontend.Services;
+namespace MediTrack.Frontend.Services.Interfaces;
 
 public interface IBarcodeScannerService
 {

@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using MediTrack.Frontend.Models;
-using MediTrack.Frontend.Services;
 using System.Globalization;
+using MediTrack.Frontend.Services.Implementaciones;
 
 namespace MediTrack.Frontend.ViewModels
 {

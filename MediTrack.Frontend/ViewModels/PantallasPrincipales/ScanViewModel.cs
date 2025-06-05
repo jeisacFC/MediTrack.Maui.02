@@ -1,14 +1,14 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediTrack.Frontend.Models; 
-using MediTrack.Frontend.Services; 
+using MediTrack.Frontend.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using ZXing.Net.Maui; // Para BarcodeResult y BarcodeReaderOptions
 using System.Diagnostics; // Para Debug.WriteLine
 using CommunityToolkit.Maui.Views; // Para Popup
-using MediTrack.Frontend.Popups; // Para InfoMedicamentoPopup (que crearemos después)
+using MediTrack.Frontend.Popups;
+using MediTrack.Frontend.Services.Interfaces; // Para InfoMedicamentoPopup (que crearemos después)
 
 
 

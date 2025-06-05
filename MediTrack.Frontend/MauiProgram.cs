@@ -2,14 +2,15 @@
 using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
 using System.Globalization;
-﻿using CommunityToolkit.Maui; // Necesario para el Community Toolkit
-using MediTrack.Frontend.Services;
+using CommunityToolkit.Maui; // Necesario para el Community Toolkit
 using MediTrack.Frontend.Vistas.PantallasFuncionales;
 using MediTrack.Frontend.ViewModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Hosting;
 using ZXing.Net.Maui;
-using ZXing.Net.Maui.Controls; // <---  para ZXing.Net.MAUI
+using ZXing.Net.Maui.Controls;
+using MediTrack.Frontend.Services.Implementaciones;
+using MediTrack.Frontend.Services.Interfaces; // <---  para ZXing.Net.MAUI
 
 namespace MediTrack.Frontend;
 
