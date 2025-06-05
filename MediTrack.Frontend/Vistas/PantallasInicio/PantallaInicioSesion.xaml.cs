@@ -17,8 +17,6 @@ public partial class PantallaInicioSesion : ContentPage
 
     private async void IniciarSesion(object sender, EventArgs e)
     {
-        // Aquí iría la validación real más adelante
-        // Por ahora, simulamos un inicio exitoso
         await Shell.Current.GoToAsync("//inicio");
     }
     private async void IrAOlvidoContrasena(object sender, EventArgs e)

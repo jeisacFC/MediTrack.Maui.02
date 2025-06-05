@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MediTrack.Frontend.ViewModels;
+namespace MediTrack.Frontend.ViewModels.PantallasInicio;
 
 public class CargaViewModel
 {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using MediTrack.Modelos;
 
-namespace MediTrack.Vistas.PantallasPrincipales
+namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
     public class PerfilViewModel
     {
