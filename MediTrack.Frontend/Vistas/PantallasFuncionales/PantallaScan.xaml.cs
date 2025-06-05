@@ -2,6 +2,7 @@ using CommunityToolkit.Maui.Views; // Para this.ShowPopupAsync()
 using MediTrack.Frontend.Popups;   // Para InstruccionesEscaneoPopup
 using MediTrack.Frontend.ViewModels; // Para ScanViewModel
 using System.Diagnostics;
+using ZXing.Net.Maui; // Para BarcodeDetectionEventArgs
 
 namespace MediTrack.Frontend.Vistas.PantallasFuncionales;
 
@@ -17,12 +18,19 @@ public partial class PantallaScan : ContentPage
     {
         base.OnAppearing();
 
-        // Mostrar el popup de instrucciones solo la primera vez o según alguna lógica
-        // Por simplicidad, lo mostramos cada vez que aparece la página de escaneo.
-        var instruccionesPopup = new InstruccionesEscaneoPopup();
-        await this.ShowPopupAsync(instruccionesPopup); // Muestra el popup
+        // Verificar permisos de cámara
+        var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
+        Debug.WriteLine($"Permiso de cámara: {cameraStatus}");
 
-        // Una vez que el popup se cierra (por el botón "Entendido"), activamos la cámara
+        if (cameraStatus != PermissionStatus.Granted)
+        {
+            cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+            Debug.WriteLine($"Permiso solicitado: {cameraStatus}");
+        }
+
+        var instruccionesPopup = new InstruccionesEscaneoPopup();
+        await this.ShowPopupAsync(instruccionesPopup);
+
         if (BindingContext is ScanViewModel vm)
         {
             vm.IsDetecting = true;
@@ -48,4 +56,35 @@ public partial class PantallaScan : ContentPage
             await vm.CancelarEscaneoCommand.ExecuteAsync(null);
         }
     }
+
+
+    private void OnBarcodesDetected(object sender, BarcodeDetectionEventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            Debug.WriteLine($"Códigos detectados: {e.Results?.Count() ?? 0}");
+
+            if (e.Results?.Any() == true)
+            {
+                var barcode = e.Results.FirstOrDefault();
+                Debug.WriteLine($"Código encontrado: {barcode?.Value} - Formato: {barcode?.Format}");
+
+                if (barcode != null && !string.IsNullOrEmpty(barcode.Value))
+                {
+                    // Pasar todo el BarcodeDetectionEventArgs (no solo barcode.Value)
+                    if (BindingContext is ScanViewModel vm)
+                    {
+                        vm.IsDetecting = false;
+
+                        // Pasar 'e' completo, no 'barcode.Value'
+                        if (vm.ProcesarCodigosDetectadosCommand.CanExecute(e))
+                        {
+                            vm.ProcesarCodigosDetectadosCommand.Execute(e);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
 }

@@ -49,8 +49,7 @@ namespace MediTrack.Frontend.ViewModels
             {
                 Formats = ZXing.Net.Maui.BarcodeFormats.All,
                 AutoRotate = true,
-                Multiple = false,
-                TryHarder = true
+                Multiple = false
             };
 
             // En el constructor de ScanViewModel

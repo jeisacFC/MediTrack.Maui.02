@@ -7,25 +7,19 @@
              x:Class="MediTrack.Frontend.Vistas.PantallasFuncionales.PantallaScan"
              Title="Escanear código" 
              NavigationPage.HasNavigationBar="False">
-    
-    <!--<ContentPage.BindingContext>
-        <viewModels:ScanViewModel />
-    </ContentPage.BindingContext>-->
 
     <Grid>
         <zxing:CameraBarcodeReaderView
             x:Name="barcodeView"
             IsDetecting="{Binding IsDetecting, Mode=TwoWay}"
             Options="{Binding BarcodeReaderOptions}"
-            HorizontalOptions="Fill" VerticalOptions="Fill">
-            <zxing:CameraBarcodeReaderView.Behaviors>
-                    <toolkit:EventToCommandBehavior
-                    EventName="BarcodesDetected"
-                    Command="{Binding ProcesarCodigosDetectadosCommand}" />
-                </zxing:CameraBarcodeReaderView.Behaviors>
-            </zxing:CameraBarcodeReaderView>
+            BarcodesDetected="OnBarcodesDetected"
+            HorizontalOptions="Fill" 
+            VerticalOptions="Fill">
+        </zxing:CameraBarcodeReaderView>
 
-            <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
+
+        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
 
             <Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#503b71ff">
                 <StackLayout Padding="15,25,15,20" HeightRequest="180">
