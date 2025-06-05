@@ -33,6 +33,9 @@ namespace MediTrack.Frontend.ViewModels
         public IAsyncRelayCommand BuscarManualCommand { get; }
 
 
+        // AGREGAR ESTOS EVENTOS
+        public event EventHandler<ResEscanearMedicamento> MostrarResultado;
+        public event EventHandler<string> MostrarError;
 
         // Usamos la interfaz para permitir la Inyección de Dependencias
         private readonly IBarcodeScannerService _barcodeScannerService;
@@ -88,37 +91,34 @@ namespace MediTrack.Frontend.ViewModels
 
                 if (infoMedicamento != null && infoMedicamento.resultado)
                 {
-                    // LÓGICA PARA MOSTRAR EL MODAL CON infoMedicamento
-                    // Esto lo haremos en el siguiente gran paso.
-                    // Por ahora, solo una alerta para confirmar que llegamos aquí.
-                    await Application.Current.MainPage.DisplayAlert(
-                       infoMedicamento.NombreComercial ?? "Medicamento Escaneado",
-                       $"Código: {codigoEscaneado}\nPrincipio: {infoMedicamento.PrincipioActivo ?? "N/A"}",
-                       "OK");
-
-                    // Después del modal (o alerta), podrías querer reactivar el escaneo o navegar.
-                    // Por ahora, no navegaremos automáticamente hacia atrás desde aquí.
-                    // IsDetecting = true; // Si quieres seguir escaneando
+                    // DISPARAR EVENTO EN LUGAR DE DisplayAlert
+                    MostrarResultado?.Invoke(this, infoMedicamento);
                 }
                 else
                 {
                     string errorMsg = infoMedicamento?.errores?.FirstOrDefault()?.Message ?? "Medicamento no encontrado.";
-                    await Application.Current.MainPage.DisplayAlert("Error", errorMsg, "OK");
-                    IsDetecting = true; // Permitir reintentar
+                    // DISPARAR EVENTO EN LUGAR DE DisplayAlert
+                    MostrarError?.Invoke(this, errorMsg);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error procesando en ViewModel: {ex.Message}\n{ex.StackTrace}");
-                await Application.Current.MainPage.DisplayAlert("Error del Sistema", "Ocurrió un error procesando la información.", "OK");
-                IsDetecting = true;
+                MostrarError?.Invoke(this, "Ocurrió un error procesando la información.");
             }
             finally
             {
                 IsProcessingResult = false;
             }
         }
-       
+
+
+        // MÉTODO PARA REACTIVAR ESCANEO (llamar desde code-behind)
+        public void ReactivarEscaneo()
+        {
+            IsDetecting = true;
+        }
+
         private async Task EjecutarCancelarEscaneo()
         {
             IsDetecting = false;
@@ -158,57 +158,3 @@ namespace MediTrack.Frontend.ViewModels
 
     }
 }
-
-#region CODIGO COMENTADO
-//using System;
-//using System.ComponentModel; // Para INotifyPropertyChanged
-//using System.Runtime.CompilerServices; // Para CallerMemberName
-//using System.Windows.Input; // Para ICommand
-//using MediTrack.Frontend.Services; // Para IBarcodeScannerService
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using ZXing; // Añade esta línea
-//using ZXing.Mobile;
-
-//namespace MediTrack.Frontend.ViewModels;
-
-
-//public class ScanViewModel : INotifyPropertyChanged
-//{
-//    private readonly IBarcodeScannerService _scanner;
-
-//    private string _scanResult;
-//    public string ScanResult
-//    {
-//        get => _scanResult;
-//        set
-//        {
-//            _scanResult = value;
-//            OnPropertyChanged();
-//        }
-//    }
-
-//    public ICommand ScanCommand { get; }
-
-//    public ScanViewModel(IBarcodeScannerService scanner)
-//    {
-//        _scanner = scanner;
-//        ScanCommand = new Command(async () => await ScanBarcode());
-//    }
-
-//    private async Task ScanBarcode()
-//    {
-//        ScanResult = "Escaneando...";
-//        ScanResult = await _scanner.ScanBarcodeAsync();
-//    }
-
-//    public event PropertyChangedEventHandler PropertyChanged;
-//    protected void OnPropertyChanged([CallerMemberName] string name = null)
-//    {
-//        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-//    }
-//}
-#endregion 
-

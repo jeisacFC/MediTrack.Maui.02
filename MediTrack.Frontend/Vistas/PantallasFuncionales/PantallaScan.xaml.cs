@@ -3,6 +3,7 @@ using MediTrack.Frontend.Popups;   // Para InstruccionesEscaneoPopup
 using MediTrack.Frontend.ViewModels; // Para ScanViewModel
 using System.Diagnostics;
 using ZXing.Net.Maui; // Para BarcodeDetectionEventArgs
+using MediTrack.Frontend.Models; // Para IBarcodeScannerService
 
 namespace MediTrack.Frontend.Vistas.PantallasFuncionales;
 
@@ -12,41 +13,53 @@ public partial class PantallaScan : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
+
+        // SUSCRIBIRSE A LOS EVENTOS DEL VIEWMODEL
+        viewModel.MostrarResultado += OnMostrarResultado;
+        viewModel.MostrarError += OnMostrarError;
+
     }
 
-    protected override async void OnAppearing()
+
+    // MANEJAR EVENTOS DEL VIEWMODEL
+    private async void OnMostrarResultado(object sender, ResEscanearMedicamento medicamento)
     {
-        base.OnAppearing();
+        await DisplayAlert(
+           medicamento.NombreComercial ?? "Medicamento Escaneado",
+           $"Principio: {medicamento.PrincipioActivo ?? "N/A"}",
+           "OK");
 
-        // Verificar permisos de cámara
-        var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
-        Debug.WriteLine($"Permiso de cámara: {cameraStatus}");
-
-        if (cameraStatus != PermissionStatus.Granted)
-        {
-            cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
-            Debug.WriteLine($"Permiso solicitado: {cameraStatus}");
-        }
-
-        var instruccionesPopup = new InstruccionesEscaneoPopup();
-        await this.ShowPopupAsync(instruccionesPopup);
-
+        // REACTIVAR ESCANEO DESPUÉS DEL ALERT
         if (BindingContext is ScanViewModel vm)
         {
-            vm.IsDetecting = true;
-            Debug.WriteLine("PantallaScan: OnAppearing - IsDetecting puesto a true después del popup");
+            vm.ReactivarEscaneo();
         }
     }
 
+    private async void OnMostrarError(object sender, string mensaje)
+    {
+        await DisplayAlert("Error", mensaje, "OK");
+
+        // REACTIVAR ESCANEO DESPUÉS DEL ERROR
+        if (BindingContext is ScanViewModel vm)
+        {
+            vm.ReactivarEscaneo();
+        }
+    }
+
+    // LIMPIAR EVENTOS AL SALIR
     protected override void OnDisappearing()
     {
         if (BindingContext is ScanViewModel vm)
         {
             vm.IsDetecting = false;
+            vm.MostrarResultado -= OnMostrarResultado;
+            vm.MostrarError -= OnMostrarError;
         }
-        Debug.WriteLine("PantallaScan: OnDisappearing - IsDetecting puesto a false");
         base.OnDisappearing();
     }
+
+  
 
     // Manejador para el botón Cancelar en el Header
     private async void Cancelar_Clicked_Header(object sender, EventArgs e)
@@ -57,34 +70,25 @@ public partial class PantallaScan : ContentPage
         }
     }
 
-
     private void OnBarcodesDetected(object sender, BarcodeDetectionEventArgs e)
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        if (BindingContext is ScanViewModel vm && e.Results?.Any() == true)
         {
-            Debug.WriteLine($"Códigos detectados: {e.Results?.Count() ?? 0}");
-
-            if (e.Results?.Any() == true)
+            MainThread.BeginInvokeOnMainThread(() =>
             {
                 var barcode = e.Results.FirstOrDefault();
-                Debug.WriteLine($"Código encontrado: {barcode?.Value} - Formato: {barcode?.Format}");
+                Debug.WriteLine($"Código encontrado: {barcode?.Value}");
 
                 if (barcode != null && !string.IsNullOrEmpty(barcode.Value))
                 {
-                    // Pasar todo el BarcodeDetectionEventArgs (no solo barcode.Value)
-                    if (BindingContext is ScanViewModel vm)
+                    vm.IsDetecting = false;
+                    if (vm.ProcesarCodigosDetectadosCommand.CanExecute(e))
                     {
-                        vm.IsDetecting = false;
-
-                        // Pasar 'e' completo, no 'barcode.Value'
-                        if (vm.ProcesarCodigosDetectadosCommand.CanExecute(e))
-                        {
-                            vm.ProcesarCodigosDetectadosCommand.Execute(e);
-                        }
+                        vm.ProcesarCodigosDetectadosCommand.Execute(e);
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
 }
