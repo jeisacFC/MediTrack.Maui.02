@@ -17,18 +17,19 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-        // ✅ CONFIGURAR CULTURA ESPAÑOLA AL INICIO
-        ConfigurarCulturaEspañola();
-
         try
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NNaF1cWWhPYVJ3WmFZfVtgdVdMYVlbRnJPIiBoS35Rc0VlWXtfcnVQRGReUU1yVEBU");
-            System.Diagnostics.Debug.WriteLine("✅ Licencia de Syncfusion registrada");
+            //NUEVA LICENCIA ESPECÍFICA PARA MAUI 24.x
+
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzg5NTQ4MEAzMjM0MmUzMDJlMzBVbStPWjNqWUtHSTdwM2grYTB3Z2s5ZUtpNjhoZ0V5SlEzZFBvVnRuT0U4PQ==");
+            System.Diagnostics.Debug.WriteLine("Nueva licencia 24.x registrada");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"❌ Error registrando licencia: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
         }
+        //CONFIGURAR CULTURA ESPAÑOLA AL INICIO
+        ConfigurarCulturaEspañola();
 
         var builder = MauiApp.CreateBuilder();
 
@@ -73,11 +74,11 @@ public static class MauiProgram
             CultureInfo.DefaultThreadCurrentCulture = cultura;
             CultureInfo.DefaultThreadCurrentUICulture = cultura;
 
-            System.Diagnostics.Debug.WriteLine("✅ Cultura española configurada");
+            System.Diagnostics.Debug.WriteLine("Cultura española configurada");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"❌ Error configurando cultura: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error configurando cultura: {ex.Message}");
         }
     }
 }
