@@ -45,9 +45,9 @@ namespace MediTrack.Frontend.ViewModels
         {
             _barcodeScannerService = scannerService; // Asigna el servicio inyectado
 
-            BarcodeReaderOptions = new BarcodeReaderOptions
+            BarcodeReaderOptions = new ZXing.Net.Maui.BarcodeReaderOptions
             {
-                Formats = BarcodeFormats.OneDimensional,
+                Formats = ZXing.Net.Maui.BarcodeFormats.All,
                 AutoRotate = true,
                 Multiple = false,
                 TryHarder = true

@@ -7,11 +7,6 @@
 	<!-- Permisos para cámara y escaneo -->
 	<uses-permission android:name="android.permission.CAMERA" />
 
-	<!-- Características de hardware (optional=false para que funcione en emuladores) -->
-	<uses-feature android:name="android.hardware.camera" android:required="false" />
-	<uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-	<uses-feature android:name="android.hardware.camera.flash" android:required="false" />
-
 	<!-- Permiso adicional recomendado para mejor rendimiento -->
 	<uses-permission android:name="android.permission.VIBRATE" />
 
