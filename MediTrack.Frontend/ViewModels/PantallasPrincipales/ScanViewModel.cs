@@ -12,7 +12,7 @@ using MediTrack.Frontend.Services.Interfaces; // Para InfoMedicamentoPopup (que 
 
 
 
-namespace MediTrack.Frontend.ViewModels
+namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
     public partial class ScanViewModel : ObservableObject
     {

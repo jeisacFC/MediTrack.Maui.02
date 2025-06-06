@@ -1,11 +1,11 @@
 using CommunityToolkit.Maui.Views; // Para this.ShowPopupAsync()
 using MediTrack.Frontend.Popups;   // Para InstruccionesEscaneoPopup
-using MediTrack.Frontend.ViewModels; // Para ScanViewModel
+using MediTrack.Frontend.ViewModels.PantallasPrincipales; // Para ScanViewModel
 using System.Diagnostics;
 using ZXing.Net.Maui; // Para BarcodeDetectionEventArgs
 using MediTrack.Frontend.Models; // Para IBarcodeScannerService
 
-namespace MediTrack.Frontend.Vistas.PantallasFuncionales;
+namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
 public partial class PantallaScan : ContentPage
 {

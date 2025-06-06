@@ -82,12 +82,23 @@
 	  
 	  <Compile Include="Models\ResEscanearMedicamento.cs" />
 	  
+	  <Compile Include="Services\Implementaciones\ApiService.cs" />
+	  
+	  <Compile Include="Services\Implementaciones\AuthService.cs" />
+	  
 	  <Compile Include="Services\Implementaciones\BarcodeScannerService.cs" />
+	  
+	  <Compile Include="Services\Implementaciones\NavigationService.cs" />
+	  
+	  <Compile Include="Services\Interfaces\IApiService.cs" />
+	  
+	  <Compile Include="Services\Interfaces\IAuthService.cs" />
 	  <Compile Include="Services\Interfaces\IBarcodeScannerService.cs" />
 	  <Compile Include="Models\ElementoSeleccionable.cs" />
 	  <Compile Include="Models\EventoAgenda.cs" />
 	  <Compile Include="Models\MedicamentoModel.cs" />
 	  <Compile Include="Services\Implementaciones\EventosService.cs" />
+	  <Compile Include="Services\Interfaces\INavigationService.cs" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -116,7 +127,7 @@
 	  <MauiXaml Update="Vistas\PantallasInicio\PantallaOlvidoContrasena.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Vistas\PantallasPrincipales\ModalAgregarEvento.xaml">
+	  <MauiXaml Update="Popups\ModalAgregarEvento.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Vistas\PantallasPrincipales\PantallaAgenda.xaml">
@@ -137,6 +148,10 @@
 	  <None Update="Vistas\PantallasFuncionales\PantallaScan.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </None>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Vistas\PantallasFuncionales\" />
 	</ItemGroup>
 	
 </Project>

@@ -3,8 +3,8 @@ using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
 using System.Globalization;
 using CommunityToolkit.Maui; // Necesario para el Community Toolkit
-using MediTrack.Frontend.Vistas.PantallasFuncionales;
-using MediTrack.Frontend.ViewModels;
+using MediTrack.Frontend.ViewModels.PantallasPrincipales;
+using MediTrack.Frontend.Vistas.PantallasPrincipales;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Hosting;
 using ZXing.Net.Maui;

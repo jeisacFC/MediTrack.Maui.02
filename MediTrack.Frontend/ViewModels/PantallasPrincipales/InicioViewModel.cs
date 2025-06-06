@@ -5,7 +5,7 @@ using MediTrack.Frontend.Models;
 using System.Globalization;
 using MediTrack.Frontend.Services.Implementaciones;
 
-namespace MediTrack.Frontend.ViewModels
+namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
     public partial class InicioViewModel : ObservableObject
     {

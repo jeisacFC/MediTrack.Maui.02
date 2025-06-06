@@ -6,7 +6,6 @@
     
     xmlns:pantallasInicio="clr-namespace:MediTrack.Frontend.Vistas.PantallasInicio"
     xmlns:pantallasPrincipales="clr-namespace:MediTrack.Frontend.Vistas.PantallasPrincipales"
-    xmlns:pantallasFuncionales="clr-namespace:MediTrack.Frontend.Vistas.PantallasFuncionales"
     
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
@@ -34,7 +33,7 @@
 
     <ShellContent Route="pantallaScan"
               Title="Escanear"
-              ContentTemplate="{DataTemplate pantallasFuncionales:PantallaScan}" />
+              ContentTemplate="{DataTemplate pantallasPrincipales:PantallaScan}" />
 
     <!-- Barra inferior de navegación -->
     <TabBar>
