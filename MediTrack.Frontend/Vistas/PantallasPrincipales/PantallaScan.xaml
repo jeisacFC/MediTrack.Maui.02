@@ -81,14 +81,7 @@
                             BackgroundColor="Transparent"
                             HorizontalOptions="Center"/>
                 </StackLayout>
-                <!-- Botón de simulación para testing -->
-                <Button Text="🔍 Simular Escaneo (Testing)"
-                            Command="{Binding SimularEscaneoCommand}"
-                            TextColor="White"
-                            FontSize="12"
-                            BackgroundColor="Transparent"
-                            HorizontalOptions="Center"
-                            Opacity="0.7"/>
+               
 
             </Border>
         </Grid>
