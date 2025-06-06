@@ -1,14 +1,17 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediTrack.Frontend.Models;
+using MediTrack.Frontend.Models.Response;
+using MediTrack.Frontend.Models.Request; 
+using MediTrack.Frontend.Models.Response; 
+using MediTrack.Frontend.Services.Interfaces; // Necesario para IApiService
 using System.Linq;
 using System.Threading.Tasks;
-using ZXing.Net.Maui; // Para BarcodeResult y BarcodeReaderOptions
-using System.Diagnostics; // Para Debug.WriteLine
+using ZXing.Net.Maui;
+using System.Diagnostics;
 using CommunityToolkit.Maui.Views; // Para Popup
 using MediTrack.Frontend.Popups;
-using MediTrack.Frontend.Services.Interfaces; // Para InfoMedicamentoPopup (que crearemos después)
+
 
 
 
@@ -16,37 +19,34 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
     public partial class ScanViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private bool _isDetecting = true;
+        // --- Propiedades para la UI --- //
+        [ObservableProperty] private bool _isDetecting = true;
+        [ObservableProperty] private bool _isProcessingResult;
+        [ObservableProperty] private string _scanResultText;
 
-        [ObservableProperty]
-        private bool _isProcessingResult;
-
-        [ObservableProperty]
-        private string _scanResultText;
-
-        // ----------------------------------  COMANDOS  ------------------------------------ //
         public BarcodeReaderOptions BarcodeReaderOptions { get; private set; }
+        
+        // --- Comandos --- //
         public IAsyncRelayCommand<BarcodeDetectionEventArgs> ProcesarCodigosDetectadosCommand { get; }
         public IAsyncRelayCommand CancelarEscaneoCommand { get; }
         public IAsyncRelayCommand SimularEscaneoCommand { get; }
         public IAsyncRelayCommand BuscarManualCommand { get; }
 
 
-        // AGREGAR ESTOS EVENTOS
+        // --- Eventos para comunicar a la Vista --- //
         public event EventHandler<ResEscanearMedicamento> MostrarResultado;
         public event EventHandler<string> MostrarError;
 
-        // Usamos la interfaz para permitir la Inyección de Dependencias
-        private readonly IBarcodeScannerService _barcodeScannerService;
+        // --- Dependencias --- //
+        private readonly IApiService _apiService;
 
 
         // ---------------------------------------------------------------------- //
 
-        // El constructor ahora recibe IBarcodeScannerService (Inyección de Dependencias)
-        public ScanViewModel(IBarcodeScannerService scannerService)
+        // El constructor ahora recibe IApiService (Inyección de Dependencias)
+        public ScanViewModel(IApiService apiService)
         {
-            _barcodeScannerService = scannerService; // Asigna el servicio inyectado
+            _apiService = apiService; // Asigna el servicio inyectado
 
             BarcodeReaderOptions = new ZXing.Net.Maui.BarcodeReaderOptions
             {
@@ -55,14 +55,11 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 Multiple = false
             };
 
-            // En el constructor de ScanViewModel
-            Debug.WriteLine($"ScanViewModel: BarcodeReaderOptions configurado - Formats: {BarcodeReaderOptions.Formats}");
-
+           
 
             // --------------------------------- DEFINICION DE METODOS QUE VIENEN DE "PANTALLASCAN" ------------------------------------- //
             ProcesarCodigosDetectadosCommand = new AsyncRelayCommand<BarcodeDetectionEventArgs>(EjecutarProcesarCodigosDetectados);
             CancelarEscaneoCommand = new AsyncRelayCommand(EjecutarCancelarEscaneo);
-            SimularEscaneoCommand = new AsyncRelayCommand(EjecutarSimulacionEscaneo); // <--- INICIALIZA EL NUEVO COMANDO
             BuscarManualCommand = new AsyncRelayCommand(EjecutarBuscarManual);
 
             ScanResultText = "Apunte la cámara al código de barras...";
@@ -71,7 +68,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
 
 
-        // ----------------------------------- METODOS ----------------------------------- //
+        // ----------------------------------- METODOS DE LOS COMANDOS ----------------------------------- //
         private async Task EjecutarProcesarCodigosDetectados(BarcodeDetectionEventArgs args)
         {
             if (IsProcessingResult || args?.Results == null || !args.Results.Any())
@@ -80,31 +77,39 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             IsProcessingResult = true;
             IsDetecting = false;
 
-            var primerResultado = args.Results[0];
-            string codigoEscaneado = primerResultado.Value;
-            Debug.WriteLine($"ViewModel: Código Detectado: {codigoEscaneado}");
-            ScanResultText = $"Detectado: {codigoEscaneado}";
+            string codigoEscaneado = args.Results[0].Value;
+            Debug.WriteLine($"ViewModel: Código Detectado: {codigoEscaneado}. Llamando al API Service...");
 
             try
             {
-                ResEscanearMedicamento infoMedicamento = await _barcodeScannerService.ObtenerDatosMedicamentoAsync(codigoEscaneado);
+
+                // Prepara el objeto Request para enviar al backend
+                var request = new ReqEscanearMedicamento
+                {
+                    CodigoBarras = codigoEscaneado,
+                    IdUsuario = 1, // TEMPORAL: Esto debería venir de un servicio de sesión de usuario
+                    IdMetodoEscaneo = 1 // Asumiendo 1 = Código de Barras
+                };
+
+                // LLAMADA REAL AL BACKEND a través del ApiService
+                ResEscanearMedicamento infoMedicamento = await _apiService.EscanearMedicamentoAsync(request);
 
                 if (infoMedicamento != null && infoMedicamento.resultado)
                 {
-                    // DISPARAR EVENTO EN LUGAR DE DisplayAlert
+                    // Dispara el evento para que la Vista (code-behind) muestre el resultado
                     MostrarResultado?.Invoke(this, infoMedicamento);
                 }
                 else
                 {
-                    string errorMsg = infoMedicamento?.errores?.FirstOrDefault()?.Message ?? "Medicamento no encontrado.";
-                    // DISPARAR EVENTO EN LUGAR DE DisplayAlert
+                    // Si la API devuelve resultado = false o nulo, dispara el evento de error
+                    string errorMsg = infoMedicamento?.errores?.FirstOrDefault()?.Message ?? "Medicamento no encontrado en el sistema.";
                     MostrarError?.Invoke(this, errorMsg);
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error procesando en ViewModel: {ex.Message}\n{ex.StackTrace}");
-                MostrarError?.Invoke(this, "Ocurrió un error procesando la información.");
+                Debug.WriteLine($"Error al llamar al ApiService: {ex.Message}");
+                MostrarError?.Invoke(this, "Error de conexión. No se pudo comunicar con el servidor.");
             }
             finally
             {
@@ -135,19 +140,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
         }
 
-        private async Task EjecutarSimulacionEscaneo() // El método de simulación sigue siendo útil
-        {
-            // ... (tu lógica de simulación que llama a EjecutarProcesarCodigosDetectados)
-            // Asegúrate que cree un BarcodeDetectionEventArgs válido
-            if (IsProcessingResult) return;
-            Debug.WriteLine("ViewModel: Ejecutando SIMULACIÓN de escaneo...");
-            var codigoSimulado = "7501055300107"; // Código de tu SP o uno que el mock service entienda
-            var formatoSimulado = BarcodeFormats.OneDimensional;
-            var simulatedResults = new List<BarcodeResult> { new BarcodeResult { Value = codigoSimulado, Format = formatoSimulado } };
-            var simulatedArgs = new BarcodeDetectionEventArgs(simulatedResults.ToArray());
-            await EjecutarProcesarCodigosDetectados(simulatedArgs);
-        }
-
+   
         private async Task EjecutarBuscarManual()
         {
             IsDetecting = false; // Detener la cámara si estaba activa

@@ -3,7 +3,7 @@ using MediTrack.Frontend.Popups;   // Para InstruccionesEscaneoPopup
 using MediTrack.Frontend.ViewModels.PantallasPrincipales; // Para ScanViewModel
 using System.Diagnostics;
 using ZXing.Net.Maui; // Para BarcodeDetectionEventArgs
-using MediTrack.Frontend.Models; // Para IBarcodeScannerService
+using MediTrack.Frontend.Models.Response; // Para IBarcodeScannerService
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
