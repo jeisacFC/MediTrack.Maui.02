@@ -27,7 +27,7 @@ public class ApiService : IApiService
 
 
 
-
+    #region MEDICAMENTOS
 
     // Implementación del método definido en la interfaz.
     public async Task<ResEscanearMedicamento> EscanearMedicamentoAsync(ReqEscanearMedicamento request)
@@ -72,4 +72,9 @@ public class ApiService : IApiService
             return null;
         }
     }
+
+    #endregion
+
+
+ 
 }
