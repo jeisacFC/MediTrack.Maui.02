@@ -78,22 +78,25 @@
 	  
 	  <Compile Include="Models\Error.cs" />
 	  
-	  <Compile Include="Models\ReqEscanearMedicamento.cs" />
+	  <Compile Include="Models\ReqBase.cs" />
 	  
-	  <Compile Include="Models\ResEscanearMedicamento.cs" />
+	  <Compile Include="Models\Request\ReqEscanearMedicamento.cs" />
+	  
+	  <Compile Include="Models\ResBase.cs" />
+	  
+	  <Compile Include="Models\Response\ResEscanearMedicamento.cs" />
+	  
+	  <Compile Include="Services\DevHttpsConnectionHelper.cs" />
 	  
 	  <Compile Include="Services\Implementaciones\ApiService.cs" />
 	  
 	  <Compile Include="Services\Implementaciones\AuthService.cs" />
-	  
-	  <Compile Include="Services\Implementaciones\BarcodeScannerService.cs" />
 	  
 	  <Compile Include="Services\Implementaciones\NavigationService.cs" />
 	  
 	  <Compile Include="Services\Interfaces\IApiService.cs" />
 	  
 	  <Compile Include="Services\Interfaces\IAuthService.cs" />
-	  <Compile Include="Services\Interfaces\IBarcodeScannerService.cs" />
 	  <Compile Include="Models\ElementoSeleccionable.cs" />
 	  <Compile Include="Models\EventoAgenda.cs" />
 	  <Compile Include="Models\MedicamentoModel.cs" />
@@ -104,6 +107,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.5" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />

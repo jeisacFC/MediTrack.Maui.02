@@ -4,29 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System.Collections.Generic;
-
-namespace MediTrack.Frontend.Models
+namespace MediTrack.Frontend.Models.Response
 {
-    public class ResEscanearMedicamento
+    public class ResEscanearMedicamento : ResBase
     {
         public int IdMedicamento { get; set; }
         public string NombreComercial { get; set; }
         public string PrincipioActivo { get; set; }
         public string Dosis { get; set; }
         public string Fabricante { get; set; }
-        public List<string> Usos { get; set; }
+        public List<string> EfectosSecundarios { get; set; }
         public List<string> Advertencias { get; set; }
-        public EfectosSecundariosCategorizados EfectosSecundarios { get; set; }
-        public List<Error> errores { get; set; }
-        public bool resultado { get; set; }
+        public List<string> Usos { get; set; }
 
+
+        // Constructor para inicializar las listas y evitar errores de "null"
         public ResEscanearMedicamento()
         {
-            Usos = new List<string>();
+            EfectosSecundarios = new List<string>();
             Advertencias = new List<string>();
-            EfectosSecundarios = new EfectosSecundariosCategorizados();
-            errores = new List<Error>();
+            Usos = new List<string>();
+           
         }
     }
 }

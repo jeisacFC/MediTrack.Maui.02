@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediTrack.Frontend.Models
-{
-    public class ReqEscanearMedicamento
+namespace MediTrack.Frontend.Models.Request;
+
+    public class ReqEscanearMedicamento : ReqBase
     {
         public string CodigoBarras { get; set; }
         public int IdUsuario { get; set; }
         public int IdMetodoEscaneo { get; set; }
     }
-}
+
