@@ -1,16 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using CommunityToolkit.Maui;
-using Syncfusion.Maui.Core.Hosting;
-using System.Globalization;
-using CommunityToolkit.Maui; // Necesario para el Community Toolkit
+﻿using CommunityToolkit.Maui;
+using MediTrack.Frontend.Services;
+using MediTrack.Frontend.Services.Implementaciones;
+using MediTrack.Frontend.Services.Interfaces;
 using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
+using Microsoft.Extensions.Http; // Necesario para AddHttpClient
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Hosting;
-using ZXing.Net.Maui;
+using Syncfusion.Maui.Core.Hosting;
+using System.Globalization;
+using System.Net.Http.Headers;
 using ZXing.Net.Maui.Controls;
-using MediTrack.Frontend.Services.Implementaciones;
-using MediTrack.Frontend.Services.Interfaces; // <---  para ZXing.Net.MAUI
 
 namespace MediTrack.Frontend;
 
@@ -46,16 +45,40 @@ public static class MauiProgram
                 fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
             });
 
-        //// Registro de servicios (DEBE ir después de UseMauiApp)
-        
-        builder.Services.AddSingleton<IBarcodeScannerService, BarcodeScannerService>();
-        builder.Services.AddTransient<ScanViewModel>();
-        builder.Services.AddTransient<PantallaScan>();
 
 
 #if DEBUG
         builder.Logging.AddDebug();
-        #endif
+#endif
+
+        // CONFIGURACIÓN DE HTTPCLIENT Y SERVICIOS
+
+        // 1. Registra el helper para la conexión HTTPS en desarrollo.
+        builder.Services.AddSingleton<DevHttpsConnectionHelper>();
+
+        // 2. Registra el HttpClient usando el helper.
+        builder.Services.AddHttpClient("ApiClient", client =>
+        {
+            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+        })
+        .ConfigurePrimaryHttpMessageHandler(sp =>
+        {
+            // Usa el helper para obtener el manejador que confía en el certificado de desarrollo.
+            return sp.GetRequiredService<DevHttpsConnectionHelper>().GetPlatformSpecificHttpMessageHandler();
+        });
+
+        // 3. Registra el ApiService y su interfaz.
+        builder.Services.AddSingleton<IApiService, ApiService>();
+
+        // 4. Registra los ViewModels y Páginas.
+        builder.Services.AddTransient<ScanViewModel>();
+        builder.Services.AddTransient<PantallaScan>();
+
+        return builder.Build();
+
+
+
+
 
         return builder.Build();
     }
