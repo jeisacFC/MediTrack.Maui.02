@@ -36,8 +36,8 @@ namespace MediTrack.Frontend.Services.Implementaciones
                     EfectosSecundarios = new EfectosSecundariosCategorizados
                     {
                         Leve = new List<string> { "Efecto leve simulado" },
-                        Moderado = new List<string>(),
-                        Grave = new List<string>()
+                        Moderado = new List<string> { "Efecto leve simulado" },
+                        Grave = new List<string> { "Efecto leve simulado" }
                     },
                     resultado = true
                 };

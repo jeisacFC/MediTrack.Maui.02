@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-// using Newtonsoft.Json; // Solo si vas a usar [JsonProperty] y recibes JSON con nombres diferentes
 using System.Collections.Generic;
 
 namespace MediTrack.Frontend.Models
@@ -19,5 +17,6 @@ namespace MediTrack.Frontend.Models
         public List<string> Leve { get; set; } = new List<string>();
         public List<string> Moderado { get; set; } = new List<string>();
         public List<string> Grave { get; set; } = new List<string>();
+
     }
 }
