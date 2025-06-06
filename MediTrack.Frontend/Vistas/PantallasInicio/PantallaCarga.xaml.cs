@@ -1,82 +1,103 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
+﻿using MediTrack.Frontend.ViewModels.PantallasInicio;
+using System.Threading;
 
 namespace MediTrack.Frontend.Vistas.PantallasInicio
 {
     public partial class PantallaCarga : ContentPage
     {
-        private CancellationTokenSource? _cts;
+        private CancellationTokenSource? _animationCts;
 
         public PantallaCarga()
         {
             InitializeComponent();
-            // ELIMINAR: logo.EnableAnimations = true; ← Esta línea causaba el error
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            _cts = new CancellationTokenSource();
 
-            // Ejecutar animación y carga por separado para mejor control
-            _ = AnimarLatidoOptimizado(_cts.Token);
-            _ = InicializarAppRapido();
+            // Iniciar animación del logo
+            _animationCts = new CancellationTokenSource();
+            _ = AnimarLogo(_animationCts.Token);
+
+            // Inicializar ViewModel cuando aparece la pantalla
+            if (BindingContext is CargaViewModel viewModel)
+            {
+                await viewModel.InitializeAsync();
+            }
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = null;
+
+            // Detener animación
+            _animationCts?.Cancel();
+            _animationCts?.Dispose();
+            _animationCts = null;
+
+            // Limpiar recursos del ViewModel
+            if (BindingContext is CargaViewModel viewModel)
+            {
+                viewModel.Cleanup();
+            }
         }
 
-        private async Task AnimarLatidoOptimizado(CancellationToken token)
+        private async Task AnimarLogo(CancellationToken cancellationToken)
         {
-            const uint duracion = 600; // Duración más suave
-
             try
             {
-                while (!token.IsCancellationRequested)
-                {
-                    // Animación más suave con easing mejorado
-                    await logo.ScaleTo(1.08, duracion, Easing.CubicInOut);
-                    if (token.IsCancellationRequested) break;
+                // Verificar si la imagen existe, si no mostrar texto fallback
+                await Task.Delay(100); // Dar tiempo para que cargue la imagen
 
-                    await logo.ScaleTo(1.0, duracion, Easing.CubicInOut);
-                    if (token.IsCancellationRequested) break;
+                if (logoImage.Source == null)
+                {
+                    logoImage.IsVisible = false;
+                    fallbackText.IsVisible = true;
+                }
+
+                const uint duracion = 1000; // Más lento: 1 segundo por palpitar
+                int palpitares = 0;
+                const int minPalpitares = 3; // Al menos 3 palpitares
+
+                while (!cancellationToken.IsCancellationRequested && palpitares < minPalpitares)
+                {
+                    // Palpitar hacia arriba (más grande y más lento)
+                    if (logoImage.IsVisible)
+                    {
+                        await logoImage.ScaleTo(1.15, duracion, Easing.CubicInOut);
+                    }
+                    else
+                    {
+                        await fallbackText.ScaleTo(1.15, duracion, Easing.CubicInOut);
+                    }
+
+                    if (cancellationToken.IsCancellationRequested) break;
+
+                    // Palpitar hacia abajo (tamaño normal)
+                    if (logoImage.IsVisible)
+                    {
+                        await logoImage.ScaleTo(1.0, duracion, Easing.CubicInOut);
+                    }
+                    else
+                    {
+                        await fallbackText.ScaleTo(1.0, duracion, Easing.CubicInOut);
+                    }
+
+                    palpitares++;
+
+                    // Pequeña pausa entre palpitares
+                    await Task.Delay(200, cancellationToken);
                 }
             }
             catch (OperationCanceledException)
             {
                 // Esperado cuando se cancela la animación
+                System.Diagnostics.Debug.WriteLine("Animación cancelada correctamente");
             }
             catch (Exception ex)
             {
-                // Log cualquier otro error
                 System.Diagnostics.Debug.WriteLine($"Error en animación: {ex.Message}");
-            }
-        }
-
-        private async Task InicializarAppRapido()
-        {
-            try
-            {
-                // Delay reducido para carga más rápida
-                await Task.Delay(600);
-
-                // Navegar en el hilo principal
-                await MainThread.InvokeOnMainThreadAsync(async () =>
-                {
-                    await Shell.Current.GoToAsync("//bienvenida");
-                });
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error en inicialización: {ex.Message}");
-                // Fallback: intentar navegar directamente
-                await Shell.Current.GoToAsync("//bienvenida");
             }
         }
     }

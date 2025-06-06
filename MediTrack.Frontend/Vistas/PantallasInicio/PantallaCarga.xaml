@@ -2,16 +2,51 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:MediTrack.Frontend.ViewModels.PantallasInicio"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaCarga"
     BackgroundColor="#4276ff"
-    NavigationPage.HasNavigationBar="False">
+    NavigationPage.HasNavigationBar="False"
+    Title="{Binding Title}">
+
+    <ContentPage.BindingContext>
+        <vm:CargaViewModel />
+    </ContentPage.BindingContext>
 
     <Grid>
-        <Image x:Name="logo"
-           Source="logo_meditrack.png"
-           WidthRequest="200"
-           HeightRequest="200"
-           HorizontalOptions="Center"
-           VerticalOptions="Center" />
+        <!-- Logo con fallback si no encuentra la imagen -->
+        <Image x:Name="logoImage"
+               Source="logo_meditrack.png"
+               WidthRequest="200"
+               HeightRequest="200"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               BackgroundColor="Transparent"
+               Aspect="AspectFit" />
+
+        <!-- Fallback: Texto si no hay imagen -->
+        <Label x:Name="fallbackText"
+               Text="MediTrack"
+               FontSize="32"
+               FontAttributes="Bold"
+               TextColor="White"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               IsVisible="False" />
+
+        <!-- Indicador de carga opcional -->
+        <ActivityIndicator IsVisible="{Binding IsLoading}"
+                          IsRunning="{Binding IsLoading}"
+                          Color="White"
+                          VerticalOptions="End"
+                          Margin="0,0,0,100" />
+
+        <!-- Mensaje de error si algo sale mal -->
+        <Label Text="{Binding ErrorMessage}"
+               IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}"
+               TextColor="White"
+               HorizontalOptions="Center"
+               VerticalOptions="End"
+               Margin="20,0,20,50"
+               HorizontalTextAlignment="Center" />
     </Grid>
 </ContentPage>
