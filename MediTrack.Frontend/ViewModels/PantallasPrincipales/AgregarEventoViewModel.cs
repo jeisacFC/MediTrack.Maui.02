@@ -109,11 +109,32 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             await ExecuteAsync(async () =>
             {
-                // Validar datos
+                // Validaciones básicas
                 if (string.IsNullOrWhiteSpace(NombreEvento))
                 {
                     await ShowAlertAsync("❌ Error", "Por favor ingresa un nombre para el evento");
                     return;
+                }
+
+                if (NombreEvento.Trim().Length < 3)
+                {
+                    await ShowAlertAsync("❌ Error", "El nombre del evento debe tener al menos 3 caracteres");
+                    return;
+                }
+
+                // Validar que la hora no sea en el pasado (solo para el día de hoy)
+                if (_fechaSeleccionada.Date == DateTime.Today)
+                {
+                    var fechaHoraCompleta = _fechaSeleccionada.Date.Add(HoraEvento);
+                    if (fechaHoraCompleta < DateTime.Now)
+                    {
+                        bool continuar = await ShowConfirmAsync(
+                            "⚠️ Advertencia",
+                            "La hora seleccionada ya pasó. ¿Deseas crear el evento de todas formas?",
+                            "Sí", "No");
+
+                        if (!continuar) return;
+                    }
                 }
 
                 // Crear el evento
@@ -142,23 +163,31 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     Completado = false
                 };
 
-                // Agregar al servicio
-                _eventosService.AgregarEvento(EventoCreado);
+                // Agregar al servicio y verificar resultado
+                bool exitoso = _eventosService.AgregarEvento(EventoCreado);
 
-                EventoGuardado = true;
+                if (exitoso)
+                {
+                    EventoGuardado = true;
 
-                // Mostrar confirmación
-                await ShowAlertAsync("✅ Éxito", $"Evento '{NombreEvento}' creado para las {HoraEvento:hh\\:mm}");
+                    // Mostrar confirmación
+                    await ShowAlertAsync("✅ Éxito", $"Evento '{NombreEvento}' creado para las {HoraEvento:hh\\:mm}");
 
-                // Cerrar modal
-                await CerrarModal();
+                    // Cerrar modal
+                    await CerrarModal();
 
-                System.Diagnostics.Debug.WriteLine($"Evento creado: {NombreEvento} - {fechaHoraCompleta:yyyy-MM-dd HH:mm}");
+                    System.Diagnostics.Debug.WriteLine($"Evento creado exitosamente: {NombreEvento} - {fechaHoraCompleta:yyyy-MM-dd HH:mm}");
+                }
+                else
+                {
+                    await ShowAlertAsync("❌ Error", "No se pudo guardar el evento. Inténtalo de nuevo.");
+                    System.Diagnostics.Debug.WriteLine($"Error: No se pudo agregar el evento al servicio");
+                }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error creando evento: {ex.Message}");
-                await ShowAlertAsync("❌ Error", "Ocurrió un error al guardar el evento");
+                await ShowAlertAsync("❌ Error", "Ocurrió un error inesperado al guardar el evento");
             }
         }
 

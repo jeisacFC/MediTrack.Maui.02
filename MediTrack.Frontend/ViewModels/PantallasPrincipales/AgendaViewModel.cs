@@ -23,6 +23,18 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [ObservableProperty]
         private string fechaFormateada = "";
 
+        [ObservableProperty]
+        private int eventosCompletados = 0;
+
+        [ObservableProperty]
+        private int eventosPendientes = 0;
+
+        [ObservableProperty]
+        private int totalEventos = 0;
+
+        [ObservableProperty]
+        private string estadisticasTexto = "";
+
         private readonly EventosService _eventosService;
         private readonly CultureInfo _culturaEspañola = new("es-ES");
 
@@ -37,6 +49,8 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
                 // Suscribirse a cambios
                 _eventosService.EventoActualizado += OnEventoActualizado;
+                _eventosService.EventoAgregado += OnEventoAgregado;
+                _eventosService.EventoEliminado += OnEventoEliminado;
 
                 // ✅ CONFIGURAR CULTURA ESPAÑOLA
                 CultureInfo.CurrentCulture = _culturaEspañola;
@@ -72,6 +86,24 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
         }
 
+        private void OnEventoAgregado(object sender, EventoAgenda evento)
+        {
+            // Recargar eventos si el nuevo evento afecta la fecha actual
+            if (evento.FechaHora.Date == FechaSeleccionada.Date)
+            {
+                CargarEventosDelDia();
+            }
+        }
+
+        private void OnEventoEliminado(object sender, EventoAgenda evento)
+        {
+            // Recargar eventos si la eliminación afecta la fecha actual
+            if (evento.FechaHora.Date == FechaSeleccionada.Date)
+            {
+                CargarEventosDelDia();
+            }
+        }
+
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(FechaSeleccionada))
@@ -85,7 +117,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             try
             {
-                // FORMATEAR FECHAS EN ESPAÑOL
+                // ✅ FORMATEAR FECHAS EN ESPAÑOL
                 MesActual = FechaSeleccionada.ToString("MMMM yyyy", _culturaEspañola);
                 FechaFormateada = FechaSeleccionada.ToString("dddd, dd 'de' MMMM", _culturaEspañola);
 
@@ -120,11 +152,42 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     EventosDelDia.Add(evento);
                 }
 
+                // Calcular estadísticas
+                ActualizarEstadisticas();
+
                 System.Diagnostics.Debug.WriteLine($"Cargados {EventosDelDia.Count} eventos para {FechaSeleccionada:yyyy-MM-dd} desde servicio");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error cargando eventos: {ex.Message}");
+            }
+        }
+
+        private void ActualizarEstadisticas()
+        {
+            try
+            {
+                var (completados, pendientes, total) = _eventosService.ObtenerEstadisticas(FechaSeleccionada);
+
+                EventosCompletados = completados;
+                EventosPendientes = pendientes;
+                TotalEventos = total;
+
+                // Crear texto descriptivo
+                if (total == 0)
+                {
+                    EstadisticasTexto = "Sin eventos";
+                }
+                else
+                {
+                    var porcentaje = total > 0 ? (completados * 100 / total) : 0;
+                    EstadisticasTexto = $"{completados} de {total} completados ({porcentaje}%)";
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error actualizando estadísticas: {ex.Message}");
+                EstadisticasTexto = "Error en estadísticas";
             }
         }
 
@@ -172,6 +235,109 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 System.Diagnostics.Debug.WriteLine($"Error esperando cierre de modal: {ex.Message}");
                 await HandleErrorAsync(ex);
             }
+        }
+
+        [RelayCommand]
+        private async Task EliminarEvento(EventoAgenda evento)
+        {
+            await ExecuteAsync(async () =>
+            {
+                if (evento == null) return;
+
+                // Confirmar eliminación
+                bool confirmar = await ShowConfirmAsync(
+                    "Eliminar evento",
+                    $"¿Estás seguro de que deseas eliminar '{evento.Titulo}'?",
+                    "Eliminar", "Cancelar");
+
+                if (!confirmar) return;
+
+                // Eliminar del servicio
+                bool eliminado = _eventosService.EliminarEvento(evento);
+
+                if (eliminado)
+                {
+                    await ShowAlertAsync("Éxito", $"Evento '{evento.Titulo}' eliminado correctamente");
+
+                    // Recargar eventos (se hará automáticamente por la notificación del servicio)
+                    System.Diagnostics.Debug.WriteLine($"Evento eliminado exitosamente: {evento.Titulo}");
+                }
+                else
+                {
+                    await ShowAlertAsync("Error", "No se pudo eliminar el evento. Inténtalo de nuevo.");
+                }
+            });
+        }
+
+        [RelayCommand]
+        private async Task EditarEvento(EventoAgenda evento)
+        {
+            await ExecuteAsync(async () =>
+            {
+                if (evento == null) return;
+
+                System.Diagnostics.Debug.WriteLine($"Editando evento: {evento.Titulo}");
+
+                // TODO: Crear ModalEditarEvento o reutilizar ModalAgregarEvento con modo edición
+                await ShowAlertAsync("En desarrollo", "La función de editar estará disponible pronto");
+            });
+        }
+
+        [RelayCommand]
+        private async Task MostrarEstadisticas()
+        {
+            await ExecuteAsync(async () =>
+            {
+                var (completados, pendientes, total) = _eventosService.ObtenerEstadisticas(FechaSeleccionada);
+
+                if (total == 0)
+                {
+                    await ShowAlertAsync("Estadísticas", "No hay eventos para este día");
+                    return;
+                }
+
+                var porcentaje = (completados * 100 / total);
+                var mensaje = $"{FechaFormateada}\n\n" +
+                             $"Total de eventos: {total}\n" +
+                             $"Completados: {completados}\n" +
+                             $"Pendientes: {pendientes}\n" +
+                             $"Progreso: {porcentaje}%";
+
+                await ShowAlertAsync("Estadísticas del día", mensaje);
+            });
+        }
+
+        [RelayCommand]
+        private async Task LimpiarCompletados()
+        {
+            await ExecuteAsync(async () =>
+            {
+                var eventosCompletados = EventosDelDia.Where(e => e.Completado).ToList();
+
+                if (!eventosCompletados.Any())
+                {
+                    await ShowAlertAsync("Información", "No hay eventos completados para eliminar");
+                    return;
+                }
+
+                bool confirmar = await ShowConfirmAsync(
+                    "Limpiar completados",
+                    $"¿Deseas eliminar los {eventosCompletados.Count} eventos completados?",
+                    "Eliminar", "Cancelar");
+
+                if (!confirmar) return;
+
+                int eliminados = 0;
+                foreach (var evento in eventosCompletados)
+                {
+                    if (_eventosService.EliminarEvento(evento))
+                    {
+                        eliminados++;
+                    }
+                }
+
+                await ShowAlertAsync("Limpieza completada", $"Se eliminaron {eliminados} eventos completados");
+            });
         }
 
         [RelayCommand]
@@ -236,7 +402,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             });
         }
 
-        // Método para recargar datos (puede ser llamado desde la UI)
         [RelayCommand]
         private async Task RecargarEventos()
         {
@@ -247,12 +412,10 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             });
         }
 
-        // Cleanup mejorado
         protected override async Task HandleErrorAsync(Exception exception)
         {
             await base.HandleErrorAsync(exception);
 
-            // Manejo específico de errores de agenda
             if (exception.Message.Contains("servicio"))
             {
                 ErrorMessage = "Error conectando con el servicio de eventos";
@@ -263,7 +426,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
         }
 
-        // Destructor para limpiar eventos
         ~AgendaViewModel()
         {
             try
@@ -271,6 +433,8 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 if (_eventosService != null)
                 {
                     _eventosService.EventoActualizado -= OnEventoActualizado;
+                    _eventosService.EventoAgregado -= OnEventoAgregado;
+                    _eventosService.EventoEliminado -= OnEventoEliminado;
                 }
             }
             catch (Exception ex)
