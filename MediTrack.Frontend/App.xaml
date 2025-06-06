@@ -21,6 +21,8 @@
             <converters:BoolToCheckConverter x:Key="BoolToCheckConverter" />
             <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
             <converters:CompletedEventsCountConverter x:Key="CompletedEventsCountConverter" />
+            <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+            <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

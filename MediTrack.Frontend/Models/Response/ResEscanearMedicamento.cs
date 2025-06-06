@@ -4,6 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+<<<<<<< Updated upstream
+=======
+using System.Collections.Generic;
+
+>>>>>>> Stashed changes
 namespace MediTrack.Frontend.Models.Response
 {
     public class ResEscanearMedicamento : ResBase

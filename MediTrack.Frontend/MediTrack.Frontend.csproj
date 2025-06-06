@@ -78,6 +78,7 @@
 	  
 	  <Compile Include="Models\Error.cs" />
 	  
+<<<<<<< Updated upstream
 	  <Compile Include="Models\ReqBase.cs" />
 	  
 	  <Compile Include="Models\Request\ReqEscanearMedicamento.cs" />
@@ -87,6 +88,17 @@
 	  <Compile Include="Models\Response\ResEscanearMedicamento.cs" />
 	  
 	  <Compile Include="Services\DevHttpsConnectionHelper.cs" />
+=======
+	  <Compile Include="Models\Request\ReqEscanearMedicamento.cs" />
+	  
+	  <Compile Include="Models\Request\ReqInsertarUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\ResBase.cs" />
+	  
+	  <Compile Include="Models\Response\ResEscanearMedicamento.cs" />
+	  
+	  <Compile Include="Models\Response\ResInsertarUsuario.cs" />
+>>>>>>> Stashed changes
 	  
 	  <Compile Include="Services\Implementaciones\ApiService.cs" />
 	  

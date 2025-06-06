@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+<<<<<<< Updated upstream
 using MediTrack.Frontend.Models.Response;
 using MediTrack.Frontend.Models.Request;
 using MediTrack.Frontend.Services.Interfaces;
@@ -10,6 +11,16 @@ using System.Threading.Tasks;
 using ZXing.Net.Maui;
 using System.Diagnostics;
 
+=======
+using System.Linq;
+using System.Threading.Tasks;
+using ZXing.Net.Maui; // Para BarcodeResult y BarcodeReaderOptions
+using System.Diagnostics; // Para Debug.WriteLine
+using CommunityToolkit.Maui.Views; // Para Popup
+using MediTrack.Frontend.Popups;
+using MediTrack.Frontend.Services.Interfaces;
+using MediTrack.Frontend.Models.Response; // Para InfoMedicamentoPopup (que crearemos después)
+>>>>>>> Stashed changes
 
 
 
