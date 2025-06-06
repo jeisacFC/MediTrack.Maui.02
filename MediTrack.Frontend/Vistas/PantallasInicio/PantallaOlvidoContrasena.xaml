@@ -41,7 +41,7 @@
                    TextColor="#3B71FF"
                    HorizontalOptions="Center"/>
 
-                        <Label Text="Ingresa tu correo y te enviaremos un enlace para restablecer la contraseña."
+                        <Label Text="Ingresa tu correo y te enviaremos un código para restablecer la contraseña."
                    FontSize="14"
                    TextColor="Gray"
                    HorizontalTextAlignment="Center"/>
@@ -70,7 +70,7 @@
                         </Frame>
 
                         <!-- Botón principal en azul -->
-                        <Button Text="Enviar enlace"
+                        <Button Text="Enviar código"
                     BackgroundColor="#3B71FF"
                     TextColor="White"
                     FontAttributes="Bold"

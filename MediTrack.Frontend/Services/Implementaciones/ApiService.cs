@@ -20,7 +20,7 @@ public class ApiService : IApiService
         _httpClient = httpClientFactory.CreateClient("ApiClient"); // Pide el cliente que configuraremos
 
         // Determina la URL base correcta dependiendo de la plataforma
-        string baseUrl = DeviceInfo.Platform == DevicePlatform.Android ? "https://10.0.2.2:44382" : "https://localhost:44382";
+        string baseUrl = DeviceInfo.Platform == DevicePlatform.Android ? "http://192.168.0.2:44382" : "https://localhost:44382";
         _httpClient.BaseAddress = new Uri(baseUrl);
     }
 

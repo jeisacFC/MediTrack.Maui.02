@@ -80,12 +80,6 @@ public static class MauiProgram
 
 
         return builder.Build();
-
-
-
-
-
-        return builder.Build();
     }
 
     private static void ConfigurarCulturaEspañola()
