@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 namespace MediTrack.Frontend.Models.Request;
 
     public class ReqEscanearMedicamento : ReqBase
 =======
+=======
+>>>>>>> Stashed changes
 namespace MediTrack.Frontend.Models.Request
 {
     public class ReqEscanearMedicamento

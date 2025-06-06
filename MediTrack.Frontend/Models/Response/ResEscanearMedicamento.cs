@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 =======
 using System.Collections.Generic;
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 namespace MediTrack.Frontend.Models.Response
 {
