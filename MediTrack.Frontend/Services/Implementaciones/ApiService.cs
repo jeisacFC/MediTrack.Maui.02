@@ -1,5 +1,5 @@
 ﻿using MediTrack.Frontend.Models.Response;
-using MediTrack.Frontend.Models.Request;    
+using MediTrack.Frontend.Models.Request;
 using MediTrack.Frontend.Services.Interfaces;
 using System.Diagnostics;
 using System.Net.Http;
@@ -11,7 +11,7 @@ namespace MediTrack.Frontend.Services.Implementaciones;
 
 public class ApiService : IApiService
 {
-   
+
     private readonly HttpClient _httpClient;
 
     // Recibe un IHttpClientFactory para crear un cliente HttpClient de forma segura y eficiente.
@@ -23,9 +23,6 @@ public class ApiService : IApiService
         string baseUrl = DeviceInfo.Platform == DevicePlatform.Android ? "https://10.0.2.2:44382" : "https://localhost:44382";
         _httpClient.BaseAddress = new Uri(baseUrl);
     }
-
-
-
 
     #region MEDICAMENTOS
 
@@ -75,6 +72,106 @@ public class ApiService : IApiService
 
     #endregion
 
+    #region AUTENTICACIÓN
 
- 
+    public async Task<ResLogin> LoginAsync(ReqLogin request)
+    {
+        var endpoint = "api/usuarios/login";
+
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Respuesta del servidor: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // El backend devuelve un objeto con AccessToken, TokenExpiration, TokenType
+                // Necesitamos mapear a Token, Expiracion, TipoToken
+                var backendResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+
+                var resLogin = new ResLogin();
+
+                // Mapear campos básicos
+                if (backendResponse.TryGetProperty("resultado", out var resultado))
+                    resLogin.resultado = resultado.GetBoolean();
+
+                if (backendResponse.TryGetProperty("Mensaje", out var mensaje))
+                    resLogin.Mensaje = mensaje.GetString();
+
+                // Mapear datos del usuario
+                if (backendResponse.TryGetProperty("IdUsuario", out var idUsuario))
+                    resLogin.IdUsuario = idUsuario.GetInt32();
+
+                if (backendResponse.TryGetProperty("Email", out var email))
+                    resLogin.Email = email.GetString();
+
+                if (backendResponse.TryGetProperty("Nombre", out var nombre))
+                    resLogin.Nombre = nombre.GetString();
+
+                if (backendResponse.TryGetProperty("Apellido1", out var apellido1))
+                    resLogin.Apellido1 = apellido1.GetString();
+
+                if (backendResponse.TryGetProperty("Apellido2", out var apellido2))
+                    resLogin.Apellido2 = apellido2.GetString();
+
+                if (backendResponse.TryGetProperty("UltimoAcceso", out var ultimoAcceso))
+                    resLogin.UltimoAcceso = ultimoAcceso.GetDateTime();
+
+                // Mapear tokens - CLAVE: mapear desde nombres del backend a nombres del frontend
+                if (backendResponse.TryGetProperty("AccessToken", out var accessToken))
+                    resLogin.Token = accessToken.GetString();
+
+                if (backendResponse.TryGetProperty("RefreshToken", out var refreshToken))
+                    resLogin.RefreshToken = refreshToken.GetString();
+
+                if (backendResponse.TryGetProperty("TokenExpiration", out var tokenExpiration))
+                    resLogin.Expiracion = tokenExpiration.GetDateTime();
+
+                if (backendResponse.TryGetProperty("TokenType", out var tokenType))
+                    resLogin.TipoToken = tokenType.GetString();
+
+                return resLogin;
+            }
+            else
+            {
+                Debug.WriteLine($"Error de API en login: {response.StatusCode}. Contenido: {responseContent}");
+
+                // Para errores, intentar deserializar directamente
+                try
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ResLogin>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    return errorResponse;
+                }
+                catch
+                {
+                    return new ResLogin
+                    {
+                        resultado = false,
+                        Mensaje = $"Error del servidor: {response.StatusCode}"
+                    };
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en login: {ex.Message}");
+            return new ResLogin
+            {
+                resultado = false,
+                Mensaje = "Error de conexión. No se pudo comunicar con el servidor."
+            };
+        }
+    }
+
+    #endregion
 }

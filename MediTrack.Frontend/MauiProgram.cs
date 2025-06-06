@@ -4,6 +4,8 @@ using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Services.Interfaces;
 using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
+using MediTrack.Frontend.ViewModels.PantallasInicio;
+using MediTrack.Frontend.Vistas.PantallasInicio;
 using Microsoft.Extensions.Http; // Necesario para AddHttpClient
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
@@ -73,6 +75,9 @@ public static class MauiProgram
         // 4. Registra los ViewModels y Páginas.
         builder.Services.AddTransient<ScanViewModel>();
         builder.Services.AddTransient<PantallaScan>();
+        builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<PantallaInicioSesion>();
+
 
         return builder.Build();
 

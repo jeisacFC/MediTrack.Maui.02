@@ -82,9 +82,17 @@
 	  
 	  <Compile Include="Models\Request\ReqEscanearMedicamento.cs" />
 	  
+	  <Compile Include="Models\Request\ReqLogin.cs" />
+	  
+	  <Compile Include="Models\Request\ReqRefreshToken.cs" />
+	  
 	  <Compile Include="Models\ResBase.cs" />
 	  
 	  <Compile Include="Models\Response\ResEscanearMedicamento.cs" />
+	  
+	  <Compile Include="Models\Response\ResLogin.cs" />
+	  
+	  <Compile Include="Models\Response\ResRefreshToken.cs" />
 	  
 	  <Compile Include="Services\DevHttpsConnectionHelper.cs" />
 	  

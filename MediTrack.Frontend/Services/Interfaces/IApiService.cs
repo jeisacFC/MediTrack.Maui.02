@@ -10,9 +10,10 @@ namespace MediTrack.Frontend.Services.Interfaces
 {
     public interface IApiService
     {
-
+        // Medicamentos
         Task<ResEscanearMedicamento> EscanearMedicamentoAsync(ReqEscanearMedicamento request);
 
-
+        // Autenticación
+        Task<ResLogin> LoginAsync(ReqLogin request);
     }
 }
