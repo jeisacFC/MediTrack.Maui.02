@@ -5,19 +5,17 @@ using MediTrack.Frontend.Models;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
 using System.Globalization;
 using MediTrack.Frontend.Services.Implementaciones;
+using MediTrack.Frontend.ViewModels.Base;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
-    public partial class AgendaViewModel : ObservableObject
+    public partial class AgendaViewModel : BaseViewModel
     {
         [ObservableProperty]
         private DateTime fechaSeleccionada = DateTime.Today;
 
         [ObservableProperty]
         private ObservableCollection<EventoAgenda> eventosDelDia = new();
-
-        [ObservableProperty]
-        private bool isLoading = false;
 
         [ObservableProperty]
         private string mesActual = "";
@@ -32,6 +30,8 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             try
             {
+                Title = "Agenda";
+
                 // Usar servicio compartido
                 _eventosService = EventosService.Instance;
 
@@ -51,6 +51,16 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             {
                 System.Diagnostics.Debug.WriteLine($"Error en AgendaViewModel: {ex.Message}");
             }
+        }
+
+        public override async Task InitializeAsync()
+        {
+            await ExecuteAsync(async () =>
+            {
+                ActualizarTextosFecha();
+                CargarEventosDelDia();
+                await Task.CompletedTask;
+            });
         }
 
         private void OnEventoActualizado(object sender, EventoAgenda evento)
@@ -75,7 +85,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             try
             {
-                // ✅ FORMATEAR FECHAS EN ESPAÑOL
+                // FORMATEAR FECHAS EN ESPAÑOL
                 MesActual = FechaSeleccionada.ToString("MMMM yyyy", _culturaEspañola);
                 FechaFormateada = FechaSeleccionada.ToString("dddd, dd 'de' MMMM", _culturaEspañola);
 
@@ -121,11 +131,11 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [RelayCommand]
         private async Task AgregarEvento()
         {
-            try
+            await ExecuteAsync(async () =>
             {
                 System.Diagnostics.Debug.WriteLine($"Abriendo modal para agregar evento en fecha: {FechaSeleccionada:yyyy-MM-dd}");
 
-                // Crear y abrir el modal
+                // Crear y abrir el modal con el nuevo ViewModel
                 var modal = new ModalAgregarEvento(FechaSeleccionada);
 
                 // Mostrar el modal
@@ -133,12 +143,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
                 // Esperar a que el modal se cierre
                 await EsperarCierreModal(modal);
-
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error abriendo modal: {ex.Message}");
-            }
+            });
         }
 
         private async Task EsperarCierreModal(ModalAgregarEvento modal)
@@ -151,38 +156,28 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     await Task.Delay(100);
                 }
 
-                // Si se guardó un evento, agregarlo al servicio
+                // Si se guardó un evento, ya está agregado automáticamente por el ViewModel del modal
+                // Solo necesitamos confirmar que se guardó
                 if (modal.EventoGuardado && modal.EventoCreado != null)
                 {
-                    await AgregarEventoCreado(modal.EventoCreado);
+                    System.Diagnostics.Debug.WriteLine($"Evento guardado exitosamente: {modal.EventoCreado.Titulo}");
+
+                    // Los eventos se recargarán automáticamente por la notificación del EventosService
+                    // El AgregarEventoViewModel ya agregó el evento al servicio
+                    // No necesitamos duplicar la lógica aquí
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error esperando cierre de modal: {ex.Message}");
-            }
-        }
-
-        private async Task AgregarEventoCreado(EventoAgenda nuevoEvento)
-        {
-            try
-            {
-                // Agregar al servicio compartido
-                _eventosService.AgregarEvento(nuevoEvento);
-
-                // Los eventos se recargarán automáticamente por la notificación
-                System.Diagnostics.Debug.WriteLine($"Evento agregado exitosamente al servicio: {nuevoEvento.Titulo} - {nuevoEvento.FechaHora:yyyy-MM-dd HH:mm}");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error agregando evento al servicio: {ex.Message}");
+                await HandleErrorAsync(ex);
             }
         }
 
         [RelayCommand]
-        private void MarcarCompletado(EventoAgenda evento)
+        private async Task MarcarCompletado(EventoAgenda evento)
         {
-            try
+            await ExecuteAsync(async () =>
             {
                 if (evento != null)
                 {
@@ -193,45 +188,94 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
                     System.Diagnostics.Debug.WriteLine($"Evento {evento.Titulo} marcado como {(evento.Completado ? "completado" : "pendiente")}");
                 }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error marcando completado: {ex.Message}");
-            }
+                await Task.CompletedTask;
+            });
         }
 
         [RelayCommand]
-        private void IrAHoy()
+        private async Task IrAHoy()
         {
-            try
+            await ExecuteAsync(async () =>
             {
                 FechaSeleccionada = DateTime.Today;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error yendo a hoy: {ex.Message}");
-            }
+                await Task.CompletedTask;
+            });
         }
 
         [RelayCommand]
-        private void IrAMañana()
+        private async Task IrAMañana()
         {
-            try
+            await ExecuteAsync(async () =>
             {
                 FechaSeleccionada = DateTime.Today.AddDays(1);
-            }
-            catch (Exception ex)
+                await Task.CompletedTask;
+            });
+        }
+
+        [RelayCommand]
+        private async Task Navegar(string destino)
+        {
+            await ExecuteAsync(async () =>
             {
-                System.Diagnostics.Debug.WriteLine($"Error yendo a mañana: {ex.Message}");
+                switch (destino.ToLower())
+                {
+                    case "hoy":
+                        FechaSeleccionada = DateTime.Today;
+                        break;
+                    case "mañana":
+                        FechaSeleccionada = DateTime.Today.AddDays(1);
+                        break;
+                    case "anterior":
+                        FechaSeleccionada = FechaSeleccionada.AddDays(-1);
+                        break;
+                    case "siguiente":
+                        FechaSeleccionada = FechaSeleccionada.AddDays(1);
+                        break;
+                }
+                await Task.CompletedTask;
+            });
+        }
+
+        // Método para recargar datos (puede ser llamado desde la UI)
+        [RelayCommand]
+        private async Task RecargarEventos()
+        {
+            await ExecuteAsync(async () =>
+            {
+                CargarEventosDelDia();
+                await Task.CompletedTask;
+            });
+        }
+
+        // Cleanup mejorado
+        protected override async Task HandleErrorAsync(Exception exception)
+        {
+            await base.HandleErrorAsync(exception);
+
+            // Manejo específico de errores de agenda
+            if (exception.Message.Contains("servicio"))
+            {
+                ErrorMessage = "Error conectando con el servicio de eventos";
+            }
+            else
+            {
+                ErrorMessage = "Error inesperado en la agenda";
             }
         }
 
-        // Cleanup
+        // Destructor para limpiar eventos
         ~AgendaViewModel()
         {
-            if (_eventosService != null)
+            try
             {
-                _eventosService.EventoActualizado -= OnEventoActualizado;
+                if (_eventosService != null)
+                {
+                    _eventosService.EventoActualizado -= OnEventoActualizado;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error en destructor de AgendaViewModel: {ex.Message}");
             }
         }
     }

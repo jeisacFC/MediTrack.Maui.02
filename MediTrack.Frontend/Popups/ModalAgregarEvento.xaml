@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MediTrack.Frontend.ViewModels.PantallasPrincipales"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.ModalAgregarEvento"
              BackgroundColor="Transparent"
-             Title="">
+             Title="{Binding Title}">
 
-    <!-- Fondo semi-transparente -->
+    <!-- Fondo semi-transparente con gesture -->
     <Grid BackgroundColor="#80000000">
         <Grid.GestureRecognizers>
-            <TapGestureRecognizer Tapped="OnFondoTapped" />
+            <TapGestureRecognizer Command="{Binding FondoTappedCommand}" />
         </Grid.GestureRecognizers>
 
         <!-- Modal flotante centrado -->
@@ -37,13 +38,13 @@
                                        FontSize="20"
                                        TextColor="White"
                                        VerticalOptions="Center" />
-                                <Label Text="Nuevo Evento"
+                                <Label Text="{Binding Title}"
                                        FontSize="18"
                                        FontAttributes="Bold"
                                        TextColor="White"
                                        VerticalOptions="Center" />
                             </HorizontalStackLayout>
-                            <Label x:Name="LabelFecha"
+                            <Label Text="{Binding FechaFormateada}"
                                    FontSize="13"
                                    TextColor="White"
                                    HorizontalTextAlignment="Center"
@@ -73,7 +74,7 @@
                                    Padding="12"
                                    HasShadow="False"
                                    BorderColor="Transparent">
-                                <Entry x:Name="EntryNombre"
+                                <Entry Text="{Binding NombreEvento}"
                                        Placeholder="Ej: Tomar medicamento..."
                                        FontSize="14"
                                        BackgroundColor="Transparent"
@@ -104,11 +105,10 @@
                                        Padding="12"
                                        HasShadow="False"
                                        BorderColor="Transparent">
-                                    <TimePicker x:Name="TimePickerHora"
+                                    <TimePicker Time="{Binding HoraEvento}"
                                                FontSize="14"
                                                BackgroundColor="Transparent"
-                                               TextColor="#333"
-                                               Time="12:00:00" />
+                                               TextColor="#333" />
                                 </Frame>
                             </VerticalStackLayout>
 
@@ -132,22 +132,13 @@
                                        HasShadow="False"
                                        BorderColor="Transparent">
                                     <Grid ColumnDefinitions="*,Auto" Padding="12,0">
-                                        <Picker x:Name="PickerTipo"
+                                        <Picker ItemsSource="{Binding TiposEvento}"
+                                               SelectedItem="{Binding TipoSeleccionado}"
                                                Grid.Column="0"
                                                FontSize="14"
                                                BackgroundColor="Transparent"
                                                TextColor="#333"
-                                               VerticalOptions="Center"
-                                               SelectedIndex="0">
-                                            <Picker.Items>
-                                                <x:String>Medicamento</x:String>
-                                                <x:String>Cita médica</x:String>
-                                                <x:String>Análisis</x:String>
-                                                <x:String>Recordatorio</x:String>
-                                                <x:String>Ejercicio</x:String>
-                                                <x:String>Otro</x:String>
-                                            </Picker.Items>
-                                        </Picker>
+                                               VerticalOptions="Center" />
                                         <Label Grid.Column="1"
                                                FontFamily="MaterialIcons"
                                                Text="&#xe5c5;"
@@ -179,7 +170,7 @@
                                    Padding="12"
                                    HasShadow="False"
                                    BorderColor="Transparent">
-                                <Editor x:Name="EditorDescripcion"
+                                <Editor Text="{Binding DescripcionEvento}"
                                        Placeholder="Detalles adicionales..."
                                        FontSize="14"
                                        BackgroundColor="Transparent"
@@ -195,26 +186,33 @@
                             <!-- Botón Cancelar -->
                             <Button Grid.Column="0"
                                     Text="Cancelar"
+                                    Command="{Binding CancelarCommand}"
                                     BackgroundColor="#E5E7EB"
                                     TextColor="#6B7280"
                                     CornerRadius="12"
                                     FontSize="14"
                                     FontAttributes="Bold"
-                                    HeightRequest="44"
-                                    Clicked="OnCancelarClicked" />
+                                    HeightRequest="44" />
 
                             <!-- Botón Guardar -->
                             <Button Grid.Column="2"
                                     Text="Guardar"
+                                    Command="{Binding GuardarCommand}"
                                     BackgroundColor="#007AFF"
                                     TextColor="White"
                                     CornerRadius="12"
                                     FontSize="14"
                                     FontAttributes="Bold"
                                     HeightRequest="44"
-                                    Clicked="OnGuardarClicked" />
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
 
                         </Grid>
+
+                        <!-- Loading indicator -->
+                        <ActivityIndicator IsVisible="{Binding IsLoading}"
+                                          IsRunning="{Binding IsLoading}"
+                                          Color="#007AFF"
+                                          Margin="0,10,0,0" />
 
                     </VerticalStackLayout>
                 </VerticalStackLayout>
