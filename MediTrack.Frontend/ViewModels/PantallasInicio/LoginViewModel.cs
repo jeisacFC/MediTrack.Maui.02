@@ -58,14 +58,21 @@ namespace MediTrack.Frontend.ViewModels.PantallasInicio
 
             try
             {
+                // LOG: Verificar datos antes de crear request
+                Debug.WriteLine($"=== DATOS ANTES DE REQUEST ===");
+                Debug.WriteLine($"Email from UI: '{this.Email}'");
+                Debug.WriteLine($"Contraseña from UI: '{this.Contraseña}'");
+                Debug.WriteLine($"Email length: {this.Email?.Length}");
+                Debug.WriteLine($"Contraseña length: {this.Contraseña?.Length}");
+
                 var request = new ReqLogin
                 {
-                    Email = this.Email?.Trim() ?? string.Empty,
-                    Contraseña = this.Contraseña ?? string.Empty,
-                    RecordarSesion = this.RecordarSesion
-                };
+                    email = this.Email?.Trim() ?? string.Empty,
+                    contrasena = this.Contraseña ?? string.Empty                };
 
-                Debug.WriteLine($"Intentando login para: {request.Email}");
+                Debug.WriteLine($"=== REQUEST CREADO ===");
+                Debug.WriteLine($"Request Email: '{request.email}'");
+                Debug.WriteLine($"Request Contraseña: '{request.contrasena}'");
 
                 // Llamada al backend
                 var response = await _apiService.LoginAsync(request);

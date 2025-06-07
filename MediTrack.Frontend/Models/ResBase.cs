@@ -9,7 +9,7 @@ namespace MediTrack.Frontend.Models;
     public class ResBase
     {
         public bool resultado { get; set; }
-        public List<Error> errores { get; set; } // Usa tu clase Error.cs existente
+        public List<Error> errores { get; set; }
         public int Codigo { get; set; }
         public string Mensaje { get; set; }
 

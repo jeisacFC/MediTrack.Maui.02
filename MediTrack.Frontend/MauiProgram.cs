@@ -22,46 +22,42 @@ public static class MauiProgram
         try
         {
             //NUEVA LICENCIA ESPECÍFICA PARA MAUI 24.x
-
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzg5NTQ4MEAzMjM0MmUzMDJlMzBVbStPWjNqWUtHSTdwM2grYTB3Z2s5ZUtpNjhoZ0V5SlEzZFBvVnRuT0U4PQ==");
             System.Diagnostics.Debug.WriteLine("Nueva licencia 24.x registrada");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error registrando licencia: {ex.Message}");
         }
+
         //CONFIGURAR CULTURA ESPAÑOLA AL INICIO
         ConfigurarCulturaEspañola();
 
         var builder = MauiApp.CreateBuilder();
-
         builder
             .UseMauiApp<App>()
             .ConfigureSyncfusionCore()
             .UseMauiCommunityToolkit()
             .UseBarcodeReader()
-
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
             });
 
-
-
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
 
         // CONFIGURACIÓN DE HTTPCLIENT Y SERVICIOS
-
         // 1. Registra el helper para la conexión HTTPS en desarrollo.
         builder.Services.AddSingleton<DevHttpsConnectionHelper>();
 
         // 2. Registra el HttpClient usando el helper.
         builder.Services.AddHttpClient("ApiClient", client =>
         {
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.Timeout = TimeSpan.FromSeconds(30); // Timeout configurado
         })
         .ConfigurePrimaryHttpMessageHandler(sp =>
         {
@@ -78,13 +74,7 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<PantallaInicioSesion>();
 
-
-        return builder.Build();
-
-
-
-
-
+        // SOLO UN RETURN
         return builder.Build();
     }
 
@@ -103,7 +93,7 @@ public static class MauiProgram
             CultureInfo.DefaultThreadCurrentCulture = cultura;
             CultureInfo.DefaultThreadCurrentUICulture = cultura;
 
-            System.Diagnostics.Debug.WriteLine("Cultura española configurada");
+            System.Diagnostics.Debug.WriteLine("Cultura española configurada correctamente");
         }
         catch (Exception ex)
         {
