@@ -74,8 +74,6 @@
 	
 	<ItemGroup>
 	  
-	  <Compile Include="Models\EfectosSecundariosCategorizados.cs" />
-	  
 	  <Compile Include="Models\Error.cs" />
 	  
 	  <Compile Include="Models\ReqBase.cs" />
