@@ -18,7 +18,8 @@
                Margin="40,0"
                VerticalOptions="Center"
                HorizontalOptions="Center"
-               MaximumWidthRequest="400">
+               MaximumWidthRequest="400"
+               MaximumHeightRequest="505">
 
             <VerticalStackLayout Spacing="20">
 
