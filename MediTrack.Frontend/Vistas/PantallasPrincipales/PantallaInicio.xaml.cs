@@ -4,11 +4,29 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
 public partial class PantallaInicio : ContentPage
 {
+    private InicioViewModel _viewModel;
+
     public PantallaInicio()
     {
         InitializeComponent();
-        BindingContext = new InicioViewModel();
+        _viewModel = new InicioViewModel();
+        BindingContext = _viewModel;
     }
 
-    
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        try
+        {
+            // Recargar datos cada vez que aparece la pantalla
+            await _viewModel.RecargarDatos();
+
+            System.Diagnostics.Debug.WriteLine("PantallaInicio: Datos recargados en OnAppearing");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error en OnAppearing de PantallaInicio: {ex.Message}");
+        }
+    }
 }
