@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using MediTrack.Frontend.Models;
 using System.Globalization;
+using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.Services.Implementaciones
 {

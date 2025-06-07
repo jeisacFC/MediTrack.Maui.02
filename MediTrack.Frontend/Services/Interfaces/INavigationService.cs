@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Services.Interfaces
 {
-    interface INavigationService
+    public interface INavigationService
     {
+        Task<bool> HandleBackNavigationAsync(ContentPage currentPage);
+        Task GoBackAsync();
+        Task GoToAsync(string route);
+        bool CanGoBack();
     }
 }

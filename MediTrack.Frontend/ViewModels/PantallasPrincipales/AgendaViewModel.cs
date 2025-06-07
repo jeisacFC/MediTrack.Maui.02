@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using MediTrack.Frontend.Models;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
 using System.Globalization;
 using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.ViewModels.Base;
+using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {

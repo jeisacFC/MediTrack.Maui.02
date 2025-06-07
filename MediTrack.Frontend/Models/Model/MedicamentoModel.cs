@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace MediTrack.Frontend.Models
+namespace MediTrack.Frontend.Models.Model
 {
     public class MedicamentoModel : INotifyPropertyChanged
     {

@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using MediTrack.Modelos;
 using MediTrack.Frontend.ViewModels;
 using Microsoft.Maui.Controls;
 using MediTrack.Frontend.ViewModels.PantallasPrincipales;
+using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {

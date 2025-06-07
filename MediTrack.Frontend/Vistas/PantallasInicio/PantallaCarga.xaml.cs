@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace MediTrack.Frontend.Vistas.PantallasInicio
 {
-    public partial class PantallaCarga : ContentPage
+    public partial class PantallaCarga : BaseContentPage
     {
         private CancellationTokenSource? _animationCts;
 

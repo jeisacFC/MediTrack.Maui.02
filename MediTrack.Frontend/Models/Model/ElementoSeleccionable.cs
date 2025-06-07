@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediTrack.Modelos
+namespace MediTrack.Frontend.Models.Model
 {
     public class ElementoSeleccionable
     {

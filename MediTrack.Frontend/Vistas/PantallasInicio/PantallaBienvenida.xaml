@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<base:BaseContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaBienvenida"
     BackgroundColor="#3b71ff"
     NavigationPage.HasNavigationBar="False"
@@ -121,4 +122,4 @@
         </Frame>
 
     </Grid>
-</ContentPage>
+</base:BaseContentPage>

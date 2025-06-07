@@ -1,5 +1,5 @@
 ﻿using MediTrack.Frontend.ViewModels.PantallasPrincipales;
-using MediTrack.Frontend.Models;
+using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {

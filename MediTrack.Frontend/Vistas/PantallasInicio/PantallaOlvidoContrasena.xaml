@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<base:BaseContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewModels="clr-namespace:MediTrack.Frontend.ViewModels.PantallasInicio"
+    xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaOlvidoContrasena"
     NavigationPage.HasNavigationBar="False">
 
@@ -125,4 +126,4 @@
             </Frame>
         </Grid>
     </Grid>
-</ContentPage>
+</base:BaseContentPage>

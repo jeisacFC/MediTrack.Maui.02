@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.Services.Implementaciones;
 
@@ -17,29 +18,17 @@ public class ApiService : IApiService
     {
         _httpClient = httpClientFactory.CreateClient("ApiClient");
 
-        // Cambiado a HTTPS - determina la URL base correcta dependiendo de la plataforma
+        //NO cambiar, ip del backend en la nube
         string baseUrl = DeviceInfo.Platform == DevicePlatform.Android
-            ? "https://10.0.2.2:44382"  // Para Android Emulator con HTTPS
-            : "https://localhost:44382"; // Para otras plataformas con HTTPS
+            ? "http://34.171.62.172:44382/"
+            : "http://34.171.62.172:44382/";
 
-        // Determina la URL base correcta dependiendo de la plataforma
-        string baseUrl = DeviceInfo.Platform == DevicePlatform.Android ? "http://192.168.0.2:44382" : "https://localhost:44382";
         _httpClient.BaseAddress = new Uri(baseUrl);
 
-        // Configuración adicional para HTTPS en desarrollo (opcional)
-        // Solo usar en desarrollo - NUNCA en producción
-#if DEBUG
-        // Esta configuración permite certificados SSL autofirmados en desarrollo
-        var handler = new HttpClientHandler()
-        {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-        };
-        // Nota: Si usas IHttpClientFactory, esta configuración debe ir en el Startup/Program.cs
-#endif
+
     }
 
     #region MEDICAMENTOS
-
     public async Task<ResEscanearMedicamento> EscanearMedicamentoAsync(ReqEscanearMedicamento request)
     {
         var endpoint = "api/medicamentos/escanear";
@@ -56,10 +45,12 @@ public class ApiService : IApiService
 
             if (response.IsSuccessStatusCode)
             {
+#pragma warning disable CS8603 // Posible tipo de valor devuelto de referencia nulo
                 return await JsonSerializer.DeserializeAsync<ResEscanearMedicamento>(responseStream, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
+#pragma warning restore CS8603 // Posible tipo de valor devuelto de referencia nulo
             }
             else
             {
@@ -245,5 +236,186 @@ public class ApiService : IApiService
         }
     }
 
+    public async Task<ResRegister> RegisterAsync(ReqRegister request)
+    {
+        var endpoint = "api/usuarios/registrar";
+
+        try
+        {
+            Debug.WriteLine("=== DATOS DE REGISTRO ENVIADOS (HTTPS) ===");
+            Debug.WriteLine($"Email: '{request.Email}'");
+            Debug.WriteLine($"Nombre: '{request.Nombre}'");
+            Debug.WriteLine($"Apellido1: '{request.Apellido1}'");
+            Debug.WriteLine($"Apellido2: '{request.Apellido2}'");
+            Debug.WriteLine($"FechaNacimiento: '{request.FechaNacimiento}'");
+            Debug.WriteLine($"IdGenero: '{request.IdGenero}'");
+            Debug.WriteLine($"NotificacionesPush: '{request.NotificacionesPush}'");
+            Debug.WriteLine("==========================================");
+
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST (HTTPS): {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Status Code: {response.StatusCode}");
+            Debug.WriteLine($"Response Headers: {response.Headers}");
+            Debug.WriteLine($"Respuesta completa del servidor: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var backendResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                    var resRegister = new ResRegister();
+
+                    Debug.WriteLine("=== CAMPOS EN LA RESPUESTA ===");
+                    foreach (var property in backendResponse.EnumerateObject())
+                    {
+                        Debug.WriteLine($"{property.Name}: {property.Value}");
+                    }
+                    Debug.WriteLine("===============================");
+
+                    // Mapear campos básicos
+                    if (backendResponse.TryGetProperty("resultado", out var resultado))
+                        resRegister.resultado = resultado.GetBoolean();
+
+                    if (backendResponse.TryGetProperty("mensaje", out var mensaje))
+                        resRegister.Mensaje = mensaje.GetString();
+                    else if (backendResponse.TryGetProperty("Mensaje", out var mensajeMayus))
+                        resRegister.Mensaje = mensajeMayus.GetString();
+
+                    // Mapear datos específicos del registro
+                    if (backendResponse.TryGetProperty("idUsuario", out var idUsuario))
+                        resRegister.IdUsuario = idUsuario.GetInt32();
+                    else if (backendResponse.TryGetProperty("IdUsuario", out var idUsuarioMayus))
+                        resRegister.IdUsuario = idUsuarioMayus.GetInt32();
+
+                    if (backendResponse.TryGetProperty("fechaRegistro", out var fechaRegistro))
+                        resRegister.FechaRegistro = fechaRegistro.GetDateTime();
+                    else if (backendResponse.TryGetProperty("FechaRegistro", out var fechaRegistroMayus))
+                        resRegister.FechaRegistro = fechaRegistroMayus.GetDateTime();
+
+                    // Mapear errores si existen
+                    if (backendResponse.TryGetProperty("errores", out var errores) && errores.ValueKind == JsonValueKind.Array)
+                    {
+                        var erroresList = new List<Error>();
+                        foreach (var error in errores.EnumerateArray())
+                        {
+                            var errorDetail = new Error();
+                            if (error.TryGetProperty("message", out var errorMessage))
+                                errorDetail.Message = errorMessage.GetString();
+                            else if (error.TryGetProperty("Message", out var errorMessageMayus))
+                                errorDetail.Message = errorMessageMayus.GetString();
+
+                            erroresList.Add(errorDetail);
+                        }
+                        resRegister.errores = erroresList;
+                    }
+
+                    Debug.WriteLine($"Resultado final mapeado - resultado: {resRegister.resultado}, mensaje: {resRegister.Mensaje}");
+                    return resRegister;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error deserializando respuesta exitosa: {ex.Message}");
+                    return new ResRegister
+                    {
+                        resultado = false,
+                        Mensaje = "Error procesando respuesta del servidor",
+                        errores = new List<Error>
+                    {
+                        new Error { Message = "Error procesando respuesta del servidor" }
+                    }
+                    };
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"Error HTTP: {response.StatusCode}");
+                Debug.WriteLine($"Contenido del error: {responseContent}");
+
+                try
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ResRegister>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (errorResponse != null)
+                    {
+                        Debug.WriteLine($"Error deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
+                        return errorResponse;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error deserializando respuesta de error: {ex.Message}");
+                }
+
+                return new ResRegister
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode} - {responseContent}",
+                    errores = new List<Error>
+                {
+                    new Error { Message = $"Error del servidor: {response.StatusCode}" }
+                }
+                };
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Debug.WriteLine($"Error HTTPS en registro: {httpEx.Message}");
+            return new ResRegister
+            {
+                resultado = false,
+                Mensaje = "Error de conexión HTTPS. Verifica que el servidor esté corriendo con SSL.",
+                errores = new List<Error>
+            {
+                new Error { Message = "Error de conexión HTTPS" }
+            }
+            };
+        }
+        catch (TaskCanceledException timeoutEx)
+        {
+            Debug.WriteLine($"Timeout en registro: {timeoutEx.Message}");
+            return new ResRegister
+            {
+                resultado = false,
+                Mensaje = "Tiempo de espera agotado. Intenta nuevamente.",
+                errores = new List<Error>
+            {
+                new Error { Message = "Tiempo de espera agotado" }
+            }
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error general en registro: {ex.Message}");
+            Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            return new ResRegister
+            {
+                resultado = false,
+                Mensaje = "Error de conexión. No se pudo comunicar con el servidor.",
+                errores = new List<Error>
+            {
+                new Error { Message = "Error de conexión general" }
+            }
+            };
+        }
+    }
+
     #endregion
+
+
 }

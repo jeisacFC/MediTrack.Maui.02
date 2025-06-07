@@ -3,7 +3,7 @@ using Microsoft.Maui.Graphics;
 
 namespace MediTrack.Frontend.Vistas.PantallasInicio
 {
-    public partial class PantallaBienvenida : ContentPage
+    public partial class PantallaBienvenida : BaseContentPage
     {
         public PantallaBienvenida()
         {
@@ -16,7 +16,6 @@ namespace MediTrack.Frontend.Vistas.PantallasInicio
         private async void IrARegistro(object sender, EventArgs e)
             => await Shell.Current.GoToAsync("//registro");
 
-        // NUEVO MÉTODO para el botón de escaneo
         private async void IrAPantallaEscaneo(object sender, EventArgs e)
         {
             // "pantalla-escaneo" debe ser el nombre de la RUTA (Route)

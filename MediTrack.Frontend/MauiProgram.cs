@@ -40,26 +40,33 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        // CONFIGURACIÓN DE HTTPCLIENT Y SERVICIOS
-        builder.Services.AddSingleton<DevHttpsConnectionHelper>();
-
         builder.Services.AddHttpClient("ApiClient", client =>
         {
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.Timeout = TimeSpan.FromSeconds(30); // Timeout configurado
+            client.Timeout = TimeSpan.FromSeconds(30);
         })
-        .ConfigurePrimaryHttpMessageHandler(sp =>
-        {
-            return sp.GetRequiredService<DevHttpsConnectionHelper>().GetPlatformSpecificHttpMessageHandler();
-        });
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+#if DEBUG
+    return new HttpClientHandler()
+    {
+        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+    };
+#else
+    return new HttpClientHandler();
+#endif
+});
 
         builder.Services.AddSingleton<IApiService, ApiService>();
+        builder.Services.AddSingleton<INavigationService, NavigationService>();
 
         // TODOS LOS VIEWMODELS Y PÁGINAS NECESARIOS
         builder.Services.AddTransient<ScanViewModel>();
         builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<PantallaInicioSesion>();
+        builder.Services.AddTransient<PantallaRegistro>();
         //Recuperar contraseña
         builder.Services.AddTransient<OlvidoContrasenaViewModel>();
         builder.Services.AddTransient<PantallaOlvidoContrasena>();

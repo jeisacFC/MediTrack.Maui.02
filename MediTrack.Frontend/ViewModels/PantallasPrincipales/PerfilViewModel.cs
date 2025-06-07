@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using MediTrack.Modelos;
+using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {

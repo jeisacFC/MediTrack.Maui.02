@@ -5,7 +5,7 @@ using Microsoft.Maui.Controls;
 
 namespace MediTrack.Frontend.Vistas.PantallasInicio;
 
-public partial class PantallaInicioSesion : ContentPage
+public partial class PantallaInicioSesion : BaseContentPage
 {
     private LoginViewModel _viewModel;
 

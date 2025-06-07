@@ -74,7 +74,7 @@
 	
 	<ItemGroup>
 	  
-	  <Compile Include="Models\Error.cs" />
+	  <Compile Include="Models\Model\Error.cs" />
 	  
 	  <Compile Include="Models\ReqBase.cs" />
 	  
@@ -84,6 +84,8 @@
 	  
 	  <Compile Include="Models\Request\ReqRefreshToken.cs" />
 	  
+	  <Compile Include="Models\Request\ReqRegister.cs" />
+	  
 	  <Compile Include="Models\ResBase.cs" />
 	  
 	  <Compile Include="Models\Response\ResEscanearMedicamento.cs" />
@@ -92,21 +94,20 @@
 	  
 	  <Compile Include="Models\Response\ResRefreshToken.cs" />
 	  
+	  <Compile Include="Models\Response\ResRegister.cs" />
+	  
 	  <Compile Include="Services\DevHttpsConnectionHelper.cs" />
 	  
 	  <Compile Include="Services\Implementaciones\ApiService.cs" />
 	  
-	  <Compile Include="Services\Implementaciones\AuthService.cs" />
-	  
 	  <Compile Include="Services\Implementaciones\NavigationService.cs" />
 	  
 	  <Compile Include="Services\Interfaces\IApiService.cs" />
-	  
-	  <Compile Include="Services\Interfaces\IAuthService.cs" />
-	  <Compile Include="Models\ElementoSeleccionable.cs" />
-	  <Compile Include="Models\EventoAgenda.cs" />
-	  <Compile Include="Models\MedicamentoModel.cs" />
+	  <Compile Include="Models\Model\ElementoSeleccionable.cs" />
+	  <Compile Include="Models\Model\EventoAgenda.cs" />
+	  <Compile Include="Models\Model\MedicamentoModel.cs" />
 	  <Compile Include="Services\Implementaciones\EventosService.cs" />
+	  <Compile Include="Services\Interfaces\IBackNavigationHandler.cs" />
 	  <Compile Include="Services\Interfaces\INavigationService.cs" />
 	</ItemGroup>
 	

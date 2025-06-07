@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Services.Interfaces
 {
-    interface IAuthService
+    public interface IBackNavigationHandler
     {
+        Task<bool> OnBackNavigationAsync();
     }
 }

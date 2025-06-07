@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<base:BaseContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaRegistro"
+    xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
     NavigationPage.HasNavigationBar="False"
     Title="Registrarse">
 
     <Grid>
 
-        <!-- Fondo con patrón -->
+        <!-- Fondo con patrón, siempre al fondo -->
         <Image Source="logo_patron.png"
                Aspect="AspectFill"
                Opacity="0.8"
@@ -16,157 +17,293 @@
                VerticalOptions="Fill"
                ZIndex="0" />
 
-        <!-- Layout principal -->
-        <Grid RowDefinitions="*,3*"
+        <!-- Layout principal dividido en dos filas -->
+        <Grid RowDefinitions="0.6*,3.4*"
               ZIndex="1">
 
+            <!-- Fila 0: espacio para el fondo -->
             <Grid Grid.Row="0" />
-            <!-- Espacio superior -->
 
-            <Frame Grid.Row="1"
-                   CornerRadius="40"
-                   BackgroundColor="White"
-                   HasShadow="True"
-                   Padding="35"
-                   VerticalOptions="Fill"
-                   HeightRequest="900">
+            <!-- Fila 1: contenedor blanco con formulario -->
+            <BoxView Grid.Row="1"
+                     BackgroundColor="White"
+                     CornerRadius="40,40,0,0"
+                     VerticalOptions="Fill"/>
 
-                <ScrollView>
-                    <VerticalStackLayout Spacing="25">
+            <ScrollView Grid.Row="1" 
+                       Margin="0,40,0,0"
+                       Padding="35,0,35,30">
 
-                        <!-- Logo -->
-                        <Image Source="logo_meditrack.png"
-                               HeightRequest="100"
+                <VerticalStackLayout Spacing="20">
+
+                    <!-- Logo pequeño -->
+                    <Image Source="logo_meditrack.png"
+                               HeightRequest="80"
                                HorizontalOptions="Center"
-                               Margin="0,10"/>
+                               Margin="0,5"/>
 
-                        <!-- Título -->
-                        <Label Text="Regístrate"
+                    <!-- Título -->
+                    <Label Text="Regístrate"
                                FontSize="28"
                                FontAttributes="Bold"
                                TextColor="#3B71FF"
                                HorizontalOptions="Center"/>
 
-                        <!-- Nombre con icono -->
-                        <Frame CornerRadius="12"
+                    <!-- Mensaje de estado -->
+                    <Label Text="{Binding MensajeEstado}"
+                               TextColor="#3B71FF"
+                               FontSize="14"
+                               HorizontalOptions="Center"
+                               IsVisible="{Binding MensajeEstado, Converter={StaticResource StringNotEmptyConverter}}"/>
+
+                    <!-- Nombre con icono -->
+                    <Frame CornerRadius="12"
                                BackgroundColor="#F8F8F8"
                                HasShadow="False"
                                Padding="10">
-                            <HorizontalStackLayout Spacing="10">
-                                <Image>
-                                    <Image.Source>
-                                        <FontImageSource Glyph="&#xE7FD;"
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE7FD;"
                                                          FontFamily="MaterialIcons"
                                                          Color="#3B71FF"
                                                          Size="20"/>
-                                    </Image.Source>
-                                </Image>
-                                <Entry Placeholder="Nombre"
+                                </Image.Source>
+                            </Image>
+                            <Entry Text="{Binding Nombre}"
+                                       Placeholder="Nombre"
                                        PlaceholderColor="#A0A0A0"
                                        TextColor="Black"
-                                       HeightRequest="45"/>
-                            </HorizontalStackLayout>
-                        </Frame>
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"/>
+                        </HorizontalStackLayout>
+                    </Frame>
 
-                        <!-- Apellidos con icono -->
-                        <Frame CornerRadius="12"
+                    <!-- Apellido 1 con icono -->
+                    <Frame CornerRadius="12"
                                BackgroundColor="#F8F8F8"
                                HasShadow="False"
                                Padding="10">
-                            <HorizontalStackLayout Spacing="10">
-                                <Image>
-                                    <Image.Source>
-                                        <FontImageSource Glyph="&#xE7FD;"
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE7FD;"
                                                          FontFamily="MaterialIcons"
                                                          Color="#3B71FF"
                                                          Size="20"/>
-                                    </Image.Source>
-                                </Image>
-                                <Entry Placeholder="Apellidos"
+                                </Image.Source>
+                            </Image>
+                            <Entry Text="{Binding Apellido1}"
+                                       Placeholder="Primer Apellido"
                                        PlaceholderColor="#A0A0A0"
                                        TextColor="Black"
-                                       HeightRequest="45"/>
-                            </HorizontalStackLayout>
-                        </Frame>
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"/>
+                        </HorizontalStackLayout>
+                    </Frame>
 
-                        <!-- Correo electrónico -->
-                        <Frame CornerRadius="12"
+                    <!-- Apellido 2 con icono (opcional) -->
+                    <Frame CornerRadius="12"
                                BackgroundColor="#F8F8F8"
                                HasShadow="False"
                                Padding="10">
-                            <HorizontalStackLayout Spacing="10">
-                                <Image>
-                                    <Image.Source>
-                                        <FontImageSource Glyph="&#xE0BE;"
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE7FD;"
                                                          FontFamily="MaterialIcons"
                                                          Color="#3B71FF"
                                                          Size="20"/>
-                                    </Image.Source>
-                                </Image>
-                                <Entry Placeholder="Correo electrónico"
+                                </Image.Source>
+                            </Image>
+                            <Entry Text="{Binding Apellido2}"
+                                       Placeholder="Segundo Apellido (opcional)"
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"/>
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- Correo electrónico -->
+                    <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="10">
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE0BE;"
+                                                         FontFamily="MaterialIcons"
+                                                         Color="#3B71FF"
+                                                         Size="20"/>
+                                </Image.Source>
+                            </Image>
+                            <Entry Text="{Binding Email}"
+                                       Placeholder="Correo electrónico"
                                        Keyboard="Email"
                                        PlaceholderColor="#A0A0A0"
                                        TextColor="Black"
-                                       HeightRequest="45"/>
-                            </HorizontalStackLayout>
-                        </Frame>
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"/>
+                        </HorizontalStackLayout>
+                    </Frame>
 
-                        <!-- Contraseña -->
-                        <Frame CornerRadius="12"
+                    <!-- Contraseña -->
+                    <Frame CornerRadius="12"
                                BackgroundColor="#F8F8F8"
                                HasShadow="False"
                                Padding="10">
-                            <HorizontalStackLayout Spacing="10">
-                                <Image>
-                                    <Image.Source>
-                                        <FontImageSource Glyph="&#xE897;"
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE897;"
                                                          FontFamily="MaterialIcons"
                                                          Color="#3B71FF"
                                                          Size="20"/>
-                                    </Image.Source>
-                                </Image>
-                                <Entry Placeholder="Contraseña"
+                                </Image.Source>
+                            </Image>
+                            <Entry Text="{Binding Contraseña}"
+                                       Placeholder="Contraseña"
                                        IsPassword="True"
                                        PlaceholderColor="#A0A0A0"
                                        TextColor="Black"
-                                       HeightRequest="45"/>
-                            </HorizontalStackLayout>
-                        </Frame>
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"/>
+                        </HorizontalStackLayout>
+                    </Frame>
 
-                        <!-- Botón Registrarse -->
-                        <Button Text="Registrarse"
+                    <!-- Confirmar Contraseña -->
+                    <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="10">
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE897;"
+                                                         FontFamily="MaterialIcons"
+                                                         Color="#3B71FF"
+                                                         Size="20"/>
+                                </Image.Source>
+                            </Image>
+                            <Entry Text="{Binding ConfirmarContraseña}"
+                                       Placeholder="Confirmar Contraseña"
+                                       IsPassword="True"
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"/>
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- Fecha de Nacimiento -->
+                    <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="10">
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE916;"
+                                                         FontFamily="MaterialIcons"
+                                                         Color="#3B71FF"
+                                                         Size="20"/>
+                                </Image.Source>
+                            </Image>
+                            <DatePicker Date="{Binding FechaNacimiento}"
+                                           TextColor="Black"
+                                           IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                           Margin="10,0"
+                                           HorizontalOptions="FillAndExpand"/>
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- Género -->
+                    <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="10">
+                        <HorizontalStackLayout>
+                            <Image>
+                                <Image.Source>
+                                    <FontImageSource Glyph="&#xE7FD;"
+                                                         FontFamily="MaterialIcons"
+                                                         Color="#3B71FF"
+                                                         Size="20"/>
+                                </Image.Source>
+                            </Image>
+                            <Picker ItemsSource="{Binding GenerosDisponibles}"
+                                       SelectedItem="{Binding GeneroSeleccionado}"
+                                       Title="Selecciona tu género"
+                                       TextColor="Black"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"
+                                       HorizontalOptions="FillAndExpand"/>
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- Acepta términos -->
+                    <HorizontalStackLayout HorizontalOptions="Start" Spacing="10">
+                        <CheckBox IsChecked="{Binding AceptaTerminos}"
+                                      Color="#3B71FF"
+                                      IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Label Text="Acepto los términos y condiciones"
+                                   TextColor="Gray"
+                                   VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Notificaciones Push -->
+                    <HorizontalStackLayout HorizontalOptions="Start" Spacing="10">
+                        <CheckBox IsChecked="{Binding NotificacionesPush}"
+                                      Color="#3B71FF"
+                                      IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Label Text="Recibir notificaciones push"
+                                   TextColor="Gray"
+                                   VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Botón Registrarse -->
+                    <Button Text="Registrarse"
+                                Command="{Binding RegisterCommand}"
                                 FontSize="18"
                                 BackgroundColor="#3B71FF"
                                 TextColor="White"
                                 CornerRadius="12"
                                 HeightRequest="50"
-                                Clicked="OnRegistrarseClicked"/>
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsLoading}" Value="True">
+                                <Setter Property="Text" Value="Registrando..." />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
 
-                        <!-- ¿Ya tienes cuenta? -->
-                        <Grid Margin="60,0,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                    <!-- Divider -->
+                    <BoxView HeightRequest="1"
+                                 BackgroundColor="#E0E0E0"/>
 
-                            <Label Text="¿Ya tienes una cuenta?"
+                    <!-- ¿Tienes cuenta? -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,15,0,30">
+                        <Label Text="¿Tienes cuenta?"
                                    TextColor="Gray"
-                                   VerticalOptions="Center"
-                                   Grid.Column="0" />
+                                   VerticalOptions="Center" />
 
-                            <Button Text="Iniciar sesión"
+                        <Button Text="Iniciar sesión"
+                                    Command="{Binding IrALoginCommand}"
                                     BackgroundColor="Transparent"
                                     TextColor="#3B71FF"
                                     FontAttributes="Bold"
                                     VerticalOptions="Center"
-                                    Grid.Column="1"
-                                    Clicked="IrAInicioSesion"/>
-                        </Grid>
+                                    Padding="0"/>
+                    </HorizontalStackLayout>
 
-                    </VerticalStackLayout>
-                </ScrollView>
+                </VerticalStackLayout>
 
-            </Frame>
+            </ScrollView>
+
         </Grid>
+
     </Grid>
-</ContentPage>
+
+</base:BaseContentPage>

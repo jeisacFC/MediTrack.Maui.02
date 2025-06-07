@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<base:BaseContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:MediTrack.Frontend.ViewModels.PantallasInicio"
+    xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaCarga"
     BackgroundColor="#4276ff"
     NavigationPage.HasNavigationBar="False"
     Title="{Binding Title}">
 
-    <ContentPage.BindingContext>
+    <base:BaseContentPage.BindingContext>
         <vm:CargaViewModel />
-    </ContentPage.BindingContext>
+    </base:BaseContentPage.BindingContext>
 
     <Grid>
         <!-- Logo con fallback si no encuentra la imagen -->
@@ -49,4 +50,4 @@
                Margin="20,0,20,50"
                HorizontalTextAlignment="Center" />
     </Grid>
-</ContentPage>
+</base:BaseContentPage>

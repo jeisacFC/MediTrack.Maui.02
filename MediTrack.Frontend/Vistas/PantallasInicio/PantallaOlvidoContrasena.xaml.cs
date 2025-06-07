@@ -5,7 +5,7 @@ using Microsoft.Maui.Controls;
 
 namespace MediTrack.Frontend.Vistas.PantallasInicio;
 
-public partial class PantallaOlvidoContrasena : ContentPage
+public partial class PantallaOlvidoContrasena : BaseContentPage
 {
     private OlvidoContrasenaViewModel _viewModel;
 
