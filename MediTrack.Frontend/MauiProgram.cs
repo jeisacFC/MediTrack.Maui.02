@@ -61,7 +61,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ScanViewModel>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
-        builder.Services.AddTransient<PerfilViewModel>();
+        builder.Services.AddTransient<PerfilViewModel>(); 
         builder.Services.AddTransient<OlvidoContrasenaViewModel>();
         builder.Services.AddTransient<CodigoVerificacionViewModel>();
         builder.Services.AddTransient<NuevaContrasenaViewModel>();

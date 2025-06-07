@@ -14,6 +14,9 @@ namespace MediTrack.Frontend.ViewModels
     {
         private readonly IApiService _apiService;
 
+        // Variable para evitar múltiples ejecuciones del logout
+        private bool _isLoggingOut = false;
+
         [ObservableProperty]
         private Usuario usuario;
 
@@ -29,10 +32,15 @@ namespace MediTrack.Frontend.ViewModels
         [ObservableProperty]
         private ObservableCollection<Alergias> alergiasSeleccionadas;
 
+        // Cambiar NombreCompleto a una propiedad observable
+        [ObservableProperty]
+        private string nombreCompleto = string.Empty;
+
         public PerfilViewModel(IApiService apiService)
         {
             _apiService = apiService;
             Title = "Perfil";
+            _isLoggingOut = false;
 
             // Inicializar colecciones
             condicionesMedicas = new ObservableCollection<CondicionesMedicas>();
@@ -42,20 +50,25 @@ namespace MediTrack.Frontend.ViewModels
 
             // Inicializar usuario vacío
             usuario = new Usuario();
+            NombreCompleto = string.Empty;
         }
-
-        // Propiedad calculada para el nombre completo
-        public string NombreCompleto => usuario != null
-            ? $"{usuario.nombre} {usuario.apellido1} {usuario.apellido2}".Trim()
-            : string.Empty;
 
         public override async Task InitializeAsync()
         {
+            Debug.WriteLine("=== INICIANDO INITIALIZE ASYNC DEL PERFIL ===");
+
             await ExecuteAsync(async () =>
             {
+                Debug.WriteLine("Cargando datos del usuario...");
                 await CargarDatosUsuarioAsync();
+
+                Debug.WriteLine("Cargando condiciones médicas...");
                 await CargarCondicionesMedicasAsync();
+
+                Debug.WriteLine("Cargando alergias...");
                 await CargarAlergiasAsync();
+
+                Debug.WriteLine("=== INITIALIZE ASYNC COMPLETADO ===");
             });
         }
 
@@ -63,15 +76,22 @@ namespace MediTrack.Frontend.ViewModels
         {
             try
             {
+                Debug.WriteLine("=== INICIANDO CARGA DE DATOS USUARIO ===");
+
                 // Obtener ID del usuario desde el almacenamiento seguro
                 var userIdStr = await SecureStorage.GetAsync("user_id");
+                Debug.WriteLine($"User ID obtenido del storage: {userIdStr}");
+
                 if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
                 {
+                    Debug.WriteLine("ERROR: No se pudo obtener user_id del storage");
                     ErrorMessage = "No se pudo obtener la información del usuario";
                     await ShowAlertAsync("Error", "Sesión expirada. Por favor, inicia sesión nuevamente.");
                     await Shell.Current.GoToAsync("//Login");
                     return;
                 }
+
+                Debug.WriteLine($"Creando request con userId: {userId}");
 
                 // Crear el request para obtener usuario
                 var request = new ReqObtenerUsuario
@@ -79,21 +99,39 @@ namespace MediTrack.Frontend.ViewModels
                     IdUsuario = userId
                 };
 
+                Debug.WriteLine("Llamando al servicio API...");
+
                 // Llamar al servicio API
                 var response = await _apiService.GetUserAsync(request);
 
+                Debug.WriteLine($"Respuesta recibida - resultado: {response?.resultado}");
+
                 if (response != null && response.resultado && response.Usuario != null)
                 {
-                    usuario = response.Usuario;
+                    Debug.WriteLine("=== ACTUALIZANDO DATOS DEL USUARIO ===");
 
-                    // Notificar cambio en nombre completo
+                    // Actualizar el usuario
+                    Usuario = response.Usuario;
+                    Debug.WriteLine($"Usuario asignado: {Usuario.nombre} {Usuario.apellido1}");
+
+                    // Actualizar el nombre completo - USAR LA PROPIEDAD
+                    NombreCompleto = $"{Usuario.nombre} {Usuario.apellido1} {Usuario.apellido2}".Trim();
+                    Debug.WriteLine($"NombreCompleto establecido: '{NombreCompleto}'");
+
+                    Debug.WriteLine($"Email: {Usuario.email}");
+                    Debug.WriteLine($"Fecha nacimiento: {Usuario.fecha_nacimiento}");
+                    Debug.WriteLine($"Género: {Usuario.id_genero}");
+                    Debug.WriteLine($"Notificaciones: {Usuario.notificaciones_push}");
+
+                    // Forzar actualización de la UI
+                    OnPropertyChanged(nameof(Usuario));
                     OnPropertyChanged(nameof(NombreCompleto));
 
-                    Debug.WriteLine($"Usuario cargado exitosamente: {usuario.nombre} {usuario.apellido1}");
+                    Debug.WriteLine("=== DATOS USUARIO CARGADOS EXITOSAMENTE ===");
                 }
                 else
                 {
-                    // Si hay errores específicos, mostrarlos
+                    Debug.WriteLine("ERROR: Respuesta inválida del servidor");
                     var mensajeError = response?.Mensaje ?? "Error desconocido al obtener datos del usuario";
 
                     if (response?.errores != null && response.errores.Any())
@@ -104,19 +142,15 @@ namespace MediTrack.Frontend.ViewModels
 
                     ErrorMessage = mensajeError;
                     await ShowAlertAsync("Error", mensajeError);
-
-                    // Si es un error de autenticación, redirigir al login
-                    if (mensajeError.Contains("autenticado") || mensajeError.Contains("401"))
-                    {
-                        await Shell.Current.GoToAsync("//Login");
-                    }
+                    Debug.WriteLine($"Mensaje de error: {mensajeError}");
                 }
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"EXCEPCIÓN en CargarDatosUsuarioAsync: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                 ErrorMessage = "Error al cargar datos del usuario";
                 await HandleErrorAsync(ex);
-                Debug.WriteLine($"Error en CargarDatosUsuarioAsync: {ex.Message}");
             }
         }
 
@@ -228,10 +262,13 @@ namespace MediTrack.Frontend.ViewModels
             });
         }
 
-        // Comando para cerrar sesión - IMPLEMENTADO
+        // Comando para cerrar sesión - CORREGIDO
         [RelayCommand]
         private async Task CerrarSesion()
         {
+            // Evitar múltiples ejecuciones
+            if (_isLoggingOut) return;
+
             var confirmar = await ShowConfirmAsync(
                 "Cerrar Sesión",
                 "¿Estás seguro que deseas cerrar sesión?",
@@ -240,55 +277,81 @@ namespace MediTrack.Frontend.ViewModels
 
             if (confirmar)
             {
-                await ExecuteAsync(async () =>
+                _isLoggingOut = true;
+
+                try
                 {
+                    // Crear el request para logout
+                    var logoutRequest = new ReqLogout
+                    {
+                        InvalidarTodos = false // Por defecto, solo invalida la sesión actual
+                    };
+
+                    // Llamar al servicio de logout
+                    var response = await _apiService.LogoutAsync(logoutRequest);
+
+                    if (response != null && response.resultado && response.LogoutExitoso)
+                    {
+                        // Logout exitoso
+                        Debug.WriteLine($"Logout exitoso. Tokens invalidados: {response.TokensInvalidados}");
+                    }
+                    else
+                    {
+                        // Error en logout, pero aún así limpiar datos locales
+                        var mensajeError = response?.Mensaje ?? "Error al cerrar sesión en el servidor";
+                        Debug.WriteLine($"Error en logout del servidor: {mensajeError}");
+                    }
+
+                    // Limpiar datos locales independientemente del resultado del servidor
+                    await LimpiarSesionAsync();
+
+                    // Mostrar mensaje de éxito solo una vez
+                    await ShowAlertAsync("Éxito", "Sesión cerrada correctamente");
+
+                    // Navegar a la pantalla de login - DIFERENTES OPCIONES
                     try
                     {
-                        // Crear el request para logout
-                        var logoutRequest = new ReqLogout
-                        {
-                            InvalidarTodos = false // Por defecto, solo invalida la sesión actual
-                        };
-
-                        // Llamar al servicio de logout
-                        var response = await _apiService.LogoutAsync(logoutRequest);
-
-                        if (response != null && response.resultado && response.LogoutExitoso)
-                        {
-                            // Logout exitoso
-                            await ShowAlertAsync("Éxito", response.Mensaje ?? "Sesión cerrada correctamente");
-
-                            Debug.WriteLine($"Logout exitoso. Tokens invalidados: {response.TokensInvalidados}");
-                        }
-                        else
-                        {
-                            // Error en logout, pero aún así limpiar datos locales
-                            var mensajeError = response?.Mensaje ?? "Error al cerrar sesión en el servidor";
-                            Debug.WriteLine($"Error en logout del servidor: {mensajeError}");
-
-                            await ShowAlertAsync("Advertencia",
-                                "Hubo un problema al cerrar sesión en el servidor, pero se limpiaron los datos locales.");
-                        }
-
-                        // Limpiar datos locales independientemente del resultado del servidor
-                        await LimpiarSesionAsync();
-
-                        // Navegar a la pantalla de login
-                        await Shell.Current.GoToAsync("//Login");
+                        // Opción 1: Usar ruta absoluta
+                        await Shell.Current.GoToAsync("///Login");
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        Debug.WriteLine($"Error en CerrarSesion: {ex.Message}");
-
-                        // En caso de error, limpiar datos locales de todas formas
-                        await LimpiarSesionAsync();
-
-                        await ShowAlertAsync("Advertencia",
-                            "Hubo un problema al cerrar sesión, pero se limpiaron los datos locales.");
-
-                        await Shell.Current.GoToAsync("//Login");
+                        try
+                        {
+                            // Opción 2: Usar ruta relativa
+                            await Shell.Current.GoToAsync("Login");
+                        }
+                        catch
+                        {
+                            // Opción 3: Limpiar la pila de navegación y ir al login
+                            Application.Current.MainPage = new AppShell();
+                        }
                     }
-                });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error en CerrarSesion: {ex.Message}");
+
+                    // En caso de error, limpiar datos locales de todas formas
+                    await LimpiarSesionAsync();
+
+                    await ShowAlertAsync("Advertencia",
+                        "Hubo un problema al cerrar sesión, pero se limpiaron los datos locales.");
+
+                    // Intentar navegar al login
+                    try
+                    {
+                        await Shell.Current.GoToAsync("Login");
+                    }
+                    catch
+                    {
+                        Application.Current.MainPage = new AppShell();
+                    }
+                }
+                finally
+                {
+                    _isLoggingOut = false;
+                }
             }
         }
 
@@ -313,14 +376,12 @@ namespace MediTrack.Frontend.ViewModels
             try
             {
                 // Limpiar datos del ViewModel
-                usuario = new Usuario();
+                Usuario = new Usuario();
+                NombreCompleto = string.Empty; // Limpiar también el nombre completo
                 condicionesMedicas.Clear();
                 alergias.Clear();
                 condicionesMedicasSeleccionadas.Clear();
                 alergiasSeleccionadas.Clear();
-
-                // Notificar cambio en nombre completo
-                OnPropertyChanged(nameof(NombreCompleto));
 
                 // Limpiar datos del almacenamiento seguro
                 SecureStorage.Remove("user_id");

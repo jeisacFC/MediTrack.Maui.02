@@ -456,16 +456,6 @@ public class ApiService : IApiService
         try
         {
 
-            if (!await EnsureTokenAsync())
-            {
-                return new ResObtenerUsuario
-                {
-                    resultado = false,
-                    Mensaje = "Usuario no autenticado. Inicia sesión nuevamente.",
-                    errores = new List<Error> { new Error { Message = "Token no disponible" } }
-                };
-            }
-
             Debug.WriteLine("=== DATOS DE OBTENER USUARIO ENVIADOS (HTTPS) ===");
             Debug.WriteLine($"IdUsuario: '{request.IdUsuario}'");
             Debug.WriteLine($"Token configurado: {_httpClient.DefaultRequestHeaders.Authorization != null}");
