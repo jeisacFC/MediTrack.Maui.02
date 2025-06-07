@@ -2,6 +2,7 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:MediTrack.Frontend.ViewModels.PantallasInicio"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaOlvidoContrasena"
     NavigationPage.HasNavigationBar="False">
 
@@ -41,10 +42,17 @@
                    TextColor="#3B71FF"
                    HorizontalOptions="Center"/>
 
-                        <Label Text="Ingresa tu correo y te enviaremos un enlace para restablecer la contraseña."
+                        <Label Text="Ingresa tu correo y te enviaremos un código para restablecer la contraseña."
                    FontSize="14"
                    TextColor="Gray"
                    HorizontalTextAlignment="Center"/>
+
+                        <!-- Mensaje de estado -->
+                        <Label Text="{Binding MensajeEstado}"
+                               TextColor="#3B71FF"
+                               FontSize="14"
+                               HorizontalOptions="Center"
+                               IsVisible="{Binding MensajeEstado, Converter={StaticResource StringNotEmptyConverter}}"/>
 
                         <!-- Entrada de correo con icono -->
                         <Frame CornerRadius="12"
@@ -61,23 +69,33 @@
                                     </Image.Source>
                                 </Image>
                                 <Entry x:Name="entryCorreo"
-                       Placeholder="correo@ejemplo.com"
-                       Keyboard="Email"
-                       PlaceholderColor="#A0A0A0"
-                       TextColor="Black"
-                       HeightRequest="45"/>
+                                       Text="{Binding Email}"
+                                       Placeholder="correo@ejemplo.com"
+                                       Keyboard="Email"
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       HeightRequest="45"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
                             </HorizontalStackLayout>
                         </Frame>
 
                         <!-- Botón principal en azul -->
-                        <Button Text="Enviar enlace"
-                    BackgroundColor="#3B71FF"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    FontSize="18"
-                    CornerRadius="12"
-                    HeightRequest="50"
-                    Clicked="EnviarEnlace"/>
+                        <Button Text="Enviar código"
+                                Command="{Binding EnviarCodigoCommand}"
+                                BackgroundColor="#3B71FF"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                FontSize="18"
+                                CornerRadius="12"
+                                HeightRequest="50"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                Clicked="EnviarEnlace">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="Text" Value="Enviando..." />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
 
                         <!-- Volver a inicio de sesión -->
                         <Grid Margin="0,0,0,10">
@@ -92,12 +110,13 @@
                      Grid.Column="0"/>
 
                             <Button Text="Iniciar sesión"
-                      BackgroundColor="Transparent"
-                      TextColor="#3B71FF"
-                      FontAttributes="Bold"
-                      VerticalOptions="Center"
-                      Grid.Column="1"
-                      Clicked="VolverInicioSesion"/>
+                                    Command="{Binding VolverInicioSesionCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#3B71FF"
+                                    FontAttributes="Bold"
+                                    VerticalOptions="Center"
+                                    Grid.Column="1"
+                                    Clicked="VolverInicioSesion"/>
                         </Grid>
 
                     </VerticalStackLayout>

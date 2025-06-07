@@ -6,7 +6,8 @@ using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
 using MediTrack.Frontend.ViewModels.PantallasInicio;
 using MediTrack.Frontend.Vistas.PantallasInicio;
-using Microsoft.Extensions.Http; // Necesario para AddHttpClient
+using MediTrack.Frontend.Popups;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
 using System.Globalization;
@@ -19,16 +20,6 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-        try
-        {
-            //NUEVA LICENCIA ESPECÍFICA PARA MAUI 24.x
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzg5NTQ4MEAzMjM0MmUzMDJlMzBVbStPWjNqWUtHSTdwM2grYTB3Z2s5ZUtpNjhoZ0V5SlEzZFBvVnRuT0U4PQ==");
-            System.Diagnostics.Debug.WriteLine("Nueva licencia 24.x registrada");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error registrando licencia: {ex.Message}");
-        }
 
         //CONFIGURAR CULTURA ESPAÑOLA AL INICIO
         ConfigurarCulturaEspañola();
@@ -50,10 +41,8 @@ public static class MauiProgram
 #endif
 
         // CONFIGURACIÓN DE HTTPCLIENT Y SERVICIOS
-        // 1. Registra el helper para la conexión HTTPS en desarrollo.
         builder.Services.AddSingleton<DevHttpsConnectionHelper>();
 
-        // 2. Registra el HttpClient usando el helper.
         builder.Services.AddHttpClient("ApiClient", client =>
         {
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -61,39 +50,58 @@ public static class MauiProgram
         })
         .ConfigurePrimaryHttpMessageHandler(sp =>
         {
-            // Usa el helper para obtener el manejador que confía en el certificado de desarrollo.
             return sp.GetRequiredService<DevHttpsConnectionHelper>().GetPlatformSpecificHttpMessageHandler();
         });
 
-        // 3. Registra el ApiService y su interfaz.
         builder.Services.AddSingleton<IApiService, ApiService>();
 
-        // 4. Registra los ViewModels y Páginas.
+        // TODOS LOS VIEWMODELS Y PÁGINAS NECESARIOS
         builder.Services.AddTransient<ScanViewModel>();
         builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<PantallaInicioSesion>();
+        //Recuperar contraseña
+        builder.Services.AddTransient<OlvidoContrasenaViewModel>();
+        builder.Services.AddTransient<PantallaOlvidoContrasena>();
+        builder.Services.AddTransient<CodigoVerificacionViewModel>();
+        builder.Services.AddTransient<ModalCodigoVerificacion>();
+        builder.Services.AddTransient<NuevaContrasenaViewModel>();
+        builder.Services.AddTransient<ModalNuevaContrasena>();
 
-        // SOLO UN RETURN
-        return builder.Build();
+        var app = builder.Build();
+
+        // OPTIMIZACIÓN: Solo las operaciones más pesadas en background
+        Task.Run(() =>
+        {
+            try
+            {
+                // Syncfusion en background con delay mínimo
+                Thread.Sleep(100); // 100ms delay para que la UI aparezca
+                Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzg5NTQ4MEAzMjM0MmUzMDJlMzBVbStPWjNqWUtHSTdwM2grYTB3Z2s5ZUtpNjhoZ0V5SlEzZFBvVnRuT0U4PQ==");
+                System.Diagnostics.Debug.WriteLine("Syncfusion configurado en background");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error Syncfusion background: {ex.Message}");
+            }
+        });
+
+        // Cultura inmediata pero optimizada
+        ConfigurarCulturaEspañola();
+
+        return app;
     }
 
     private static void ConfigurarCulturaEspañola()
     {
         try
         {
-            // Configurar cultura española para toda la aplicación
             var cultura = new CultureInfo("es-ES");
-
-            // Configurar para el hilo actual
             CultureInfo.CurrentCulture = cultura;
             CultureInfo.CurrentUICulture = cultura;
-
-            // Configurar por defecto para nuevos hilos
             CultureInfo.DefaultThreadCurrentCulture = cultura;
             CultureInfo.DefaultThreadCurrentUICulture = cultura;
-
-            System.Diagnostics.Debug.WriteLine("Cultura española configurada correctamente");
+            System.Diagnostics.Debug.WriteLine("Cultura española configurada");
         }
         catch (Exception ex)
         {

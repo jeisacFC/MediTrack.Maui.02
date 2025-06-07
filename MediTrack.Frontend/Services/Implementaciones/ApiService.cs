@@ -22,6 +22,8 @@ public class ApiService : IApiService
             ? "https://10.0.2.2:44382"  // Para Android Emulator con HTTPS
             : "https://localhost:44382"; // Para otras plataformas con HTTPS
 
+        // Determina la URL base correcta dependiendo de la plataforma
+        string baseUrl = DeviceInfo.Platform == DevicePlatform.Android ? "http://192.168.0.2:44382" : "https://localhost:44382";
         _httpClient.BaseAddress = new Uri(baseUrl);
 
         // Configuración adicional para HTTPS en desarrollo (opcional)
