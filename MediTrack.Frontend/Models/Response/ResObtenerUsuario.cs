@@ -9,6 +9,6 @@ namespace MediTrack.Frontend.Models.Response
 {
     public class ResObtenerUsuario : ResBase
     {
-        public Usuario Usuario { get; set; }
+        public Usuarios Usuario { get; set; }
     }
 }

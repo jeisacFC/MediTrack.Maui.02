@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Model
 {
-    public class Error
+    public class GeneroEnum
     {
-        public int ErrorCode { get; set; }
-        public string Message { get; set; }
+        public int id_genero { get; set; }
+        public string descripcion { get; set; }
     }
 }

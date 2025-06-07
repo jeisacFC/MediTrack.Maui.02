@@ -78,9 +78,59 @@
 	  
 	  <Compile Include="Models\Model\CondicionesMedicas.cs" />
 	  
-	  <Compile Include="Models\Model\Error.cs" />
+	  <Compile Include="Models\Model\Direcciones.cs" />
 	  
-	  <Compile Include="Models\Model\Usuario.cs" />
+	  <Compile Include="Models\Model\EfectosSecundarios.cs" />
+	  
+	  <Compile Include="Models\Model\Errores.cs" />
+	  
+	  <Compile Include="Models\Model\EscaneosMedicamentos.cs" />
+	  
+	  <Compile Include="Models\Model\EstadoEnum.cs" />
+	  
+	  <Compile Include="Models\Model\EstadoSesionEnum.cs" />
+	  
+	  <Compile Include="Models\Model\EventosMedicos.cs" />
+	  
+	  <Compile Include="Models\Model\Fabricantes.cs" />
+	  
+	  <Compile Include="Models\Model\FechasRecordatorios.cs" />
+	  
+	  <Compile Include="Models\Model\FrecuenciaEnum.cs" />
+	  
+	  <Compile Include="Models\Model\GeneroEnum.cs" />
+	  
+	  <Compile Include="Models\Model\HistorialRecordatorios.cs" />
+	  
+	  <Compile Include="Models\Model\InteraccionesMedicamentos.cs" />
+	  
+	  <Compile Include="Models\Model\MedicamentoEfectos.cs" />
+	  
+	  <Compile Include="Models\Model\MedicamentoExterno.cs" />
+	  
+	  <Compile Include="Models\Model\Medicamentos.cs" />
+	  
+	  <Compile Include="Models\Model\MetodoEscaneoEnum.cs" />
+	  
+	  <Compile Include="Models\Model\ProgramacionRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Model\RecomendacionesIA.cs" />
+	  
+	  <Compile Include="Models\Model\RecordatoriosMedicacion.cs" />
+	  
+	  <Compile Include="Models\Model\Sesiones.cs" />
+	  
+	  <Compile Include="Models\Model\SeveridadEnum.cs" />
+	  
+	  <Compile Include="Models\Model\UsuarioAlergias.cs" />
+	  
+	  <Compile Include="Models\Model\UsuarioMedicamentos.cs" />
+	  
+	  <Compile Include="Models\Model\Usuarios.cs" />
+	  
+	  <Compile Include="Models\Model\UsuariosCondiciones.cs" />
+	  
+	  <Compile Include="Models\Model\UsuarioSintomaReportado.cs" />
 	  
 	  <Compile Include="Models\ReqBase.cs" />
 	  
@@ -140,6 +190,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\ModalCodigoVerificacion.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\ModalGestionarSintomas.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\ModalNuevaContrasena.xaml">

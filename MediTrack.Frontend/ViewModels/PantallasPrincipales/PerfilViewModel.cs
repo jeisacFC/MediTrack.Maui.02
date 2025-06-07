@@ -13,7 +13,7 @@ namespace MediTrack.Frontend.ViewModels
         private readonly IApiService _apiService;
 
         [ObservableProperty]
-        private Usuario usuario;
+        private Usuarios usuario;
 
         [ObservableProperty]
         private ObservableCollection<CondicionesMedicas> condicionesMedicas;
@@ -39,7 +39,7 @@ namespace MediTrack.Frontend.ViewModels
             alergiasSeleccionadas = new ObservableCollection<Alergias>();
 
             // Inicializar usuario vacío
-            usuario = new Usuario();
+            usuario = new Usuarios();
         }
 
         // Propiedad calculada para el nombre completo
@@ -65,7 +65,7 @@ namespace MediTrack.Frontend.ViewModels
                 // Usuario = await _apiService.ObtenerUsuarioActualAsync();
 
                 // Datos de ejemplo para pruebas - remover cuando implementes el servicio
-                usuario = new Usuario
+                usuario = new Usuarios
                 {
                     id_usuario = 1,
                     nombre = "Jeremy",
@@ -241,7 +241,7 @@ namespace MediTrack.Frontend.ViewModels
         private async Task LimpiarSesionAsync()
         {
             // Limpiar datos locales
-            usuario = new Usuario();
+            usuario = new Usuarios();
             condicionesMedicas.Clear();
             alergias.Clear();
             condicionesMedicasSeleccionadas.Clear();
