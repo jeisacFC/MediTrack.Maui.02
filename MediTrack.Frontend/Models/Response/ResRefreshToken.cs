@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediTrack.Frontend.ViewModels.PantallasInicio
+namespace MediTrack.Frontend.Models.Response
 {
-    internal class InicioSesionViewModel
+    internal class ResRefreshToken
     {
     }
 }

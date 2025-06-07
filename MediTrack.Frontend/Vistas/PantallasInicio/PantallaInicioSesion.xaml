@@ -2,6 +2,7 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:MediTrack.Frontend.ViewModels.PantallasInicio"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaInicioSesion"
     NavigationPage.HasNavigationBar="False">
 
@@ -48,6 +49,13 @@
                    TextColor="#3B71FF"
                    HorizontalOptions="Center"/>
 
+                        <!-- Mensaje de estado -->
+                        <Label Text="{Binding MensajeEstado}"
+                               TextColor="#3B71FF"
+                               FontSize="14"
+                               HorizontalOptions="Center"
+                               IsVisible="{Binding MensajeEstado, Converter={StaticResource StringNotEmptyConverter}}"/>
+
                         <!-- Correo electrónico -->
                         <Frame CornerRadius="12"
                    BackgroundColor="#F8F8F8"
@@ -62,11 +70,14 @@
                                      Size="20"/>
                                     </Image.Source>
                                 </Image>
-                                <Entry Placeholder="Correo electrónico"
-                       Keyboard="Email"
-                       PlaceholderColor="#A0A0A0"
-                       TextColor="Black"
-                       Margin="10,0"/>
+                                <Entry x:Name="EmailEntry"
+                                       Text="{Binding Email}"
+                                       Placeholder="Correo electrónico"
+                                       Keyboard="Email"
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"/>
                             </HorizontalStackLayout>
                         </Frame>
 
@@ -84,30 +95,52 @@
                                      Size="20"/>
                                     </Image.Source>
                                 </Image>
-                                <Entry Placeholder="Contraseña"
-                       IsPassword="True"
-                       PlaceholderColor="#A0A0A0"
-                       TextColor="Black"
-                       Margin="10,0"/>
+                                <Entry x:Name="ContraseñaEntry"
+                                       Text="{Binding Contraseña}"
+                                       Placeholder="Contraseña"
+                                       IsPassword="True"
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"/>
                             </HorizontalStackLayout>
                         </Frame>
 
+                        <!-- Recordar sesión -->
+                        <HorizontalStackLayout HorizontalOptions="Start" Spacing="10">
+                            <CheckBox IsChecked="{Binding RecordarSesion}"
+                                      Color="#3B71FF"
+                                      IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
+                            <Label Text="Recordar sesión"
+                                   TextColor="Gray"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+
                         <!-- Botón Ingresar -->
                         <Button Text="Ingresar"
-                    FontSize="18"
-                    BackgroundColor="#3B71FF"
-                    TextColor="White"
-                    CornerRadius="12"
-                    HeightRequest="50"
-                    Clicked="IniciarSesion"/>
+                                Command="{Binding LoginCommand}"
+                                FontSize="18"
+                                BackgroundColor="#3B71FF"
+                                TextColor="White"
+                                CornerRadius="12"
+                                HeightRequest="50"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                Clicked="IniciarSesion">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="Text" Value="Cargando..." />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
 
                         <!-- ¿Olvidaste tu contraseña? -->
                         <Label Text="¿Olvidaste tu contraseña?"
-                   TextColor="#3B71FF"
-                   FontAttributes="Italic"
-                   HorizontalOptions="Center">
+                               TextColor="#3B71FF"
+                               FontAttributes="Italic"
+                               HorizontalOptions="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="IrAOlvidoContrasena" />
+                                <TapGestureRecognizer Command="{Binding IrAOlvidoContraseñaCommand}" 
+                                                      Tapped="IrAOlvidoContrasena" />
                             </Label.GestureRecognizers>
                         </Label>
 
@@ -130,12 +163,13 @@
 
                             <!-- Botón a la derecha -->
                             <Button Text="Regístrate"
-                      BackgroundColor="Transparent"
-                      TextColor="#3B71FF"
-                      FontAttributes="Bold"
-                      VerticalOptions="Center"
-                      Grid.Column="1"
-                      Clicked="IrARegistro"/>
+                                    Command="{Binding IrARegistroCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#3B71FF"
+                                    FontAttributes="Bold"
+                                    VerticalOptions="Center"
+                                    Grid.Column="1"
+                                    Clicked="IrARegistro"/>
                         </Grid>
 
                     </VerticalStackLayout>
