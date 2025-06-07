@@ -1,19 +1,17 @@
 ﻿using CommunityToolkit.Maui;
-using MediTrack.Frontend.Services;
+using MediTrack.Frontend.Popups;
 using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Services.Interfaces;
-using MediTrack.Frontend.ViewModels.PantallasPrincipales;
-using MediTrack.Frontend.Vistas.PantallasPrincipales;
+using MediTrack.Frontend.ViewModels;
 using MediTrack.Frontend.ViewModels.PantallasInicio;
+using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 using MediTrack.Frontend.Vistas.PantallasInicio;
-using MediTrack.Frontend.Popups;
-using Microsoft.Extensions.Http;
+using MediTrack.Frontend.Vistas.PantallasPrincipales;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
 using System.Globalization;
 using System.Net.Http.Headers;
 using ZXing.Net.Maui.Controls;
-using MediTrack.Frontend.ViewModels;
 
 namespace MediTrack.Frontend;
 
@@ -21,7 +19,6 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-
         //CONFIGURAR CULTURA ESPAÑOLA AL INICIO
         ConfigurarCulturaEspañola();
 
@@ -37,26 +34,25 @@ public static class MauiProgram
                 fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
             });
 
-#if DEBUG
         builder.Logging.AddDebug();
-#endif
 
+        // Registrar el AuthHandler
+        builder.Services.AddTransient<AuthHandler>();
+
+        // Configurar HttpClient con el AuthHandler
         builder.Services.AddHttpClient("ApiClient", client =>
         {
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.Timeout = TimeSpan.FromSeconds(30);
         })
-.ConfigurePrimaryHttpMessageHandler(() =>
-{
-#if DEBUG
-    return new HttpClientHandler()
-    {
-        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-    };
-#else
-    return new HttpClientHandler();
-#endif
-});
+        .ConfigurePrimaryHttpMessageHandler(() =>
+        {
+            return new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+            };
+        })
+        .AddHttpMessageHandler<AuthHandler>(); // AGREGAR EL HANDLER DE AUTENTICACIÓN
 
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
@@ -77,19 +73,17 @@ public static class MauiProgram
         builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<PantallaOlvidoContrasena>();
 
-        //mODALES
+        //MODALES
         builder.Services.AddTransient<ModalCodigoVerificacion>();
         builder.Services.AddTransient<ModalNuevaContrasena>();
 
         var app = builder.Build();
 
-        // OPTIMIZACIÓN: Solo las operaciones más pesadas en background
         Task.Run(() =>
         {
             try
             {
-                // Syncfusion en background con delay mínimo
-                Thread.Sleep(100); // 100ms delay para que la UI aparezca
+                Thread.Sleep(100);
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzg5NTQ4MEAzMjM0MmUzMDJlMzBVbStPWjNqWUtHSTdwM2grYTB3Z2s5ZUtpNjhoZ0V5SlEzZFBvVnRuT0U4PQ==");
                 System.Diagnostics.Debug.WriteLine("Syncfusion configurado en background");
             }
@@ -99,7 +93,6 @@ public static class MauiProgram
             }
         });
 
-        // Cultura inmediata pero optimizada
         ConfigurarCulturaEspañola();
 
         return app;

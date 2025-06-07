@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediTrack.Frontend.Models.Model;
+using MediTrack.Frontend.Models.Request;
 using MediTrack.Frontend.Services;
 using MediTrack.Frontend.Services.Interfaces;
 using MediTrack.Frontend.ViewModels.Base;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MediTrack.Frontend.ViewModels
 {
@@ -13,7 +15,7 @@ namespace MediTrack.Frontend.ViewModels
         private readonly IApiService _apiService;
 
         [ObservableProperty]
-        private Usuarios usuario;
+        private Usuario usuario;
 
         [ObservableProperty]
         private ObservableCollection<CondicionesMedicas> condicionesMedicas;
@@ -39,7 +41,7 @@ namespace MediTrack.Frontend.ViewModels
             alergiasSeleccionadas = new ObservableCollection<Alergias>();
 
             // Inicializar usuario vacío
-            usuario = new Usuarios();
+            usuario = new Usuario();
         }
 
         // Propiedad calculada para el nombre completo
@@ -61,33 +63,60 @@ namespace MediTrack.Frontend.ViewModels
         {
             try
             {
-                // TODO: Implementar cuando tengas el método en IApiService
-                // Usuario = await _apiService.ObtenerUsuarioActualAsync();
-
-                // Datos de ejemplo para pruebas - remover cuando implementes el servicio
-                usuario = new Usuarios
+                // Obtener ID del usuario desde el almacenamiento seguro
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
                 {
-                    id_usuario = 1,
-                    nombre = "Jeremy",
-                    apellido1 = "Duran",
-                    apellido2 = "Vargas",
-                    email = "jeremy@meditrack.com",
-                    fecha_nacimiento = new DateTime(2003, 11, 2),
-                    id_genero = "Masculino",
-                    fecha_registro = DateTime.Now.AddMonths(-6),
-                    ultimo_acceso = DateTime.Now.AddHours(-2),
-                    notificaciones_push = true,
-                    cuenta_bloqueada = false,
-                    intentos_fallidos = 0
+                    ErrorMessage = "No se pudo obtener la información del usuario";
+                    await ShowAlertAsync("Error", "Sesión expirada. Por favor, inicia sesión nuevamente.");
+                    await Shell.Current.GoToAsync("//Login");
+                    return;
+                }
+
+                // Crear el request para obtener usuario
+                var request = new ReqObtenerUsuario
+                {
+                    IdUsuario = userId
                 };
 
-                // Notificar cambio en nombre completo
-                OnPropertyChanged(nameof(NombreCompleto));
+                // Llamar al servicio API
+                var response = await _apiService.GetUserAsync(request);
+
+                if (response != null && response.resultado && response.Usuario != null)
+                {
+                    usuario = response.Usuario;
+
+                    // Notificar cambio en nombre completo
+                    OnPropertyChanged(nameof(NombreCompleto));
+
+                    Debug.WriteLine($"Usuario cargado exitosamente: {usuario.nombre} {usuario.apellido1}");
+                }
+                else
+                {
+                    // Si hay errores específicos, mostrarlos
+                    var mensajeError = response?.Mensaje ?? "Error desconocido al obtener datos del usuario";
+
+                    if (response?.errores != null && response.errores.Any())
+                    {
+                        var erroresDetalle = string.Join(", ", response.errores.Select(e => e.Message));
+                        mensajeError += $". Detalles: {erroresDetalle}";
+                    }
+
+                    ErrorMessage = mensajeError;
+                    await ShowAlertAsync("Error", mensajeError);
+
+                    // Si es un error de autenticación, redirigir al login
+                    if (mensajeError.Contains("autenticado") || mensajeError.Contains("401"))
+                    {
+                        await Shell.Current.GoToAsync("//Login");
+                    }
+                }
             }
             catch (Exception ex)
             {
                 ErrorMessage = "Error al cargar datos del usuario";
                 await HandleErrorAsync(ex);
+                Debug.WriteLine($"Error en CargarDatosUsuarioAsync: {ex.Message}");
             }
         }
 
@@ -199,7 +228,7 @@ namespace MediTrack.Frontend.ViewModels
             });
         }
 
-        // Comando para cerrar sesión
+        // Comando para cerrar sesión - IMPLEMENTADO
         [RelayCommand]
         private async Task CerrarSesion()
         {
@@ -213,11 +242,52 @@ namespace MediTrack.Frontend.ViewModels
             {
                 await ExecuteAsync(async () =>
                 {
-                    // Limpiar datos de sesión
-                    await LimpiarSesionAsync();
+                    try
+                    {
+                        // Crear el request para logout
+                        var logoutRequest = new ReqLogout
+                        {
+                            InvalidarTodos = false // Por defecto, solo invalida la sesión actual
+                        };
 
-                    // Navegar a la pantalla de login
-                    await Shell.Current.GoToAsync("//Login");
+                        // Llamar al servicio de logout
+                        var response = await _apiService.LogoutAsync(logoutRequest);
+
+                        if (response != null && response.resultado && response.LogoutExitoso)
+                        {
+                            // Logout exitoso
+                            await ShowAlertAsync("Éxito", response.Mensaje ?? "Sesión cerrada correctamente");
+
+                            Debug.WriteLine($"Logout exitoso. Tokens invalidados: {response.TokensInvalidados}");
+                        }
+                        else
+                        {
+                            // Error en logout, pero aún así limpiar datos locales
+                            var mensajeError = response?.Mensaje ?? "Error al cerrar sesión en el servidor";
+                            Debug.WriteLine($"Error en logout del servidor: {mensajeError}");
+
+                            await ShowAlertAsync("Advertencia",
+                                "Hubo un problema al cerrar sesión en el servidor, pero se limpiaron los datos locales.");
+                        }
+
+                        // Limpiar datos locales independientemente del resultado del servidor
+                        await LimpiarSesionAsync();
+
+                        // Navegar a la pantalla de login
+                        await Shell.Current.GoToAsync("//Login");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error en CerrarSesion: {ex.Message}");
+
+                        // En caso de error, limpiar datos locales de todas formas
+                        await LimpiarSesionAsync();
+
+                        await ShowAlertAsync("Advertencia",
+                            "Hubo un problema al cerrar sesión, pero se limpiaron los datos locales.");
+
+                        await Shell.Current.GoToAsync("//Login");
+                    }
                 });
             }
         }
@@ -240,17 +310,34 @@ namespace MediTrack.Frontend.ViewModels
 
         private async Task LimpiarSesionAsync()
         {
-            // Limpiar datos locales
-            usuario = new Usuarios();
-            condicionesMedicas.Clear();
-            alergias.Clear();
-            condicionesMedicasSeleccionadas.Clear();
-            alergiasSeleccionadas.Clear();
+            try
+            {
+                // Limpiar datos del ViewModel
+                usuario = new Usuario();
+                condicionesMedicas.Clear();
+                alergias.Clear();
+                condicionesMedicasSeleccionadas.Clear();
+                alergiasSeleccionadas.Clear();
 
-            // TODO: Limpiar tokens de autenticación, preferencias, etc.
-            // await SecureStorage.Default.RemoveAsync("auth_token");
+                // Notificar cambio en nombre completo
+                OnPropertyChanged(nameof(NombreCompleto));
 
-            await Task.CompletedTask;
+                // Limpiar datos del almacenamiento seguro
+                SecureStorage.Remove("user_id");
+                SecureStorage.Remove("jwt_token");
+                SecureStorage.Remove("refresh_token");
+                SecureStorage.Remove("user_email");
+                SecureStorage.Remove("user_name");
+
+                Debug.WriteLine("Datos de sesión limpiados correctamente");
+
+                await Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error al limpiar sesión: {ex.Message}");
+                // No relanzar la excepción para no interrumpir el flujo de logout
+            }
         }
 
         // Método para actualizar el perfil
@@ -263,6 +350,18 @@ namespace MediTrack.Frontend.ViewModels
                 // await _apiService.ActualizarPerfilAsync(Usuario);
 
                 await ShowAlertAsync("Éxito", "Perfil actualizado correctamente");
+            });
+        }
+
+        // Comando para refrescar datos del perfil
+        [RelayCommand]
+        private async Task RefrescarPerfil()
+        {
+            await ExecuteAsync(async () =>
+            {
+                await CargarDatosUsuarioAsync();
+                await CargarCondicionesMedicasAsync();
+                await CargarAlergiasAsync();
             });
         }
     }

@@ -88,6 +88,8 @@
 	  
 	  <Compile Include="Models\Request\ReqLogin.cs" />
 	  
+	  <Compile Include="Models\Request\ReqLogout.cs" />
+	  
 	  <Compile Include="Models\Request\ReqObtenerUsuario.cs" />
 	  
 	  <Compile Include="Models\Request\ReqRefreshToken.cs" />
@@ -100,11 +102,15 @@
 	  
 	  <Compile Include="Models\Response\ResLogin.cs" />
 	  
+	  <Compile Include="Models\Response\ResLogout.cs" />
+	  
 	  <Compile Include="Models\Response\ResObtenerUsuario.cs" />
 	  
 	  <Compile Include="Models\Response\ResRefreshToken.cs" />
 	  
 	  <Compile Include="Models\Response\ResRegister.cs" />
+	  
+	  <Compile Include="Services\AuthHandler.cs" />
 	  
 	  <Compile Include="Services\DevHttpsConnectionHelper.cs" />
 	  

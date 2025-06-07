@@ -26,6 +26,7 @@ public class ApiService : IApiService
 
         _httpClient.BaseAddress = new Uri(baseUrl);
 
+        _ = Task.Run(async () => await ConfigurarTokenAsync());
     }
 
     #region MEDICAMENTOS
@@ -167,6 +168,41 @@ public class ApiService : IApiService
                     else if (backendResponse.TryGetProperty("RefreshToken", out var refreshTokenMayus))
                         resLogin.RefreshToken = refreshTokenMayus.GetString();
 
+                    if (!string.IsNullOrEmpty(resLogin.Token))
+                    {
+                        // Guardar el access token
+                        await SecureStorage.SetAsync("jwt_token", resLogin.Token);
+
+                        // Guardar el refresh token si existe
+                        if (!string.IsNullOrEmpty(resLogin.RefreshToken))
+                        {
+                            await SecureStorage.SetAsync("refresh_token", resLogin.RefreshToken);
+                        }
+
+                        // Guardar datos del usuario para el logout
+                        if (resLogin.IdUsuario > 0)
+                        {
+                            await SecureStorage.SetAsync("user_id", resLogin.IdUsuario.ToString());
+                        }
+
+                        if (!string.IsNullOrEmpty(resLogin.Email))
+                        {
+                            await SecureStorage.SetAsync("user_email", resLogin.Email);
+                        }
+
+                        if (!string.IsNullOrEmpty(resLogin.Nombre))
+                        {
+                            await SecureStorage.SetAsync("user_name", resLogin.Nombre);
+                        }
+
+                        Debug.WriteLine("=== DATOS DE SESIÓN GUARDADOS ===");
+                        Debug.WriteLine($"Access Token: {resLogin.Token}");
+                        Debug.WriteLine($"Refresh Token: {resLogin.RefreshToken}");
+                        Debug.WriteLine($"User ID: {resLogin.IdUsuario}");
+                        Debug.WriteLine($"Email: {resLogin.Email}");
+                        Debug.WriteLine("=================================");
+                    }
+
                     Debug.WriteLine($"Resultado final mapeado - resultado: {resLogin.resultado}, mensaje: {resLogin.Mensaje}");
                     return resLogin;
                 }
@@ -235,7 +271,6 @@ public class ApiService : IApiService
             };
         }
     }
-
     public async Task<ResRegister> RegisterAsync(ReqRegister request)
     {
         var endpoint = "api/usuarios/registrar";
@@ -420,8 +455,20 @@ public class ApiService : IApiService
 
         try
         {
+
+            if (!await EnsureTokenAsync())
+            {
+                return new ResObtenerUsuario
+                {
+                    resultado = false,
+                    Mensaje = "Usuario no autenticado. Inicia sesión nuevamente.",
+                    errores = new List<Error> { new Error { Message = "Token no disponible" } }
+                };
+            }
+
             Debug.WriteLine("=== DATOS DE OBTENER USUARIO ENVIADOS (HTTPS) ===");
             Debug.WriteLine($"IdUsuario: '{request.IdUsuario}'");
+            Debug.WriteLine($"Token configurado: {_httpClient.DefaultRequestHeaders.Authorization != null}");
             Debug.WriteLine("=================================================");
 
             Debug.WriteLine($"Llamando a GET (HTTPS): {_httpClient.BaseAddress}{endpoint}");
@@ -646,6 +693,261 @@ public class ApiService : IApiService
             }
             };
         }
+    }
+    public async Task<ResLogout> LogoutAsync(ReqLogout request)
+    {
+        var endpoint = "api/usuarios/logout";
+
+        try
+        {
+            // Crear request si no se proporciona
+            if (request == null)
+            {
+                request = new ReqLogout { InvalidarTodos = false };
+            }
+
+            // Obtener datos guardados para completar el request
+            var userIdStr = await SecureStorage.GetAsync("user_id");
+            if (!string.IsNullOrEmpty(userIdStr) && int.TryParse(userIdStr, out var userId))
+            {
+                request.IdUsuario = userId;
+            }
+
+            var accessToken = await SecureStorage.GetAsync("jwt_token");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                request.AccessToken = accessToken;
+            }
+
+            var refreshToken = await SecureStorage.GetAsync("refresh_token");
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                request.RefreshToken = refreshToken;
+            }
+
+            Debug.WriteLine("=== DATOS DE LOGOUT ENVIADOS ===");
+            Debug.WriteLine($"IdUsuario: {request.IdUsuario}");
+            Debug.WriteLine($"InvalidarTodos: {request.InvalidarTodos}");
+            Debug.WriteLine($"AccessToken presente: {!string.IsNullOrEmpty(request.AccessToken)}");
+            Debug.WriteLine($"RefreshToken presente: {!string.IsNullOrEmpty(request.RefreshToken)}");
+            Debug.WriteLine("=================================");
+
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Status Code: {response.StatusCode}");
+            Debug.WriteLine($"Response Headers: {response.Headers}");
+            Debug.WriteLine($"Respuesta completa del servidor: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var backendResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                    var resLogout = new ResLogout();
+
+                    Debug.WriteLine("=== CAMPOS EN LA RESPUESTA DE LOGOUT ===");
+                    foreach (var property in backendResponse.EnumerateObject())
+                    {
+                        Debug.WriteLine($"{property.Name}: {property.Value}");
+                    }
+                    Debug.WriteLine("========================================");
+
+                    // Mapear campos básicos
+                    if (backendResponse.TryGetProperty("resultado", out var resultado))
+                        resLogout.resultado = resultado.GetBoolean();
+
+                    if (backendResponse.TryGetProperty("mensaje", out var mensaje))
+                        resLogout.Mensaje = mensaje.GetString();
+                    else if (backendResponse.TryGetProperty("Mensaje", out var mensajeMayus))
+                        resLogout.Mensaje = mensajeMayus.GetString();
+
+                    // Mapear campos específicos de logout
+                    if (backendResponse.TryGetProperty("logoutExitoso", out var logoutExitoso))
+                        resLogout.LogoutExitoso = logoutExitoso.GetBoolean();
+                    else if (backendResponse.TryGetProperty("LogoutExitoso", out var logoutExitosoMayus))
+                        resLogout.LogoutExitoso = logoutExitosoMayus.GetBoolean();
+
+                    if (backendResponse.TryGetProperty("fechaLogout", out var fechaLogout))
+                        resLogout.FechaLogout = fechaLogout.GetDateTime();
+                    else if (backendResponse.TryGetProperty("FechaLogout", out var fechaLogoutMayus))
+                        resLogout.FechaLogout = fechaLogoutMayus.GetDateTime();
+
+                    if (backendResponse.TryGetProperty("tokensInvalidados", out var tokensInvalidados))
+                        resLogout.TokensInvalidados = tokensInvalidados.GetInt32();
+                    else if (backendResponse.TryGetProperty("TokensInvalidados", out var tokensInvalidadosMayus))
+                        resLogout.TokensInvalidados = tokensInvalidadosMayus.GetInt32();
+
+                    // Si el logout fue exitoso, limpiar datos locales
+                    if (resLogout.resultado && resLogout.LogoutExitoso)
+                    {
+                        Debug.WriteLine("=== LIMPIANDO DATOS LOCALES ===");
+
+                        var userRemoved = SecureStorage.Remove("user_id");
+                        var jwtRemoved = SecureStorage.Remove("jwt_token");
+                        var refreshRemoved = SecureStorage.Remove("refresh_token");
+                        var emailRemoved = SecureStorage.Remove("user_email");
+                        var nameRemoved = SecureStorage.Remove("user_name");
+
+                        Debug.WriteLine($"Datos eliminados - User: {userRemoved}, JWT: {jwtRemoved}, Refresh: {refreshRemoved}, Email: {emailRemoved}, Name: {nameRemoved}");
+                        Debug.WriteLine("===============================");
+                    }
+
+                    Debug.WriteLine($"Resultado final mapeado - resultado: {resLogout.resultado}, logoutExitoso: {resLogout.LogoutExitoso}, mensaje: {resLogout.Mensaje}");
+                    return resLogout;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error deserializando respuesta exitosa de logout: {ex.Message}");
+                    return new ResLogout
+                    {
+                        resultado = false,
+                        LogoutExitoso = false,
+                        Mensaje = "Error procesando respuesta del servidor",
+                        FechaLogout = DateTime.Now,
+                        TokensInvalidados = 0
+                    };
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"Error HTTP en logout: {response.StatusCode}");
+                Debug.WriteLine($"Contenido del error: {responseContent}");
+
+                try
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ResLogout>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (errorResponse != null)
+                    {
+                        Debug.WriteLine($"Error deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
+                        return errorResponse;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error deserializando respuesta de error de logout: {ex.Message}");
+                }
+
+                return new ResLogout
+                {
+                    resultado = false,
+                    LogoutExitoso = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode} - {responseContent}",
+                    FechaLogout = DateTime.Now,
+                    TokensInvalidados = 0
+                };
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Debug.WriteLine($"Error HTTP en logout: {httpEx.Message}");
+            return new ResLogout
+            {
+                resultado = false,
+                LogoutExitoso = false,
+                Mensaje = "Error de conexión. Verifica que el servidor esté corriendo.",
+                FechaLogout = DateTime.Now,
+                TokensInvalidados = 0
+            };
+        }
+        catch (TaskCanceledException timeoutEx)
+        {
+            Debug.WriteLine($"Timeout en logout: {timeoutEx.Message}");
+            return new ResLogout
+            {
+                resultado = false,
+                LogoutExitoso = false,
+                Mensaje = "Tiempo de espera agotado. Intenta nuevamente.",
+                FechaLogout = DateTime.Now,
+                TokensInvalidados = 0
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error general en logout: {ex.Message}");
+            Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+
+            // En caso de error de comunicación, limpiar datos locales como medida de seguridad
+            try
+            {
+                SecureStorage.Remove("user_id");
+                SecureStorage.Remove("jwt_token");
+                SecureStorage.Remove("refresh_token");
+                SecureStorage.Remove("user_email");
+                SecureStorage.Remove("user_name");
+                Debug.WriteLine("Datos locales limpiados por error de comunicación");
+            }
+            catch (Exception cleanupEx)
+            {
+                Debug.WriteLine($"Error limpiando datos locales: {cleanupEx.Message}");
+            }
+
+            return new ResLogout
+            {
+                resultado = false,
+                LogoutExitoso = false,
+                Mensaje = "Error de conexión. No se pudo comunicar con el servidor.",
+                FechaLogout = DateTime.Now,
+                TokensInvalidados = 0
+            };
+        }
+    }
+
+    #endregion
+
+    #region TOKEN
+
+    private async Task ConfigurarTokenAsync()
+    {
+        try
+        {
+            var token = await SecureStorage.GetAsync("jwt_token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                Debug.WriteLine("Token cargado desde almacenamiento seguro");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error cargando token: {ex.Message}");
+        }
+    }
+
+    private async Task<bool> EnsureTokenAsync()
+    {
+        var token = await SecureStorage.GetAsync("jwt_token");
+        if (string.IsNullOrEmpty(token))
+        {
+            Debug.WriteLine("No hay token disponible");
+            return false;
+        }
+
+        if (_httpClient.DefaultRequestHeaders.Authorization == null)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            Debug.WriteLine("Token configurado en HttpClient");
+        }
+
+        return true;
     }
 
     #endregion
