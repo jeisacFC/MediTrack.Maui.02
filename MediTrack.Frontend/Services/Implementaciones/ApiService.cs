@@ -39,6 +39,7 @@ public class ApiService : IApiService
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             Debug.WriteLine($"Llamando a POST (HTTPS): {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
 
             var response = await _httpClient.PostAsync(endpoint, content);
             var responseStream = await response.Content.ReadAsStreamAsync();
@@ -68,6 +69,46 @@ public class ApiService : IApiService
         {
             Debug.WriteLine($"Error de conexión en ApiService: {ex.Message}");
             return null;
+        }
+    }
+
+
+    public async Task<ResBuscarMedicamento> BuscarMedicamentoManualAsync(ReqBuscarMedicamento request)
+    {
+        var endpoint = "api/medicamentos/buscar"; // Endpoint específico para la búsqueda manual
+
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de Búsqueda Manual: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Deserializa la respuesta JSON al tipo ResBuscarMedicamento
+                return JsonSerializer.Deserialize<ResBuscarMedicamento>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                // Manejo de error si la llamada no fue exitosa
+                Debug.WriteLine($"Error de API en Búsqueda Manual: {response.StatusCode}");
+                return new ResBuscarMedicamento { resultado = false, errores = new List<Error> { new Error { Message = $"Error del servidor: {response.StatusCode}" } } };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en BuscarMedicamentoManualAsync: {ex.Message}");
+            return new ResBuscarMedicamento { resultado = false, errores = new List<Error> { new Error { Message = "No se pudo conectar con el servidor." } } };
         }
     }
 

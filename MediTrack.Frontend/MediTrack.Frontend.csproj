@@ -80,9 +80,13 @@
 	  
 	  <Compile Include="Models\Model\Error.cs" />
 	  
+	  <Compile Include="Models\Model\MedicamentoExterno.cs" />
+	  
 	  <Compile Include="Models\Model\Usuario.cs" />
 	  
 	  <Compile Include="Models\ReqBase.cs" />
+	  
+	  <Compile Include="Models\Request\ReqBuscarMedicamento.cs" />
 	  
 	  <Compile Include="Models\Request\ReqEscanearMedicamento.cs" />
 	  
@@ -95,6 +99,8 @@
 	  <Compile Include="Models\Request\ReqRegister.cs" />
 	  
 	  <Compile Include="Models\ResBase.cs" />
+	  
+	  <Compile Include="Models\Response\ResBuscarMedicamento.cs" />
 	  
 	  <Compile Include="Models\Response\ResEscanearMedicamento.cs" />
 	  
