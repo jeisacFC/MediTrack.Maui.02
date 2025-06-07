@@ -1,12 +1,13 @@
-﻿using MediTrack.Frontend.Models.Response;
+﻿using MediTrack.Frontend.Models.Model;
 using MediTrack.Frontend.Models.Request;
+using MediTrack.Frontend.Models.Response;
 using MediTrack.Frontend.Services.Interfaces;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.Services.Implementaciones;
 
@@ -24,7 +25,6 @@ public class ApiService : IApiService
             : "http://34.171.62.172:44382/";
 
         _httpClient.BaseAddress = new Uri(baseUrl);
-
 
     }
 
@@ -414,8 +414,239 @@ public class ApiService : IApiService
             };
         }
     }
+    public async Task<ResObtenerUsuario> GetUserAsync(ReqObtenerUsuario request)
+    {
+        var endpoint = "api/usuarios/perfil";
+
+        try
+        {
+            Debug.WriteLine("=== DATOS DE OBTENER USUARIO ENVIADOS (HTTPS) ===");
+            Debug.WriteLine($"IdUsuario: '{request.IdUsuario}'");
+            Debug.WriteLine("=================================================");
+
+            Debug.WriteLine($"Llamando a GET (HTTPS): {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.GetAsync(endpoint);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Status Code: {response.StatusCode}");
+            Debug.WriteLine($"Response Headers: {response.Headers}");
+            Debug.WriteLine($"Respuesta completa del servidor: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var backendResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                    var resObtenerUsuario = new ResObtenerUsuario();
+
+                    Debug.WriteLine("=== CAMPOS EN LA RESPUESTA ===");
+                    foreach (var property in backendResponse.EnumerateObject())
+                    {
+                        Debug.WriteLine($"{property.Name}: {property.Value}");
+                    }
+                    Debug.WriteLine("===============================");
+
+                    // Mapear campos básicos
+                    if (backendResponse.TryGetProperty("resultado", out var resultado))
+                        resObtenerUsuario.resultado = resultado.GetBoolean();
+
+                    if (backendResponse.TryGetProperty("mensaje", out var mensaje))
+                        resObtenerUsuario.Mensaje = mensaje.GetString();
+                    else if (backendResponse.TryGetProperty("Mensaje", out var mensajeMayus))
+                        resObtenerUsuario.Mensaje = mensajeMayus.GetString();
+
+                    // Mapear datos del usuario si existen
+                    if (backendResponse.TryGetProperty("usuario", out var usuario) && usuario.ValueKind == JsonValueKind.Object)
+                    {
+                        var usuarioObj = new Usuario();
+
+                        if (usuario.TryGetProperty("id_usuario", out var idUsuario))
+                            usuarioObj.id_usuario = idUsuario.GetInt32();
+                        else if (usuario.TryGetProperty("Id_Usuario", out var idUsuarioMayus))
+                            usuarioObj.id_usuario = idUsuarioMayus.GetInt32();
+
+                        if (usuario.TryGetProperty("email", out var email))
+                            usuarioObj.email = email.GetString();
+                        else if (usuario.TryGetProperty("Email", out var emailMayus))
+                            usuarioObj.email = emailMayus.GetString();
+
+                        if (usuario.TryGetProperty("contraseña", out var contraseña))
+                            usuarioObj.contraseña = contraseña.GetString();
+                        else if (usuario.TryGetProperty("Contraseña", out var contraseñaMayus))
+                            usuarioObj.contraseña = contraseñaMayus.GetString();
+
+                        if (usuario.TryGetProperty("fecha_registro", out var fechaRegistro))
+                            usuarioObj.fecha_registro = fechaRegistro.GetDateTime();
+                        else if (usuario.TryGetProperty("Fecha_Registro", out var fechaRegistroMayus))
+                            usuarioObj.fecha_registro = fechaRegistroMayus.GetDateTime();
+
+                        if (usuario.TryGetProperty("notificaciones_push", out var notificacionesPush))
+                            usuarioObj.notificaciones_push = notificacionesPush.GetBoolean();
+                        else if (usuario.TryGetProperty("Notificaciones_Push", out var notificacionesPushMayus))
+                            usuarioObj.notificaciones_push = notificacionesPushMayus.GetBoolean();
+
+                        if (usuario.TryGetProperty("ultimo_acceso", out var ultimoAcceso))
+                            usuarioObj.ultimo_acceso = ultimoAcceso.GetDateTime();
+                        else if (usuario.TryGetProperty("Ultimo_Acceso", out var ultimoAccesoMayus))
+                            usuarioObj.ultimo_acceso = ultimoAccesoMayus.GetDateTime();
+
+                        if (usuario.TryGetProperty("intentos_fallidos", out var intentosFallidos))
+                            usuarioObj.intentos_fallidos = intentosFallidos.GetInt32();
+                        else if (usuario.TryGetProperty("Intentos_Fallidos", out var intentosfallidosMayus))
+                            usuarioObj.intentos_fallidos = intentosfallidosMayus.GetInt32();
+
+                        if (usuario.TryGetProperty("cuenta_bloqueada", out var cuentaBloqueada))
+                            usuarioObj.cuenta_bloqueada = cuentaBloqueada.GetBoolean();
+                        else if (usuario.TryGetProperty("Cuenta_Bloqueada", out var cuentaBloqueadaMayus))
+                            usuarioObj.cuenta_bloqueada = cuentaBloqueadaMayus.GetBoolean();
+
+                        if (usuario.TryGetProperty("nombre", out var nombre))
+                            usuarioObj.nombre = nombre.GetString();
+                        else if (usuario.TryGetProperty("Nombre", out var nombreMayus))
+                            usuarioObj.nombre = nombreMayus.GetString();
+
+                        if (usuario.TryGetProperty("apellido1", out var apellido1))
+                            usuarioObj.apellido1 = apellido1.GetString();
+                        else if (usuario.TryGetProperty("Apellido1", out var apellido1Mayus))
+                            usuarioObj.apellido1 = apellido1Mayus.GetString();
+
+                        if (usuario.TryGetProperty("apellido2", out var apellido2))
+                            usuarioObj.apellido2 = apellido2.GetString();
+                        else if (usuario.TryGetProperty("Apellido2", out var apellido2Mayus))
+                            usuarioObj.apellido2 = apellido2Mayus.GetString();
+
+                        if (usuario.TryGetProperty("fecha_nacimiento", out var fechaNacimiento))
+                            usuarioObj.fecha_nacimiento = fechaNacimiento.GetDateTime();
+                        else if (usuario.TryGetProperty("Fecha_Nacimiento", out var fechaNacimientoMayus))
+                            usuarioObj.fecha_nacimiento = fechaNacimientoMayus.GetDateTime();
+
+                        if (usuario.TryGetProperty("id_genero", out var idGenero))
+                            usuarioObj.id_genero = idGenero.GetString();
+                        else if (usuario.TryGetProperty("Id_Genero", out var idGeneroMayus))
+                            usuarioObj.id_genero = idGeneroMayus.GetString();
+
+                        resObtenerUsuario.Usuario = usuarioObj;
+                    }
+
+                    // Mapear errores si existen
+                    if (backendResponse.TryGetProperty("errores", out var errores) && errores.ValueKind == JsonValueKind.Array)
+                    {
+                        var erroresList = new List<Error>();
+                        foreach (var error in errores.EnumerateArray())
+                        {
+                            var errorDetail = new Error();
+                            if (error.TryGetProperty("message", out var errorMessage))
+                                errorDetail.Message = errorMessage.GetString();
+                            else if (error.TryGetProperty("Message", out var errorMessageMayus))
+                                errorDetail.Message = errorMessageMayus.GetString();
+
+                            erroresList.Add(errorDetail);
+                        }
+                        resObtenerUsuario.errores = erroresList;
+                    }
+
+                    Debug.WriteLine($"Resultado final mapeado - resultado: {resObtenerUsuario.resultado}, mensaje: {resObtenerUsuario.Mensaje}");
+                    return resObtenerUsuario;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error deserializando respuesta exitosa: {ex.Message}");
+                    return new ResObtenerUsuario
+                    {
+                        resultado = false,
+                        Mensaje = "Error procesando respuesta del servidor",
+                        errores = new List<Error>
+                    {
+                        new Error { Message = "Error procesando respuesta del servidor" }
+                    }
+                    };
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"Error HTTP: {response.StatusCode}");
+                Debug.WriteLine($"Contenido del error: {responseContent}");
+
+                try
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ResObtenerUsuario>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (errorResponse != null)
+                    {
+                        Debug.WriteLine($"Error deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
+                        return errorResponse;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error deserializando respuesta de error: {ex.Message}");
+                }
+
+                // Manejar códigos de estado específicos
+                string mensajeError = response.StatusCode switch
+                {
+                    HttpStatusCode.Unauthorized => "Usuario no autenticado",
+                    HttpStatusCode.NotFound => "Usuario no encontrado",
+                    HttpStatusCode.Forbidden => "No tienes permisos para acceder a este recurso",
+                    _ => $"Error del servidor: {response.StatusCode} - {responseContent}"
+                };
+
+                return new ResObtenerUsuario
+                {
+                    resultado = false,
+                    Mensaje = mensajeError,
+                    errores = new List<Error>
+                {
+                    new Error { Message = $"Error del servidor: {response.StatusCode}" }
+                }
+                };
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Debug.WriteLine($"Error HTTPS en obtener usuario: {httpEx.Message}");
+            return new ResObtenerUsuario
+            {
+                resultado = false,
+                Mensaje = "Error de conexión HTTPS. Verifica que el servidor esté corriendo con SSL.",
+                errores = new List<Error>
+            {
+                new Error { Message = "Error de conexión HTTPS" }
+            }
+            };
+        }
+        catch (TaskCanceledException timeoutEx)
+        {
+            Debug.WriteLine($"Timeout en obtener usuario: {timeoutEx.Message}");
+            return new ResObtenerUsuario
+            {
+                resultado = false,
+                Mensaje = "Tiempo de espera agotado. Intenta nuevamente.",
+                errores = new List<Error>
+            {
+                new Error { Message = "Tiempo de espera agotado" }
+            }
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error general en obtener usuario: {ex.Message}");
+            Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            return new ResObtenerUsuario
+            {
+                resultado = false,
+                Mensaje = "Error de conexión. No se pudo comunicar con el servidor.",
+                errores = new List<Error>
+            {
+                new Error { Message = "Error de conexión general" }
+            }
+            };
+        }
+    }
 
     #endregion
-
-
 }

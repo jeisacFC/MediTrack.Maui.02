@@ -1,45 +1,48 @@
-using System;
-using System.Linq;
 using MediTrack.Frontend.ViewModels;
-using Microsoft.Maui.Controls;
-using MediTrack.Frontend.ViewModels.PantallasPrincipales;
-using MediTrack.Frontend.Models.Model;
 
-namespace MediTrack.Frontend.Vistas.PantallasPrincipales
+namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
+
+public partial class PantallaPerfil : BaseContentPage
 {
-    public partial class PantallaPerfil : ContentPage
+    private readonly PerfilViewModel _viewModel;
+    public PantallaPerfil()
     {
-        public PantallaPerfil()
-        {
-            InitializeComponent();
-            BindingContext = new PerfilViewModel();
-        }
+        InitializeComponent();
 
-        private void OnPadecimientosSeleccionados(object sender, SelectionChangedEventArgs e)
-        {
-            var seleccionados = e.CurrentSelection.Cast<ElementoSeleccionable>().ToList();
-            // Procesa la selección...
-        }
+        _viewModel = App.Current.Handler.MauiContext.Services.GetService<PerfilViewModel>();
+        BindingContext = _viewModel;
+    }
+    public PantallaPerfil(PerfilViewModel viewModel)
+    {
+        InitializeComponent();
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+    }
 
-        private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
-        {
-            var seleccionados = e.CurrentSelection.Cast<ElementoSeleccionable>().ToList();
-            // Procesa la selección...
-        }
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await _viewModel.InitializeAsync();
+    }
 
-        private async void OnCerrarSesionClicked(object sender, EventArgs e)
-        {
-            bool confirmar = await DisplayAlert("Cerrar sesión",
-                                                "¿Deseas salir de tu cuenta?",
-                                                "Sí", "Cancelar");
-            if (!confirmar)
-                return;
+    // Eventos requeridos por el XAML
+    private void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
+    {
+        _viewModel.OnCondicionesMedicasSeleccionadas(sender, e);
+    }
 
-            // Limpia datos de sesión si usas Preferences o SecureStorage
-            // Preferences.Clear();
+    private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
+    {
+        _viewModel.OnAlergiasSeleccionadas(sender, e);
+    }
 
-            // Navega a la ruta de login definida en tu AppShell
-            await Shell.Current.GoToAsync("//inicioSesion");
-        }
+    private async void OnEditarPerfilClicked(object sender, EventArgs e)
+    {
+        await _viewModel.EditarPerfilCommand.ExecuteAsync(null);
+    }
+
+    private async void OnCerrarSesionClicked(object sender, EventArgs e)
+    {
+        await _viewModel.CerrarSesionCommand.ExecuteAsync(null);
     }
 }

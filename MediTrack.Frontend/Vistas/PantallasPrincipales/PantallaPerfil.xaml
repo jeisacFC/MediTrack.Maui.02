@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<base:BaseContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaPerfil"
+    xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
     BackgroundColor="#e6f0ff"
     Title="Perfil">
 
@@ -22,7 +23,7 @@
              VerticalOptions="Fill" />
         </Grid>
 
-        <!-- 2) Contenedor blanco desplazable, sin avatar -->
+        <!-- 2) Contenedor blanco desplazable -->
         <ScrollView Margin="0,80,0,0">
             <Frame CornerRadius="40"
              Margin="0"
@@ -38,32 +39,48 @@
                  TextColor="#0B2B6E" />
 
                     <Grid ColumnDefinitions="Auto,*"
-                RowDefinitions="Auto,Auto,Auto,Auto"
+                RowDefinitions="Auto,Auto,Auto"
                 ColumnSpacing="10"
                 RowSpacing="10">
-                        <Label Text="Nombre" Grid.Row="0" Grid.Column="0" TextColor="#0B2B6E"/>
-                        <Label Text="Jeremy" Grid.Row="0" Grid.Column="1"/>
-                        <Label Text="Apellidos" Grid.Row="1" Grid.Column="0" TextColor="#0B2B6E"/>
-                        <Label Text="Duran Vargas" Grid.Row="1" Grid.Column="1"/>
-                        <Label Text="Fecha de nacimiento" Grid.Row="2" Grid.Column="0" TextColor="#0B2B6E"/>
-                        <Label Text="02/11/2003" Grid.Row="2" Grid.Column="1"/>
-                        <Label Text="Género" Grid.Row="3" Grid.Column="0" TextColor="#0B2B6E"/>
-                        <Label Text="Masculino" Grid.Row="3" Grid.Column="1"/>
+                        <Label Text="Nombre Completo" Grid.Row="0" Grid.Column="0" TextColor="#0B2B6E"/>
+                        <Label Text="{Binding NombreCompleto}" Grid.Row="0" Grid.Column="1"/>
+                        <Label Text="Fecha de nacimiento" Grid.Row="1" Grid.Column="0" TextColor="#0B2B6E"/>
+                        <Label Text="{Binding Usuario.fecha_nacimiento, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="1" Grid.Column="1"/>
+                        <Label Text="Género" Grid.Row="2" Grid.Column="0" TextColor="#0B2B6E"/>
+                        <Label Text="{Binding Usuario.id_genero}" Grid.Row="2" Grid.Column="1"/>
                     </Grid>
 
-                    <!-- Información de Contacto -->
-                    <Label Text="Información de Contacto"
+                    <!-- Información de Cuenta -->
+                    <Label Text="Información de Cuenta"
                  FontAttributes="Bold"
                  FontSize="16"
                  TextColor="#0B2B6E" />
                     <Grid ColumnDefinitions="Auto,*"
-                RowDefinitions="Auto,Auto"
+                RowDefinitions="Auto,Auto,Auto"
                 ColumnSpacing="10"
                 RowSpacing="10">
-                        <Label Text="Celular" Grid.Row="0" Grid.Column="0" TextColor="#0B2B6E"/>
-                        <Label Text="72386291" Grid.Row="0" Grid.Column="1"/>
-                        <Label Text="Correo Electrónico" Grid.Row="1" Grid.Column="0" TextColor="#0B2B6E"/>
-                        <Label Text="jeremy@meditrack.com" Grid.Row="1" Grid.Column="1"/>
+                        <Label Text="Correo Electrónico" Grid.Row="0" Grid.Column="0" TextColor="#0B2B6E"/>
+                        <Label Text="{Binding Usuario.email}" Grid.Row="0" Grid.Column="1"/>
+                        <Label Text="Fecha de Registro" Grid.Row="1" Grid.Column="0" TextColor="#0B2B6E"/>
+                        <Label Text="{Binding Usuario.fecha_registro, StringFormat='{0:dd/MM/yyyy}'}" Grid.Row="1" Grid.Column="1"/>
+                        <Label Text="Último Acceso" Grid.Row="2" Grid.Column="0" TextColor="#0B2B6E"/>
+                        <Label Text="{Binding Usuario.ultimo_acceso, StringFormat='{0:dd/MM/yyyy HH:mm}'}" Grid.Row="2" Grid.Column="1"/>
+                    </Grid>
+
+                    <!-- Configuración -->
+                    <Label Text="Configuración"
+                 FontAttributes="Bold"
+                 FontSize="16"
+                 TextColor="#0B2B6E" />
+                    <Grid ColumnDefinitions="Auto,*"
+                RowDefinitions="Auto"
+                ColumnSpacing="10"
+                RowSpacing="10">
+                        <Label Text="Notificaciones Push" Grid.Row="0" Grid.Column="0" TextColor="#0B2B6E"/>
+                        <Switch Grid.Row="0" Grid.Column="1" 
+                        IsToggled="{Binding Usuario.notificaciones_push}"
+                        OnColor="#3b71ff"
+                        ThumbColor="White"/>
                     </Grid>
 
                     <!-- Información Médica -->
@@ -72,37 +89,74 @@
                  FontSize="16"
                  TextColor="#0B2B6E" />
 
-                    <!-- Colección de Padecimientos -->
-                    <Label Text="Padecimientos" TextColor="#0B2B6E" />
-                    <CollectionView ItemsSource="{Binding Padecimientos}"
+                    <!-- Colección de Condiciones Médicas -->
+                    <Label Text="Condiciones Médicas" TextColor="#0B2B6E" />
+                    <CollectionView ItemsSource="{Binding CondicionesMedicas}"
                           SelectionMode="Multiple"
-                          SelectionChanged="OnPadecimientosSeleccionados">
+                          SelectionChanged="OnCondicionesMedicasSeleccionadas"
+                          MinimumHeightRequest="100">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid Padding="10">
-                                    <Label Text="{Binding Nombre}"
-                         FontSize="14"
-                         TextColor="Black" />
+                                    <Frame BackgroundColor="#f8f9fa"
+                                   CornerRadius="15"
+                                   Padding="10,8"
+                                   HasShadow="False">
+                                        <Label Text="{Binding nombre_condicion}"
+                                 FontSize="14"
+                                 TextColor="#0B2B6E" />
+                                    </Frame>
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay condiciones médicas registradas"
+                           TextColor="Gray"
+                           FontAttributes="Italic"
+                           HorizontalOptions="Center"
+                           Margin="0,20"/>
+                        </CollectionView.EmptyView>
                     </CollectionView>
 
                     <!-- Colección de Alergias -->
                     <Label Text="Alergias" TextColor="#0B2B6E" />
                     <CollectionView ItemsSource="{Binding Alergias}"
                           SelectionMode="Multiple"
-                          SelectionChanged="OnAlergiasSeleccionadas">
+                          SelectionChanged="OnAlergiasSeleccionadas"
+                          MinimumHeightRequest="100">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid Padding="10">
-                                    <Label Text="{Binding Nombre}"
-                         FontSize="14"
-                         TextColor="Black" />
+                                    <Frame BackgroundColor="#fff2f2"
+                                   CornerRadius="15"
+                                   Padding="10,8"
+                                   HasShadow="False">
+                                        <Label Text="{Binding nombre_alergia}"
+                                 FontSize="14"
+                                 TextColor="#d32f2f" />
+                                    </Frame>
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay alergias registradas"
+                           TextColor="Gray"
+                           FontAttributes="Italic"
+                           HorizontalOptions="Center"
+                           Margin="0,20"/>
+                        </CollectionView.EmptyView>
                     </CollectionView>
+
+                    <!-- Botón Editar Perfil -->
+                    <Button Text="Editar Perfil"
+                  BackgroundColor="#3b71ff"
+                  TextColor="White"
+                  CornerRadius="20"
+                  HeightRequest="45"
+                  WidthRequest="250"
+                  HorizontalOptions="Center"
+                  Clicked="OnEditarPerfilClicked"
+                  Margin="0,10,0,0"/>
 
                     <!-- Botón Cerrar sesión -->
                     <Button Text="Cerrar sesión"
@@ -146,7 +200,7 @@
              Margin="0,-10,0,0"
              HasShadow="True">
                 <Label FontFamily="MaterialIcons"
-               Text=""
+               Text=""
                FontSize="20"
                TextColor="#3b71ff"
                HorizontalOptions="Center"
@@ -155,4 +209,4 @@
         </Grid>
 
     </Grid>
-</ContentPage>
+</base:BaseContentPage>

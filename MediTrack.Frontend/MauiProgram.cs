@@ -13,6 +13,7 @@ using Syncfusion.Maui.Core.Hosting;
 using System.Globalization;
 using System.Net.Http.Headers;
 using ZXing.Net.Maui.Controls;
+using MediTrack.Frontend.ViewModels;
 
 namespace MediTrack.Frontend;
 
@@ -60,19 +61,24 @@ public static class MauiProgram
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
 
-        // TODOS LOS VIEWMODELS Y PÁGINAS NECESARIOS
+        // TODOS LOS VIEWMODELS 
         builder.Services.AddTransient<ScanViewModel>();
-        builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
+        builder.Services.AddTransient<PerfilViewModel>();
+        builder.Services.AddTransient<OlvidoContrasenaViewModel>();
+        builder.Services.AddTransient<CodigoVerificacionViewModel>();
+        builder.Services.AddTransient<NuevaContrasenaViewModel>();
+
+        // PANTALLAS 
         builder.Services.AddTransient<PantallaInicioSesion>();
         builder.Services.AddTransient<PantallaRegistro>();
-        //Recuperar contraseña
-        builder.Services.AddTransient<OlvidoContrasenaViewModel>();
+        builder.Services.AddTransient<PantallaPerfil>();
+        builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<PantallaOlvidoContrasena>();
-        builder.Services.AddTransient<CodigoVerificacionViewModel>();
+
+        //mODALES
         builder.Services.AddTransient<ModalCodigoVerificacion>();
-        builder.Services.AddTransient<NuevaContrasenaViewModel>();
         builder.Services.AddTransient<ModalNuevaContrasena>();
 
         var app = builder.Build();

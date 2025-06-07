@@ -74,13 +74,21 @@
 	
 	<ItemGroup>
 	  
+	  <Compile Include="Models\Model\Alergias.cs" />
+	  
+	  <Compile Include="Models\Model\CondicionesMedicas.cs" />
+	  
 	  <Compile Include="Models\Model\Error.cs" />
+	  
+	  <Compile Include="Models\Model\Usuario.cs" />
 	  
 	  <Compile Include="Models\ReqBase.cs" />
 	  
 	  <Compile Include="Models\Request\ReqEscanearMedicamento.cs" />
 	  
 	  <Compile Include="Models\Request\ReqLogin.cs" />
+	  
+	  <Compile Include="Models\Request\ReqObtenerUsuario.cs" />
 	  
 	  <Compile Include="Models\Request\ReqRefreshToken.cs" />
 	  
@@ -91,6 +99,8 @@
 	  <Compile Include="Models\Response\ResEscanearMedicamento.cs" />
 	  
 	  <Compile Include="Models\Response\ResLogin.cs" />
+	  
+	  <Compile Include="Models\Response\ResObtenerUsuario.cs" />
 	  
 	  <Compile Include="Models\Response\ResRefreshToken.cs" />
 	  

@@ -16,5 +16,6 @@ namespace MediTrack.Frontend.Services.Interfaces
         // Autenticación
         Task<ResLogin> LoginAsync(ReqLogin request);
         Task<ResRegister> RegisterAsync(ReqRegister request);
+        Task<ResObtenerUsuario> GetUserAsync(ReqObtenerUsuario request);
     }
 }
