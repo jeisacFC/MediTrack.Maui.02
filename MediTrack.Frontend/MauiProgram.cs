@@ -6,6 +6,7 @@ using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
 using MediTrack.Frontend.ViewModels.PantallasInicio;
 using MediTrack.Frontend.Vistas.PantallasInicio;
+using MediTrack.Frontend.Popups;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
@@ -55,6 +56,13 @@ public static class MauiProgram
         builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<PantallaInicioSesion>();
+        //Recuperar contraseña
+        builder.Services.AddTransient<OlvidoContrasenaViewModel>();
+        builder.Services.AddTransient<PantallaOlvidoContrasena>();
+        builder.Services.AddTransient<CodigoVerificacionViewModel>();
+        builder.Services.AddTransient<ModalCodigoVerificacion>();
+        builder.Services.AddTransient<NuevaContrasenaViewModel>();
+        builder.Services.AddTransient<ModalNuevaContrasena>();
 
         var app = builder.Build();
 
