@@ -30,56 +30,23 @@
     <ShellContent Route="olvidoContrasena"
                   ContentTemplate="{DataTemplate pantallasInicio:PantallaOlvidoContrasena}" />
 
-    <ShellContent Route="pantallaScan"
-              Title="Escanear"
-              ContentTemplate="{DataTemplate pantallasPrincipales:PantallaScan}" />
-
-
-    <!--<ShellContent Route="pantallaBusqueda"
-          Title="Búsqueda"
-          ContentTemplate="{DataTemplate pantallasPrincipales:PantallaBusqueda}" />-->
-
-
-
-    <!-- Barra inferior de navegación -->
     <TabBar>
 
-        <ShellContent Title="Inicio" Route="inicio">
-            <ShellContent.Icon>
-                <FontImageSource Glyph="&#xe88a;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
-            </ShellContent.Icon>
-            <ShellContent.ContentTemplate>
-                <DataTemplate>
-                    <pantallasPrincipales:PantallaInicio />
-                </DataTemplate>
-            </ShellContent.ContentTemplate>
-        </ShellContent>
+        <ShellContent Title="Inicio"
+            Route="inicio" Icon="{FontImageSource Glyph='&#xe88a;', FontFamily='MaterialIcons', Size=28, Color='#3b71ff'}"
+            ContentTemplate="{DataTemplate pantallasPrincipales:PantallaInicio}" />
 
-        <ShellContent Title="Agenda" Route="agenda">
-            <ShellContent.Icon>
-                <FontImageSource Glyph="&#xe916;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
-            </ShellContent.Icon>
-            <ShellContent.ContentTemplate>
-                <DataTemplate>
-                    <pantallasPrincipales:PantallaAgenda />
-                </DataTemplate>
-            </ShellContent.ContentTemplate>
-        </ShellContent>
+        <ShellContent Title="Agenda"
+            Route="agenda" Icon="{FontImageSource Glyph='&#xe916;', FontFamily='MaterialIcons', Size=28, Color='#3b71ff'}"
+            ContentTemplate="{DataTemplate pantallasPrincipales:PantallaAgenda}" />
 
         <ShellContent Title="Búsqueda"
                   Route="busqueda" Icon="{FontImageSource Glyph='&#xe8b6;', FontFamily='MaterialIcons', Size=28, Color='#3b71ff'}"
                   ContentTemplate="{DataTemplate pantallasPrincipales:PantallaBusqueda}" />
 
-        <ShellContent Title="Perfil" Route="perfil">
-            <ShellContent.Icon>
-                <FontImageSource Glyph="&#xe7fd;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
-            </ShellContent.Icon>
-            <ShellContent.ContentTemplate>
-                <DataTemplate>
-                    <pantallasPrincipales:PantallaPerfil />
-                </DataTemplate>
-            </ShellContent.ContentTemplate>
-        </ShellContent>
-
-    </TabBar>
+        <ShellContent Title="Perfil"
+                    Route="busqueda" Icon="{FontImageSource Glyph='&#xe7fd;', FontFamily='MaterialIcons', Size=28, Color='#3b71ff'}"
+                    ContentTemplate="{DataTemplate pantallasPrincipales:PantallaPerfil}" />
+            
+    </TabBar>   
 </Shell>

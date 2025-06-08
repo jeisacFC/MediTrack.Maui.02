@@ -64,7 +64,6 @@ namespace MediTrack.Frontend.ViewModels
             usuario = new Usuarios();
         }
 
-
         public override async Task InitializeAsync()
         {
             Debug.WriteLine("=== INICIANDO INITIALIZE ASYNC DEL PERFIL ===");

@@ -4,339 +4,466 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaPerfil"
     xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
-    BackgroundColor="#3b71ff"
+    BackgroundColor="#e6f0ff"
     Title="Perfil">
 
     <Grid>
-        <!-- Encabezado azul con patrón y botón volver -->
-        <Grid HeightRequest="120" VerticalOptions="Start">
-            <BoxView Color="#3b71ff" HorizontalOptions="Fill" VerticalOptions="Fill" />
-            <Image Source="logo_patron.png" Aspect="AspectFill" Opacity="0.15" HorizontalOptions="Fill" VerticalOptions="Fill" />
 
-            <!-- Botón Volver -->
-            <Button Text="&lt; Volver" 
-                    BackgroundColor="Transparent"
-                    TextColor="White"
-                    FontSize="16"
-                    HorizontalOptions="Start"
-                    VerticalOptions="Start"
-                    Margin="20,50,0,0"
-                    Command="{Binding VolverCommand}"/>
-
-            <!-- Avatar del usuario -->
-            <Frame BackgroundColor="White"
-                   CornerRadius="40"
-                   HeightRequest="80"
-                   WidthRequest="80"
-                   HorizontalOptions="Center"
-                   VerticalOptions="End"
-                   Margin="0,0,0,-40"
-                   HasShadow="True">
-                <Image Source="user_avatar.png" 
-                       HeightRequest="60"
-                       WidthRequest="60"
-                       Aspect="AspectFill"/>
-            </Frame>
+        <!-- 1) Encabezado azul con patrón -->
+        <Grid HeightRequest="150"
+          VerticalOptions="Start">
+            <BoxView Color="#3b71ff"
+               Opacity="0.9"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill" />
+            <Image Source="logo_patron.png"
+             Aspect="AspectFill"
+             Opacity="0.15"
+             HorizontalOptions="Fill"
+             VerticalOptions="Fill" />
         </Grid>
 
-        <!-- Contenedor blanco desplazable -->
+        <!-- 2) Contenedor blanco desplazable -->
         <ScrollView Margin="0,80,0,0">
-            <Frame CornerRadius="25" 
-                   Margin="0" 
-                   Padding="20,60,20,20" 
-                   BackgroundColor="White" 
-                   HasShadow="False">
-                <VerticalStackLayout Spacing="25">
+            <Frame CornerRadius="40"
+             Margin="0"
+             Padding="25,80,25,25"
+             BackgroundColor="White"
+             HasShadow="False">
+
+                <VerticalStackLayout Spacing="30">
 
                     <!-- Información Personal -->
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Información Personal" 
-                               FontAttributes="Bold" 
-                               FontSize="18" 
-                               TextColor="#0B2B6E" 
-                               Margin="0,0,0,10"/>
-
-                        <!-- Nombre -->
-                        <Grid ColumnDefinitions="Auto,*" RowSpacing="15" ColumnSpacing="20">
-                            <Label Text="Nombre" 
-                                   Grid.Column="0"
-                                   TextColor="#666666" 
-                                   FontSize="14" 
-                                   VerticalOptions="Center"/>
-                            <Label Text="{Binding NombreCompleto, FallbackValue='Jeremy'}" 
-                                   Grid.Column="1"
-                                   FontSize="16" 
-                                   FontAttributes="Bold"
-                                   TextColor="#0B2B6E"
-                                   HorizontalOptions="End"
-                                   VerticalOptions="Center"/>
-                        </Grid>
-
-                        <BoxView HeightRequest="1" BackgroundColor="#E0E0E0" HorizontalOptions="Fill"/>
-
-                        <!-- Apellidos -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="20">
-                            <Label Text="Apellidos" 
-                                   Grid.Column="0"
-                                   TextColor="#666666" 
-                                   FontSize="14" 
-                                   VerticalOptions="Center"/>
-                            <Label Text="{Binding Apellidos, FallbackValue='Duran Vargas'}" 
-                                   Grid.Column="1"
-                                   FontSize="16" 
-                                   FontAttributes="Bold"
-                                   TextColor="#0B2B6E"
-                                   HorizontalOptions="End"
-                                   VerticalOptions="Center"/>
-                        </Grid>
-
-                        <BoxView HeightRequest="1" BackgroundColor="#E0E0E0" HorizontalOptions="Fill"/>
-
-                        <!-- Fecha de nacimiento -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="20">
-                            <Label Text="Fecha de nacimiento" 
-                                   Grid.Column="0"
-                                   TextColor="#666666" 
-                                   FontSize="14" 
-                                   VerticalOptions="Center"/>
-                            <Label Text="{Binding FechaNacimientoFormateada, FallbackValue='02/11/2003'}" 
-                                   Grid.Column="1"
-                                   FontSize="16" 
-                                   FontAttributes="Bold"
-                                   TextColor="#0B2B6E"
-                                   HorizontalOptions="End"
-                                   VerticalOptions="Center"/>
-                        </Grid>
-
-                        <BoxView HeightRequest="1" BackgroundColor="#E0E0E0" HorizontalOptions="Fill"/>
-
-                        <!-- Género -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="20">
-                            <Label Text="Género" 
-                                   Grid.Column="0"
-                                   TextColor="#666666" 
-                                   FontSize="14" 
-                                   VerticalOptions="Center"/>
-                            <Label Text="{Binding GeneroTexto, FallbackValue='Masculino'}" 
-                                   Grid.Column="1"
-                                   FontSize="16" 
-                                   FontAttributes="Bold"
-                                   TextColor="#0B2B6E"
-                                   HorizontalOptions="End"
-                                   VerticalOptions="Center"/>
-                        </Grid>
-                    </VerticalStackLayout>
-
-                    <!-- Información de Contacto -->
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Información de Contacto" 
-                               FontAttributes="Bold" 
-                               FontSize="18" 
-                               TextColor="#0B2B6E" 
-                               Margin="0,20,0,10"/>
-
-                        <!-- Celular -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="20">
-                            <Label Text="Celular" 
-                                   Grid.Column="0"
-                                   TextColor="#666666" 
-                                   FontSize="14" 
-                                   VerticalOptions="Center"/>
-                            <Label Text="{Binding Telefono, FallbackValue='72386291'}" 
-                                   Grid.Column="1"
-                                   FontSize="16" 
-                                   FontAttributes="Bold"
-                                   TextColor="#0B2B6E"
-                                   HorizontalOptions="End"
-                                   VerticalOptions="Center"/>
-                        </Grid>
-
-                        <BoxView HeightRequest="1" BackgroundColor="#E0E0E0" HorizontalOptions="Fill"/>
-
-                        <!-- Correo Electrónico -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="20">
-                            <Label Text="Correo Electrónico" 
-                                   Grid.Column="0"
-                                   TextColor="#666666" 
-                                   FontSize="14" 
-                                   VerticalOptions="Center"/>
-                            <Label Text="{Binding Usuario.email, FallbackValue='jeremy@meditrack.com'}" 
-                                   Grid.Column="1"
-                                   FontSize="16" 
-                                   FontAttributes="Bold"
-                                   TextColor="#0B2B6E"
-                                   HorizontalOptions="End"
-                                   VerticalOptions="Center"/>
-                        </Grid>
-                    </VerticalStackLayout>
-
-                    <!-- Información Médica -->
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Información Médica" 
-                               FontAttributes="Bold" 
-                               FontSize="18" 
-                               TextColor="#0B2B6E" 
-                               Margin="0,20,0,10"/>
-
-                        <!-- Padecimiento -->
-                        <VerticalStackLayout Spacing="10">
-                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
-                                <Label Text="Padecimiento" 
-                                       Grid.Column="0"
-                                       TextColor="#666666" 
-                                       FontSize="14" 
-                                       VerticalOptions="Center"/>
-                                <Label Text="▼" 
-                                       Grid.Column="2"
-                                       TextColor="#3b71ff" 
-                                       FontSize="12" 
-                                       VerticalOptions="Center"/>
+                    <Frame BackgroundColor="#f8f9fa" 
+                           CornerRadius="20" 
+                           Padding="20" 
+                           HasShadow="True">
+                        <VerticalStackLayout Spacing="15">
+                            <!-- Header con título y botón editar -->
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Información Personal"
+                                     FontAttributes="Bold"
+                                     FontSize="18"
+                                     TextColor="#0B2B6E"
+                                     VerticalOptions="Center"
+                                     Grid.Column="0" />
+                                <Button Grid.Column="1"
+                                      Text="&#xE3C9;"
+                                      FontFamily="MaterialIcons"
+                                      BackgroundColor="#3b71ff"
+                                      TextColor="White"
+                                      CornerRadius="20"
+                                      HeightRequest="35"
+                                      WidthRequest="35"
+                                      FontSize="18"
+                                      Command="{Binding EditarInformacionPersonalCommand}" />
                             </Grid>
 
-                            <!-- Lista expandible de padecimientos -->
-                            <VerticalStackLayout Spacing="8" Margin="20,0,0,0">
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                                    <Label Text="▶" 
-                                           Grid.Column="0"
-                                           TextColor="#3b71ff" 
-                                           FontSize="12" 
-                                           VerticalOptions="Center"/>
-                                    <Label Text="Escoliosis" 
-                                           Grid.Column="1"
-                                           TextColor="#0B2B6E" 
-                                           FontSize="14" 
-                                           VerticalOptions="Center"/>
-                                </Grid>
+                            <!-- Información -->
+                            <Grid ColumnDefinitions="140,*"
+                                RowDefinitions="Auto,Auto,Auto"
+                                ColumnSpacing="15"
+                                RowSpacing="12">
+                                <Label Text="Nombre Completo" 
+                                     Grid.Row="0" Grid.Column="0" 
+                                     TextColor="#495057"
+                                     FontAttributes="Bold"
+                                     FontSize="14"/>
+                                <Label Text="{Binding NombreCompleto}" 
+                                     Grid.Row="0" Grid.Column="1"
+                                     TextColor="#212529"
+                                     FontSize="14"/>
 
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                                    <Label Text="▶" 
-                                           Grid.Column="0"
-                                           TextColor="#3b71ff" 
-                                           FontSize="12" 
-                                           VerticalOptions="Center"/>
-                                    <Label Text="Diabetes" 
-                                           Grid.Column="1"
-                                           TextColor="#0B2B6E" 
-                                           FontSize="14" 
-                                           VerticalOptions="Center"/>
-                                </Grid>
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
+                                <Label Text="Fecha de Nacimiento" 
+                                     Grid.Row="1" Grid.Column="0" 
+                                     TextColor="#495057"
+                                     FontAttributes="Bold"
+                                     FontSize="14"/>
+                                <Label Text="{Binding FechaNacimientoFormateada}" 
+                                     Grid.Row="1" Grid.Column="1"
+                                     TextColor="#212529"
+                                     FontSize="14"/>
 
-                        <BoxView HeightRequest="1" BackgroundColor="#E0E0E0" HorizontalOptions="Fill"/>
-
-                        <!-- Alergias -->
-                        <VerticalStackLayout Spacing="10">
-                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
-                                <Label Text="Alergias" 
-                                       Grid.Column="0"
-                                       TextColor="#666666" 
-                                       FontSize="14" 
-                                       VerticalOptions="Center"/>
-                                <Label Text="▼" 
-                                       Grid.Column="2"
-                                       TextColor="#3b71ff" 
-                                       FontSize="12" 
-                                       VerticalOptions="Center"/>
+                                <Label Text="Género" 
+                                     Grid.Row="2" Grid.Column="0" 
+                                     TextColor="#495057"
+                                     FontAttributes="Bold"
+                                     FontSize="14"/>
+                                <Label Text="{Binding GeneroTexto}" 
+                                     Grid.Row="2" Grid.Column="1"
+                                     TextColor="#212529"
+                                     FontSize="14"/>
                             </Grid>
-
-                            <!-- Lista expandible de alergias -->
-                            <VerticalStackLayout Spacing="8" Margin="20,0,0,0">
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                                    <Label Text="▶" 
-                                           Grid.Column="0"
-                                           TextColor="#3b71ff" 
-                                           FontSize="12" 
-                                           VerticalOptions="Center"/>
-                                    <Label Text="Camarones" 
-                                           Grid.Column="1"
-                                           TextColor="#0B2B6E" 
-                                           FontSize="14" 
-                                           VerticalOptions="Center"/>
-                                </Grid>
-
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                                    <Label Text="▶" 
-                                           Grid.Column="0"
-                                           TextColor="#3b71ff" 
-                                           FontSize="12" 
-                                           VerticalOptions="Center"/>
-                                    <Label Text="Maní" 
-                                           Grid.Column="1"
-                                           TextColor="#0B2B6E" 
-                                           FontSize="14" 
-                                           VerticalOptions="Center"/>
-                                </Grid>
-                            </VerticalStackLayout>
                         </VerticalStackLayout>
-                    </VerticalStackLayout>
+                    </Frame>
+
+                    <!-- Información de Cuenta -->
+                    <Frame BackgroundColor="#f8f9fa" 
+                           CornerRadius="20" 
+                           Padding="20" 
+                           HasShadow="True">
+                        <VerticalStackLayout Spacing="15">
+                            <Label Text="Información de Cuenta"
+                                 FontAttributes="Bold"
+                                 FontSize="18"
+                                 TextColor="#0B2B6E" />
+
+                            <Grid ColumnDefinitions="140,*"
+                                RowDefinitions="Auto,Auto"
+                                ColumnSpacing="15"
+                                RowSpacing="12">
+                                <Label Text="Correo" 
+                                     Grid.Row="0" Grid.Column="0" 
+                                     TextColor="#495057"
+                                     FontAttributes="Bold"
+                                     FontSize="14"/>
+                                <Label Text="{Binding Usuario.email}" 
+                                     Grid.Row="0" Grid.Column="1"
+                                     TextColor="#212529"
+                                     FontSize="14"/>
+
+                                <Label Text="Estado de Cuenta" 
+                                     Grid.Row="1" Grid.Column="0" 
+                                     TextColor="#495057"
+                                     FontAttributes="Bold"
+                                     FontSize="14"/>
+                                <Frame Grid.Row="1" Grid.Column="1"
+                                     BackgroundColor="#d4edda"
+                                     CornerRadius="12"
+                                     Padding="8,4"
+                                     HasShadow="False"
+                                     HorizontalOptions="Start">
+                                    <Label Text="{Binding EstadoCuenta}"
+                                         TextColor="#155724"
+                                         FontSize="12"
+                                         FontAttributes="Bold"/>
+                                </Frame>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
 
                     <!-- Configuración -->
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Configuración" 
-                               FontAttributes="Bold" 
-                               FontSize="18" 
-                               TextColor="#0B2B6E" 
-                               Margin="0,20,0,10"/>
+                    <Frame BackgroundColor="#f8f9fa" 
+                           CornerRadius="20" 
+                           Padding="20" 
+                           HasShadow="True">
+                        <VerticalStackLayout Spacing="15">
+                            <!-- Header con título y botón editar -->
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Configuración"
+                                     FontAttributes="Bold"
+                                     FontSize="18"
+                                     TextColor="#0B2B6E"
+                                     VerticalOptions="Center"
+                                     Grid.Column="0" />
+                                <Button Grid.Column="1"
+                                      Text="&#xE8B8;"
+                                      FontFamily="MaterialIcons"
+                                      BackgroundColor="#3b71ff"
+                                      TextColor="White"
+                                      CornerRadius="20"
+                                      HeightRequest="35"
+                                      WidthRequest="35"
+                                      FontSize="18"
+                                      Command="{Binding EditarConfiguracionCommand}" />
+                            </Grid>
 
-                        <!-- Notificaciones Push -->
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
-                            <Label Text="Notificaciones Push" 
-                                   Grid.Column="0"
-                                   TextColor="#666666" 
-                                   FontSize="14" 
-                                   VerticalOptions="Center"/>
-                            <Switch Grid.Column="2"
-                                    IsToggled="{Binding Usuario.notificaciones_push}"
-                                    OnColor="#3b71ff"
-                                    ThumbColor="White"
-                                    Toggled="OnToggleNotificaciones"/>
-                        </Grid>
-                    </VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,Auto"
+                                RowDefinitions="Auto"
+                                ColumnSpacing="15">
+                                <StackLayout Grid.Column="0" Spacing="5">
+                                    <Label Text="Notificaciones Push" 
+                                         TextColor="#495057"
+                                         FontAttributes="Bold"
+                                         FontSize="14"/>
+                                    <Label Text="Recibir alertas de medicamentos" 
+                                         TextColor="#6c757d"
+                                         FontSize="12"/>
+                                </StackLayout>
+                                <Switch Grid.Column="1" 
+                                      IsToggled="{Binding Usuario.notificaciones_push}"
+                                      OnColor="#3b71ff"
+                                      ThumbColor="White"
+                                      Toggled="OnNotificacionesToggled"
+                                      VerticalOptions="Center"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
 
-                    <!-- Botones de Acción -->
-                    <VerticalStackLayout Spacing="15" Margin="0,30,0,0">
-                        <Button Text="Editar Perfil" 
-                                Command="{Binding EditarPerfilCommand}"
-                                BackgroundColor="#3b71ff" 
-                                TextColor="White" 
-                                CornerRadius="25" 
-                                HeightRequest="50"
-                                FontSize="16"
-                                FontAttributes="Bold"/>
+                    <!-- Información Médica -->
+                    <Label Text="Información Médica"
+                         FontAttributes="Bold"
+                         FontSize="20"
+                         TextColor="#0B2B6E"
+                         Margin="0,10,0,0" />
 
-                        <Button Text="Cerrar Sesión" 
-                                Command="{Binding CerrarSesionCommand}"
-                                BackgroundColor="Transparent" 
-                                TextColor="#dc3545" 
-                                BorderColor="#dc3545"
-                                BorderWidth="1"
-                                CornerRadius="25" 
-                                HeightRequest="50"
-                                FontSize="16"/>
-                    </VerticalStackLayout>
+                    <!-- Condiciones Médicas -->
+                    <Frame BackgroundColor="#f8f9fa" 
+                           CornerRadius="20" 
+                           Padding="20" 
+                           HasShadow="True">
+                        <VerticalStackLayout Spacing="15">
+                            <!-- Header con título y botones -->
+                            <Grid ColumnDefinitions="*,Auto,Auto">
+                                <Label Text="Condiciones Médicas"
+                                     FontAttributes="Bold"
+                                     FontSize="16"
+                                     TextColor="#0B2B6E"
+                                     VerticalOptions="Center"
+                                     Grid.Column="0" />
+                                <Button Grid.Column="1"
+                                      Text="&#xE145;"
+                                      FontFamily="MaterialIcons"
+                                      BackgroundColor="#28a745"
+                                      TextColor="White"
+                                      CornerRadius="18"
+                                      HeightRequest="36"
+                                      WidthRequest="36"
+                                      FontSize="20"
+                                      Margin="0,0,8,0"
+                                      Command="{Binding AgregarCondicionMedicaCommand}" />
+                                <Button Grid.Column="2"
+                                      Text="&#xE3C9;"
+                                      FontFamily="MaterialIcons"
+                                      BackgroundColor="#3b71ff"
+                                      TextColor="White"
+                                      CornerRadius="18"
+                                      HeightRequest="36"
+                                      WidthRequest="36"
+                                      FontSize="18"
+                                      Command="{Binding EditarCondicionesMedicasCommand}" />
+                            </Grid>
 
-                    <!-- Indicador de Carga -->
-                    <ActivityIndicator IsRunning="{Binding IsBusy}" 
-                                      IsVisible="{Binding IsBusy}"
-                                      Color="#3b71ff" 
-                                      VerticalOptions="Center" 
-                                      HorizontalOptions="Center"
-                                      HeightRequest="40"/>
+                            <!-- Lista de Condiciones -->
+                            <CollectionView ItemsSource="{Binding CondicionesMedicas}"
+                                  SelectionMode="Multiple"
+                                  SelectionChanged="OnCondicionesMedicasSeleccionadas"
+                                  MinimumHeightRequest="80">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="0">
+                                            <Frame BackgroundColor="White"
+                                                 CornerRadius="15"
+                                                 Padding="15,12"
+                                                 HasShadow="True">
+                                                <Grid ColumnDefinitions="Auto,*">
+                                                    <Frame Grid.Column="0"
+                                                         BackgroundColor="#3b71ff"
+                                                         CornerRadius="12"
+                                                         HeightRequest="24"
+                                                         WidthRequest="24"
+                                                         Padding="0"
+                                                         HasShadow="False"
+                                                         VerticalOptions="Center"
+                                                         Margin="0,0,10,0">
+                                                        <Label FontFamily="MaterialIcons"
+                                                             Text="&#xE8F4;"
+                                                             FontSize="14"
+                                                             TextColor="White"
+                                                             HorizontalOptions="Center"
+                                                             VerticalOptions="Center"/>
+                                                    </Frame>
+                                                    <Label Grid.Column="1"
+                                                         Text="{Binding nombre_condicion}"
+                                                         FontSize="14"
+                                                         TextColor="#212529"
+                                                         VerticalOptions="Center" />
+                                                </Grid>
+                                            </Frame>
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                                <CollectionView.EmptyView>
+                                    <StackLayout Padding="20" Spacing="10">
+                                        <Label FontFamily="MaterialIcons"
+                                             Text="&#xE8F4;"
+                                             FontSize="40"
+                                             TextColor="#adb5bd"
+                                             HorizontalOptions="Center"/>
+                                        <Label Text="No hay condiciones médicas registradas"
+                                             TextColor="#6c757d"
+                                             FontAttributes="Italic"
+                                             HorizontalOptions="Center"
+                                             FontSize="14"/>
+                                    </StackLayout>
+                                </CollectionView.EmptyView>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Frame>
 
-                    <!-- Mensaje de Error -->
-                    <Label Text="{Binding ErrorMessage}" 
-                           IsVisible="{Binding HasError}"
-                           TextColor="#dc3545" 
-                           FontSize="14" 
-                           HorizontalOptions="Center"
-                           Margin="0,10,0,0"/>
+                    <!-- Alergias -->
+                    <Frame BackgroundColor="#f8f9fa" 
+                           CornerRadius="20" 
+                           Padding="20" 
+                           HasShadow="True">
+                        <VerticalStackLayout Spacing="15">
+                            <!-- Header con título y botones -->
+                            <Grid ColumnDefinitions="*,Auto,Auto">
+                                <Label Text="Alergias"
+                                     FontAttributes="Bold"
+                                     FontSize="16"
+                                     TextColor="#0B2B6E"
+                                     VerticalOptions="Center"
+                                     Grid.Column="0" />
+                                <Button Grid.Column="1"
+                                      Text="&#xE145;"
+                                      FontFamily="MaterialIcons"
+                                      BackgroundColor="#dc3545"
+                                      TextColor="White"
+                                      CornerRadius="18"
+                                      HeightRequest="36"
+                                      WidthRequest="36"
+                                      FontSize="20"
+                                      Margin="0,0,8,0"
+                                      Command="{Binding AgregarAlergiaCommand}" />
+                                <Button Grid.Column="2"
+                                      Text="&#xE3C9;"
+                                      FontFamily="MaterialIcons"
+                                      BackgroundColor="#dc3545"
+                                      TextColor="White"
+                                      CornerRadius="18"
+                                      HeightRequest="36"
+                                      WidthRequest="36"
+                                      FontSize="18"
+                                      Command="{Binding EditarAlergiasCommand}" />
+                            </Grid>
 
-                    <!-- Espaciado inferior -->
-                    <BoxView HeightRequest="20" BackgroundColor="Transparent"/>
+                            <!-- Lista de Alergias -->
+                            <CollectionView ItemsSource="{Binding Alergias}"
+                                  SelectionMode="Multiple"
+                                  SelectionChanged="OnAlergiasSeleccionadas"
+                                  MinimumHeightRequest="80">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="0">
+                                            <Frame BackgroundColor="White"
+                                                 CornerRadius="15"
+                                                 Padding="15,12"
+                                                 HasShadow="True">
+                                                <Grid ColumnDefinitions="Auto,*">
+                                                    <Frame Grid.Column="0"
+                                                         BackgroundColor="#dc3545"
+                                                         CornerRadius="12"
+                                                         HeightRequest="24"
+                                                         WidthRequest="24"
+                                                         Padding="0"
+                                                         HasShadow="False"
+                                                         VerticalOptions="Center"
+                                                         Margin="0,0,10,0">
+                                                        <Label FontFamily="MaterialIcons"
+                                                             Text="&#xE000;"
+                                                             FontSize="14"
+                                                             TextColor="White"
+                                                             HorizontalOptions="Center"
+                                                             VerticalOptions="Center"/>
+                                                    </Frame>
+                                                    <Label Grid.Column="1"
+                                                         Text="{Binding nombre_alergia}"
+                                                         FontSize="14"
+                                                         TextColor="#721c24"
+                                                         VerticalOptions="Center" />
+                                                </Grid>
+                                            </Frame>
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                                <CollectionView.EmptyView>
+                                    <StackLayout Padding="20" Spacing="10">
+                                        <Label FontFamily="MaterialIcons"
+                                             Text="&#xE000;"
+                                             FontSize="40"
+                                             TextColor="#adb5bd"
+                                             HorizontalOptions="Center"/>
+                                        <Label Text="No hay alergias registradas"
+                                             TextColor="#6c757d"
+                                             FontAttributes="Italic"
+                                             HorizontalOptions="Center"
+                                             FontSize="14"/>
+                                    </StackLayout>
+                                </CollectionView.EmptyView>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Frame>
+
+
+                        <Button Text="🚪  Cerrar Sesión"
+                              BackgroundColor="White"
+                              TextColor="#dc3545"
+                              CornerRadius="25"
+                              HeightRequest="50"
+                              FontSize="16"
+                              FontAttributes="Bold"
+                              HorizontalOptions="Fill"
+                              Command="{Binding CerrarSesionCommand}" />
+
 
                 </VerticalStackLayout>
             </Frame>
         </ScrollView>
+
+        <!-- 3) Avatar para la foto de perfil -->
+        <Grid HorizontalOptions="Center"
+          VerticalOptions="Start"
+          Margin="0,30,0,0">
+            <Frame BackgroundColor="White"
+             CornerRadius="60"
+             HeightRequest="120"
+             WidthRequest="120"
+             Padding="15"
+             HasShadow="True">
+                <Label FontFamily="MaterialIcons"
+               Text="&#xE853;"
+               FontSize="90"
+               TextColor="#3b71ff"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"/>
+            </Frame>
+            <Frame Padding="0"
+             WidthRequest="32"
+             HeightRequest="32"
+             BackgroundColor="#28a745"
+             CornerRadius="16"
+             HorizontalOptions="End"
+             VerticalOptions="End"
+             Margin="0,0,-10,-10"
+             HasShadow="True">
+                <Label Text="✏️"
+               FontSize="16"
+               TextColor="White"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"/>
+            </Frame>
+        </Grid>
+
+        <!-- Indicador de carga -->
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="#80000000"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+            <Frame BackgroundColor="White"
+                   CornerRadius="20"
+                   Padding="30"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HasShadow="True">
+                <StackLayout Orientation="Horizontal" Spacing="20">
+                    <ActivityIndicator IsRunning="True" 
+                                     Color="#3b71ff"
+                                     HeightRequest="30"
+                                     WidthRequest="30"/>
+                    <Label Text="Cargando perfil..." 
+                         TextColor="#0B2B6E" 
+                         VerticalOptions="Center"
+                         FontSize="16"/>
+                </StackLayout>
+            </Frame>
+        </Grid>
+
     </Grid>
 </base:BaseContentPage>

@@ -107,7 +107,7 @@
                             </HorizontalStackLayout>
                         </Frame>
 
-                        <!-- Recordar sesión -->
+                        <!-- Recordar sesión 
                         <HorizontalStackLayout HorizontalOptions="Start" Spacing="10">
                             <CheckBox IsChecked="{Binding RecordarSesion}"
                                       Color="#3B71FF"
@@ -115,7 +115,7 @@
                             <Label Text="Recordar sesión"
                                    TextColor="Gray"
                                    VerticalOptions="Center"/>
-                        </HorizontalStackLayout>
+                        </HorizontalStackLayout>-->
 
                         <!-- Botón Ingresar -->
                         <Button Text="Ingresar"
