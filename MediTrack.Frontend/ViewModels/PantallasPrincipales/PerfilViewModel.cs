@@ -76,6 +76,7 @@ namespace MediTrack.Frontend.ViewModels
             EstadoCuenta = string.Empty;
         }
 
+
         public override async Task InitializeAsync()
         {
             Debug.WriteLine("=== INICIANDO INITIALIZE ASYNC DEL PERFIL ===");

@@ -73,7 +73,11 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
 
             string codigoEscaneado = args.Results[0].Value;
+            var userIdStr = await SecureStorage.GetAsync("user_id");
+
+      
             Debug.WriteLine($"ViewModel: Procesando código: {codigoEscaneado}");
+            Debug.WriteLine($"ID de usuario (string): {userIdStr} - Tipo: {userIdStr?.GetType()}");
 
 
             try
@@ -81,7 +85,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 var request = new ReqEscanearMedicamento
                 {
                     CodigoBarras = codigoEscaneado,
-                    IdUsuario = 1,
+                    IdUsuario = int.Parse(userIdStr),
                     IdMetodoEscaneo = 1
                 };
 

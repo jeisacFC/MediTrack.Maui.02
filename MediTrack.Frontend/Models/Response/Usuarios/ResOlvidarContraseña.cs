@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Response
 {
-    public class ResOlvidarContraseña : ResBase
+    public class ResOlvidarContrasena : ResBase
     {
         public string Email { get; set; }
         public bool EmailEnviado { get; set; }

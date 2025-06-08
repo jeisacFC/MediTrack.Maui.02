@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Response
 {
-    public class ResRestablecerContraseña : ResBase
+    public class ResRestablecerContrasena : ResBase
     {
         public DateTime? FechaActualizacion { get; set; }
     }
