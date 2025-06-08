@@ -982,4 +982,355 @@ public class ApiService : IApiService
     }
 
     #endregion
+
+    // Agregar estos métodos a ApiService.cs
+
+    #region EVENTOS MÉDICOS
+
+    public async Task<ResListarEventosCalendario> ObtenerEventosAsync(ReqObtenerUsuario request)
+    {
+        var endpoint = "api/evento/listar";
+
+        try
+        {
+            Debug.WriteLine($"=== OBTENIENDO EVENTOS PARA USUARIO: {request.IdUsuario} ===");
+
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Status Code: {response.StatusCode}");
+            Debug.WriteLine($"Respuesta completa del servidor: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var backendResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                    var resEventos = new ResListarEventosCalendario();
+
+                    // Mapear campos básicos
+                    if (backendResponse.TryGetProperty("resultado", out var resultado))
+                        resEventos.resultado = resultado.GetBoolean();
+
+                    if (backendResponse.TryGetProperty("mensaje", out var mensaje))
+                        resEventos.Mensaje = mensaje.GetString();
+                    else if (backendResponse.TryGetProperty("Mensaje", out var mensajeMayus))
+                        resEventos.Mensaje = mensajeMayus.GetString();
+
+                    // Mapear eventos
+                    if (backendResponse.TryGetProperty("eventos", out var eventos) && eventos.ValueKind == JsonValueKind.Array)
+                    {
+                        var eventosList = new List<ResEventoCalendario>();
+                        foreach (var evento in eventos.EnumerateArray())
+                        {
+                            var eventoObj = new ResEventoCalendario();
+
+                            if (evento.TryGetProperty("tipo", out var tipo))
+                                eventoObj.Tipo = tipo.GetString();
+                            else if (evento.TryGetProperty("Tipo", out var tipoMayus))
+                                eventoObj.Tipo = tipoMayus.GetString();
+
+                            if (evento.TryGetProperty("fechaHora", out var fechaHora))
+                                eventoObj.FechaHora = fechaHora.GetDateTime();
+                            else if (evento.TryGetProperty("FechaHora", out var fechaHoraMayus))
+                                eventoObj.FechaHora = fechaHoraMayus.GetDateTime();
+
+                            if (evento.TryGetProperty("titulo", out var titulo))
+                                eventoObj.Titulo = titulo.GetString();
+                            else if (evento.TryGetProperty("Titulo", out var tituloMayus))
+                                eventoObj.Titulo = tituloMayus.GetString();
+
+                            if (evento.TryGetProperty("descripcion", out var descripcion))
+                                eventoObj.Descripcion = descripcion.GetString();
+                            else if (evento.TryGetProperty("Descripcion", out var descripcionMayus))
+                                eventoObj.Descripcion = descripcionMayus.GetString();
+
+                            eventosList.Add(eventoObj);
+                        }
+                        resEventos.Eventos = eventosList;
+                    }
+
+                    Debug.WriteLine($"Eventos obtenidos: {resEventos.Eventos?.Count ?? 0}");
+                    return resEventos;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error deserializando respuesta de eventos: {ex.Message}");
+                    return new ResListarEventosCalendario
+                    {
+                        resultado = false,
+                        Mensaje = "Error procesando respuesta del servidor",
+                        errores = new List<Errores> { new Errores { mensaje = "Error procesando respuesta" } }
+                    };
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"Error HTTP obteniendo eventos: {response.StatusCode}");
+                return new ResListarEventosCalendario
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}",
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Debug.WriteLine($"Error HTTP en obtener eventos: {httpEx.Message}");
+            return new ResListarEventosCalendario
+            {
+                resultado = false,
+                Mensaje = "Error de conexión HTTP",
+                errores = new List<Errores> { new Errores { mensaje = "Error de conexión HTTP" } }
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error general obteniendo eventos: {ex.Message}");
+            return new ResListarEventosCalendario
+            {
+                resultado = false,
+                Mensaje = "Error de conexión",
+                errores = new List<Errores> { new Errores { mensaje = "Error de conexión general" } }
+            };
+        }
+    }
+
+    public async Task<ResInsertarEventoMedico> InsertarEventoAsync(ReqInsertarEventoMedico request)
+    {
+        var endpoint = "api/evento/insertar";
+
+        try
+        {
+            Debug.WriteLine("=== INSERTANDO NUEVO EVENTO ===");
+            Debug.WriteLine($"IdUsuario: {request.IdUsuario}");
+            Debug.WriteLine($"Titulo: {request.Titulo}");
+            Debug.WriteLine($"FechaEvento: {request.FechaEvento:yyyy-MM-dd HH:mm}");
+
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Status Code: {response.StatusCode}");
+            Debug.WriteLine($"Respuesta: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var resEvento = JsonSerializer.Deserialize<ResInsertarEventoMedico>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    Debug.WriteLine($"Evento insertado - resultado: {resEvento.resultado}");
+                    return resEvento;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error deserializando respuesta de insertar evento: {ex.Message}");
+                    return new ResInsertarEventoMedico
+                    {
+                        resultado = false,
+                        Mensaje = "Error procesando respuesta del servidor"
+                    };
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"Error HTTP insertando evento: {response.StatusCode}");
+                return new ResInsertarEventoMedico
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error general insertando evento: {ex.Message}");
+            return new ResInsertarEventoMedico
+            {
+                resultado = false,
+                Mensaje = "Error de conexión"
+            };
+        }
+    }
+
+    public async Task<ResActualizarEventoMedico> ActualizarEventoAsync(ReqActualizarEventoMedico request)
+    {
+        var endpoint = "api/evento/actualizar";
+
+        try
+        {
+            Debug.WriteLine("=== ACTUALIZANDO EVENTO ===");
+            Debug.WriteLine($"IdEvento: {request.IdEvento}");
+            Debug.WriteLine($"Titulo: {request.Titulo}");
+
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Status Code: {response.StatusCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var resEvento = JsonSerializer.Deserialize<ResActualizarEventoMedico>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return resEvento;
+            }
+            else
+            {
+                return new ResActualizarEventoMedico
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error actualizando evento: {ex.Message}");
+            return new ResActualizarEventoMedico
+            {
+                resultado = false,
+                Mensaje = "Error de conexión"
+            };
+        }
+    }
+
+    public async Task<ResCompletarEvento> CompletarEventoAsync(ReqEvento request)
+    {
+        var endpoint = "api/evento/completar";
+
+        try
+        {
+            Debug.WriteLine("=== MARCANDO EVENTO COMO COMPLETADO ===");
+            Debug.WriteLine($"IdEvento: {request.IdEvento}");
+
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Status Code: {response.StatusCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var resEvento = JsonSerializer.Deserialize<ResCompletarEvento>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return resEvento;
+            }
+            else
+            {
+                return new ResCompletarEvento
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error completando evento: {ex.Message}");
+            return new ResCompletarEvento
+            {
+                resultado = false,
+                Mensaje = "Error de conexión"
+            };
+        }
+    }
+
+    public async Task<ResEliminarEventoUsuario> EliminarEventoAsync(ReqEvento request)
+    {
+        var endpoint = "api/evento/eliminar";
+
+        try
+        {
+            Debug.WriteLine("=== ELIMINANDO EVENTO ===");
+            Debug.WriteLine($"IdEvento: {request.IdEvento}");
+
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Status Code: {response.StatusCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var resEvento = JsonSerializer.Deserialize<ResEliminarEventoUsuario>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return resEvento;
+            }
+            else
+            {
+                return new ResEliminarEventoUsuario
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error eliminando evento: {ex.Message}");
+            return new ResEliminarEventoUsuario
+            {
+                resultado = false,
+                Mensaje = "Error de conexión"
+            };
+        }
+    }
+
+    #endregion
 }

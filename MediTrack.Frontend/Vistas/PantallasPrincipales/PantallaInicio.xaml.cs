@@ -1,4 +1,6 @@
 using MediTrack.Frontend.ViewModels.PantallasPrincipales;
+using MediTrack.Frontend.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
@@ -9,7 +11,13 @@ public partial class PantallaInicio : ContentPage
     public PantallaInicio()
     {
         InitializeComponent();
-        _viewModel = new InicioViewModel();
+
+        // Obtener ApiService desde DI o usar DependencyService como fallback
+        var apiService = Handler?.MauiContext?.Services?.GetService<IApiService>()
+                       ?? Microsoft.Maui.Controls.DependencyService.Get<IApiService>();
+
+        // Crear ViewModel con dependencia
+        _viewModel = new InicioViewModel(apiService);
         BindingContext = _viewModel;
     }
 
@@ -19,10 +27,10 @@ public partial class PantallaInicio : ContentPage
 
         try
         {
-            // Recargar datos cada vez que aparece la pantalla
-            await _viewModel.RecargarDatos();
+            // Inicializar y recargar datos cada vez que aparece la pantalla
+            await _viewModel.InitializeAsync();
 
-            System.Diagnostics.Debug.WriteLine("PantallaInicio: Datos recargados en OnAppearing");
+            System.Diagnostics.Debug.WriteLine("PantallaInicio: Datos recargados desde backend en OnAppearing");
         }
         catch (Exception ex)
         {
