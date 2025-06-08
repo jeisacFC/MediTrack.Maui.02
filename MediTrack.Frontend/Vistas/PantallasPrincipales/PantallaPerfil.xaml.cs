@@ -1,6 +1,7 @@
 using MediTrack.Frontend.ViewModels;
 using MediTrack.Frontend.Models.Model;
 using System.Diagnostics;
+using MediTrack.Frontend.Vistas.Base;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {

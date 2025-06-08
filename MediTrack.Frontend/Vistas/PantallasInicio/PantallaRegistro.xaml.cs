@@ -2,6 +2,7 @@ using System;
 using Microsoft.Maui.Controls;
 using MediTrack.Frontend.ViewModels.PantallasInicio;
 using MediTrack.Frontend.Models.Response;
+using MediTrack.Frontend.Vistas.Base;
 
 namespace MediTrack.Frontend.Vistas.PantallasInicio
 {

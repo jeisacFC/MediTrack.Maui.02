@@ -2,7 +2,7 @@
 <base:BaseContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
+    xmlns:base="clr-namespace:MediTrack.Frontend.Vistas.Base"
     x:Class="MediTrack.Frontend.Vistas.PantallasInicio.PantallaBienvenida"
     BackgroundColor="#3b71ff"
     NavigationPage.HasNavigationBar="False"

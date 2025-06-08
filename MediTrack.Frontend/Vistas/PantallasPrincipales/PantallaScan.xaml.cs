@@ -1,9 +1,10 @@
-using CommunityToolkit.Maui.Views; // Para this.ShowPopupAsync()
-using MediTrack.Frontend.Popups;   // Para InstruccionesEscaneoPopup
-using MediTrack.Frontend.ViewModels.PantallasPrincipales; // Para ScanViewModel
+using CommunityToolkit.Maui.Views; 
+using MediTrack.Frontend.Popups;   
+using MediTrack.Frontend.ViewModels.PantallasPrincipales; 
 using System.Diagnostics;
-using ZXing.Net.Maui; // Para BarcodeDetectionEventArgs
-using MediTrack.Frontend.Models.Response; // Para IBarcodeScannerService
+using ZXing.Net.Maui; 
+using MediTrack.Frontend.Models.Response; 
+using MediTrack.Frontend.Vistas.Base;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 

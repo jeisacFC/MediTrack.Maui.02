@@ -1,5 +1,6 @@
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Graphics;
+using MediTrack.Frontend.Vistas.Base;
 
 namespace MediTrack.Frontend.Vistas.PantallasInicio
 {
