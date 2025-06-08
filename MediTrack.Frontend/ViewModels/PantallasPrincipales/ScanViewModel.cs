@@ -134,7 +134,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             IsDetecting = false;
         }
 
-
         private async Task EjecutarCancelarEscaneo()
         {
             DetenerEscaneo();
@@ -148,7 +147,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 Debug.WriteLine("No se pudo navegar hacia atrás, ya estamos en la raíz o es la única página.");
             }
         }
-
 
         private async Task EjecutarBuscarManual()
         {

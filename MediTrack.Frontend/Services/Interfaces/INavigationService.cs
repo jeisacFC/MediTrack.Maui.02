@@ -12,5 +12,9 @@ namespace MediTrack.Frontend.Services.Interfaces
         Task GoBackAsync();
         Task GoToAsync(string route);
         bool CanGoBack();
+
+        // NUEVOS MÉTODOS PARA EL ESCENARIO DE ESCANEO (VOLVER PAGINA ANTERIOR SIN ESPICIFAR RUTA)
+        void GuardarPaginaActual();
+        Task VolverAPaginaAnteriorAsync();
     }
 }
