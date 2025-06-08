@@ -88,14 +88,14 @@
                                 Clicked="IrARegistro" />
                         </Grid>
 
-                        <Button Text="Probar Escaneo (Temporal)"
+                        <!--<Button Text="Probar Escaneo (Temporal)"
                             BackgroundColor="DarkOrange" 
                             TextColor="White"
                             CornerRadius="30"
                             HeightRequest="60"
                             FontSize="18"
                             FontAttributes="Bold"
-                            Clicked="IrAPantallaEscaneo" />
+                            Clicked="IrAPantallaEscaneo" />-->
                     </VerticalStackLayout>
                     <!-- Espacio flexible debajo de los botones -->
                     <BoxView Grid.Row="2" />
