@@ -157,8 +157,25 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
         private async Task EjecutarBuscarManual()
         {
-            DetenerEscaneo();
-            await Application.Current.MainPage.DisplayAlert("Navegación", "Ir a Búsqueda Manual (pendiente)", "OK");
+
+            try 
+            {
+                System.Diagnostics.Debug.WriteLine("=== INICIO BuscarManual ===");
+
+                // Guardar página actual por si necesitas volver
+                _navigationService.GuardarPaginaActual();
+
+                DetenerEscaneo();
+
+                System.Diagnostics.Debug.WriteLine("Navegando a búsqueda...");
+                await _navigationService.GoToAsync("//busqueda");
+
+                System.Diagnostics.Debug.WriteLine("Navegación a búsqueda completada");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error navegando a búsqueda: {ex.Message}");
+            }
         }
 
     }
