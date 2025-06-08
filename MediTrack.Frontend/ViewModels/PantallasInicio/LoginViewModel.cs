@@ -87,7 +87,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasInicio
                 else
                 {
                     // Login fallido
-                    string errorMsg = response?.errores?.FirstOrDefault()?.Message ??
+                    string errorMsg = response?.errores?.FirstOrDefault()?.mensaje ??
                                      "Credenciales incorrectas. Verifique su email y contraseña.";
 
                     MensajeEstado = "Error en el login";

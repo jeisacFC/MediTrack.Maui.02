@@ -78,43 +78,268 @@
 	  
 	  <Compile Include="Models\Model\CondicionesMedicas.cs" />
 	  
-	  <Compile Include="Models\Model\Error.cs" />
+	  <Compile Include="Models\Model\Direcciones.cs" />
 	  
 	  <Compile Include="Models\Model\MedicamentoExterno.cs" />
 	  
 	  <Compile Include="Models\Model\Usuario.cs" />
+	  <Compile Include="Models\Model\EfectosSecundarios.cs" />
 	  
-	  <Compile Include="Models\ReqBase.cs" />
+	  <Compile Include="Models\Model\Errores.cs" />
 	  
-	  <Compile Include="Models\Request\ReqBuscarMedicamento.cs" />
+	  <Compile Include="Models\Model\EscaneosMedicamentos.cs" />
 	  
-	  <Compile Include="Models\Request\ReqEscanearMedicamento.cs" />
+	  <Compile Include="Models\Model\EstadoEnum.cs" />
 	  
-	  <Compile Include="Models\Request\ReqLogin.cs" />
+	  <Compile Include="Models\Model\EstadoSesionEnum.cs" />
 	  
-	  <Compile Include="Models\Request\ReqLogout.cs" />
+	  <Compile Include="Models\Model\EventosMedicos.cs" />
 	  
-	  <Compile Include="Models\Request\ReqObtenerUsuario.cs" />
+	  <Compile Include="Models\Model\Fabricantes.cs" />
 	  
-	  <Compile Include="Models\Request\ReqRefreshToken.cs" />
+	  <Compile Include="Models\Model\FechasRecordatorios.cs" />
 	  
-	  <Compile Include="Models\Request\ReqRegister.cs" />
+	  <Compile Include="Models\Model\FrecuenciaEnum.cs" />
 	  
-	  <Compile Include="Models\ResBase.cs" />
+	  <Compile Include="Models\Model\GeneroEnum.cs" />
 	  
-	  <Compile Include="Models\Response\ResBuscarMedicamento.cs" />
+	  <Compile Include="Models\Model\HistorialRecordatorios.cs" />
 	  
-	  <Compile Include="Models\Response\ResEscanearMedicamento.cs" />
+	  <Compile Include="Models\Model\InteraccionesMedicamentos.cs" />
 	  
-	  <Compile Include="Models\Response\ResLogin.cs" />
+	  <Compile Include="Models\Model\MedicamentoEfectos.cs" />
 	  
-	  <Compile Include="Models\Response\ResLogout.cs" />
+	  <Compile Include="Models\Model\MedicamentoExterno.cs" />
 	  
-	  <Compile Include="Models\Response\ResObtenerUsuario.cs" />
+	  <Compile Include="Models\Model\Medicamentos.cs" />
 	  
-	  <Compile Include="Models\Response\ResRefreshToken.cs" />
+	  <Compile Include="Models\Model\MetodoEscaneoEnum.cs" />
 	  
-	  <Compile Include="Models\Response\ResRegister.cs" />
+	  <Compile Include="Models\Model\ProgramacionRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Model\RecomendacionesIA.cs" />
+	  
+	  <Compile Include="Models\Model\RecordatoriosMedicacion.cs" />
+	  
+	  <Compile Include="Models\Model\Sesiones.cs" />
+	  
+	  <Compile Include="Models\Model\SeveridadEnum.cs" />
+	  
+	  <Compile Include="Models\Model\UsuarioAlergias.cs" />
+	  
+	  <Compile Include="Models\Model\UsuarioMedicamentos.cs" />
+	  
+	  <Compile Include="Models\Model\Usuarios.cs" />
+	  
+	  <Compile Include="Models\Model\UsuariosCondiciones.cs" />
+	  
+	  <Compile Include="Models\Model\UsuarioSintomaReportado.cs" />
+	  
+	  <Compile Include="Models\Request\ReqBase.cs" />
+	  
+	  <Compile Include="Models\Request\Alergia\ReqActualizarAlergia.cs" />
+	  
+	  <Compile Include="Models\Request\Alergia\ReqAsignarAlergiaUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Alergia\ReqDesasignarAlergia.cs" />
+	  
+	  <Compile Include="Models\Request\Alergia\ReqEliminarAlergia.cs" />
+	  
+	  <Compile Include="Models\Request\Alergia\ReqInsertarAlergia.cs" />
+	  
+	  <Compile Include="Models\Request\Alergia\ReqListarAlergias.cs" />
+	  
+	  <Compile Include="Models\Request\Alergia\ReqObtenerAlergia.cs" />
+	  
+	  <Compile Include="Models\Request\Alergia\ReqObtenerAlergiasUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Condicion\ReqActualizarCondicion.cs" />
+	  
+	  <Compile Include="Models\Request\Condicion\ReqAsignarCondicionUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Condicion\ReqDesasignarCondicionUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Condicion\ReqEliminarCondicion.cs" />
+	  
+	  <Compile Include="Models\Request\Condicion\ReqInsertarCondicion.cs" />
+	  
+	  <Compile Include="Models\Request\Condicion\ReqListarCondiciones.cs" />
+	  
+	  <Compile Include="Models\Request\Condicion\ReqObtenerCondicion.cs" />
+	  
+	  <Compile Include="Models\Request\Condicion\ReqObtenerCondicionesUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqActualizarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqEvento.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqInsertarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Request\Medicamentos\ReqBuscarMedicamento.cs" />
+	  
+	  <Compile Include="Models\Request\Medicamentos\ReqEscanearMedicamento.cs" />
+	  
+	  <Compile Include="Models\Request\Medicamentos\ReqGuardarMedicamento.cs" />
+	  
+	  <Compile Include="Models\Request\Medicamentos\ReqMedicamento.cs" />
+	  
+	  <Compile Include="Models\Request\Recordatorios\ReqActualizarRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Request\Recordatorios\ReqEliminarRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Request\Recordatorios\ReqInsertarRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Request\Recordatorios\ReqListarRecordatorios.cs" />
+	  
+	  <Compile Include="Models\Request\Recordatorios\ReqMarcarEstadoRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Request\Recordatorios\ReqObtenerRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqRegister.cs" />
+	  
+	  <Compile Include="Models\Request\Sintomas\ReqAgregarSintomasSeleccionados.cs" />
+	  
+	  <Compile Include="Models\Request\Sintomas\ReqBuscarSintoma.cs" />
+	  
+	  <Compile Include="Models\Request\Sintomas\ReqEliminarSintoma.cs" />
+	  
+	  <Compile Include="Models\Request\Sintomas\ReqInsertarSintomaManual.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqActualizarUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqAutenticarUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqCambiarContraseña.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqInsertarUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqLogin.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqLogout.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqObtenerUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqOlvidarContraseña.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqRefreshToken.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqRestablecerContraseña.cs" />
+	  
+	  <Compile Include="Models\Request\Usuarios\ReqSolicitarResetPassword.cs" />
+	  
+	  <Compile Include="Models\Response\ResBase.cs" />
+	  
+	  <Compile Include="Models\Response\Alergias\ResActualizarAlergia.cs" />
+	  
+	  <Compile Include="Models\Response\Alergias\ResAsignarAlergiaUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Alergias\ResDesasignarAlergiaUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Alergias\ResEliminarAlergia.cs" />
+	  
+	  <Compile Include="Models\Response\Alergias\ResInsertarAlergia.cs" />
+	  
+	  <Compile Include="Models\Response\Alergias\ResListarAlergias.cs" />
+	  
+	  <Compile Include="Models\Response\Alergias\ResObtenerAlergia.cs" />
+	  
+	  <Compile Include="Models\Response\Alergias\ResObtenerAlergiasUsuarios.cs" />
+	  
+	  <Compile Include="Models\Response\Condiciones\ResActualizarCondicion.cs" />
+	  
+	  <Compile Include="Models\Response\Condiciones\ResAsignarCondicionUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Condiciones\ResDesasignarCondicionUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Condiciones\ResEliminarCondicion.cs" />
+	  
+	  <Compile Include="Models\Response\Condiciones\ResInsertarCondicion.cs" />
+	  
+	  <Compile Include="Models\Response\Condiciones\ResListarCondiciones.cs" />
+	  
+	  <Compile Include="Models\Response\Condiciones\ResObtenerCondicion.cs" />
+	  
+	  <Compile Include="Models\Response\Condiciones\ResObtenerCondicionesUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResActualizarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResCompletarEvento.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResEliminarEventoUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResEventoCalendario.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResInsertarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResListarEventosCalendario.cs" />
+	  
+	  <Compile Include="Models\Response\IA\ResAlertaSalud.cs" />
+	  
+	  <Compile Include="Models\Response\IA\ResHabitosSaludables.cs" />
+	  
+	  <Compile Include="Models\Response\IA\ResInteraccionesMedicamentos.cs" />
+	  
+	  <Compile Include="Models\Response\IA\ResRecomendacionesIA.cs" />
+	  
+	  <Compile Include="Models\Response\Medicamentos\ResBuscarMedicamento.cs" />
+	  
+	  <Compile Include="Models\Response\Medicamentos\ResDetalleMedicamentoUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Medicamentos\ResEliminarMedicamentoUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Medicamentos\ResEscanearMedicamento.cs" />
+	  
+	  <Compile Include="Models\Response\Medicamentos\ResGuardarMedicamento.cs" />
+	  
+	  <Compile Include="Models\Response\Medicamentos\ResInsertarUsuarioMedicamento.cs" />
+	  
+	  <Compile Include="Models\Response\Medicamentos\ResListarMedicamentosUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Recordatorios\ResActualizarRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Response\Recordatorios\ResEliminarRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Response\Recordatorios\ResInsertarRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Response\Recordatorios\ResListarRecordatorios.cs" />
+	  
+	  <Compile Include="Models\Response\Recordatorios\ResMarcarEstadoRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Response\Recordatorios\ResObtenerRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResRegister.cs" />
+	  
+	  <Compile Include="Models\Response\Sintomas\ResAgregarSintomasSeleccionados.cs" />
+	  
+	  <Compile Include="Models\Response\Sintomas\ResBuscarSintoma.cs" />
+	  
+	  <Compile Include="Models\Response\Sintomas\ResEliminarSintoma.cs" />
+	  
+	  <Compile Include="Models\Response\Sintomas\ResInsertarSintomaManual.cs" />
+	  
+	  <Compile Include="Models\Response\Sintomas\ResObtenerSintomasUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResActualizarUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResAutenticarUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResCambiarContraseña.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResInsertarUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResLogin.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResLogout.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResObtenerUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResOlvidarContraseña.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResRefreshToken.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResRestablecerContraseña.cs" />
+	  
+	  <Compile Include="Models\Response\Usuarios\ResSolicitarResetPassword.cs" />
 	  
 	  <Compile Include="Services\AuthHandler.cs" />
 	  
@@ -152,6 +377,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\ModalCodigoVerificacion.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\ModalGestionarSintomas.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\ModalNuevaContrasena.xaml">

@@ -14,9 +14,15 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="25">
 
-            <!-- Medicamentos para hoy - DISEÑO IGUAL QUE LA AGENDA -->
-            <VerticalStackLayout Spacing="10">
-                <!-- Header similar al de la agenda -->
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsVisible="{Binding IsLoading}"
+                             IsRunning="{Binding IsLoading}"
+                             Color="#007AFF"
+                             HeightRequest="40" />
+
+            <!-- Medicamentos para hoy -->
+            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                <!-- Header -->
                 <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
                     <Label Grid.Column="0"
                            Text="{Binding FechaHoy, StringFormat='Medicamentos - {0}'}"
@@ -25,7 +31,6 @@
                            TextColor="Black"
                            VerticalTextAlignment="Center" />
 
-                    <!-- Botón para ir a la agenda -->
                     <Button Grid.Column="1"
                             Text="Ver todo"
                             BackgroundColor="#007AFF"
@@ -35,27 +40,13 @@
                             Padding="10,6"
                             WidthRequest="70"
                             HeightRequest="28"
-                            Command="{Binding IrAAgendaCommand}" />
+                            Command="{Binding IrAAgendaCommand}"
+                            IsVisible="{Binding HayMedicamentos}" />
                 </Grid>
 
-                <!-- Lista de medicamentos CON MISMO DISEÑO QUE AGENDA -->
-                <CollectionView ItemsSource="{Binding MedicamentosHoy}">
-                    <CollectionView.EmptyView>
-                        <ContentView>
-                            <VerticalStackLayout Spacing="8" Padding="15">
-                                <Label FontFamily="MaterialIcons"
-                                       Text="&#xe1a3;"
-                                       FontSize="40"
-                                       TextColor="#cccccc"
-                                       HorizontalTextAlignment="Center" />
-                                <Label Text="No hay medicamentos para hoy"
-                                       TextColor="Gray"
-                                       FontSize="14"
-                                       HorizontalTextAlignment="Center" />
-                            </VerticalStackLayout>
-                        </ContentView>
-                    </CollectionView.EmptyView>
-
+                <!-- Lista de medicamentos -->
+                <CollectionView ItemsSource="{Binding MedicamentosHoy}"
+                               IsVisible="{Binding HayMedicamentos}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame BackgroundColor="White"
@@ -113,118 +104,308 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
+                <!-- Mensaje cuando no hay medicamentos -->
+                <Frame BackgroundColor="#F8F9FA" 
+                       CornerRadius="15" 
+                       Padding="20"
+                       HasShadow="False"
+                       IsVisible="{Binding HayMedicamentos, Converter={StaticResource InverseBoolConverter}}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label FontFamily="MaterialIcons"
+                               Text="&#xe1a3;"
+                               FontSize="30"
+                               TextColor="#cccccc"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="No hay medicamentos para hoy"
+                               TextColor="Gray"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
             </VerticalStackLayout>
 
-            <!-- Escaneos recientes (DATOS HARDCODEADOS RESTAURADOS) -->
-            <Label Text="Escaneos Recientes"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   TextColor="Black" />
+            <!-- Escaneos recientes -->
+            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                    <Label Grid.Column="0"
+                           Text="Escaneos Recientes"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="Black"
+                           VerticalTextAlignment="Center" />
 
-            <ScrollView Orientation="Horizontal"
-                        HorizontalScrollBarVisibility="Always"
-                        HeightRequest="120">
-                <HorizontalStackLayout Spacing="10" Padding="0,5">
-                    <Frame BackgroundColor="#f1f4ff"
-                           CornerRadius="15"
-                           Padding="10"
-                           WidthRequest="200"
-                           HasShadow="True">
-                        <VerticalStackLayout>
-                            <Label Text="Divalproato Sódico 250mg"
-                                   FontAttributes="Bold"
-                                   FontSize="14"/>
-                            <Label Text="5 de Abril, 7:23 p. m."
-                                   FontSize="12"
-                                   TextColor="Gray"/>
-                        </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Text="Ver todos"
+                            BackgroundColor="#4CAF50"
+                            TextColor="White"
+                            CornerRadius="10"
+                            FontSize="11"
+                            Padding="8,5"
+                            WidthRequest="70"
+                            HeightRequest="26"
+                            Command="{Binding VerTodosEscaneosCommand}"
+                            IsVisible="{Binding HayEscaneos}" />
+                </Grid>
+
+                <!-- Lista de escaneos -->
+                <ScrollView Orientation="Horizontal"
+                           HorizontalScrollBarVisibility="Never"
+                           HeightRequest="120"
+                           IsVisible="{Binding HayEscaneos}">
+                    <StackLayout Orientation="Horizontal" Spacing="10" Padding="0,5">
+                        <Frame BackgroundColor="#E8F5E8"
+                               CornerRadius="15"
+                               Padding="12"
+                               WidthRequest="200"
+                               HasShadow="True">
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="Divalproato Sódico 250mg"
+                                       FontAttributes="Bold"
+                                       FontSize="14"
+                                       TextColor="Black"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="5 de Abril, 7:23 p. m."
+                                       FontSize="12"
+                                       TextColor="Gray" />
+                                <Label Text="Laboratorio ABC"
+                                       FontSize="11"
+                                       TextColor="#666"
+                                       LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <Frame BackgroundColor="#E8F5E8"
+                               CornerRadius="15"
+                               Padding="12"
+                               WidthRequest="200"
+                               HasShadow="True">
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="Amoxicilina 500mg"
+                                       FontAttributes="Bold"
+                                       FontSize="14"
+                                       TextColor="Black"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="4 de Abril, 10:43 a. m."
+                                       FontSize="12"
+                                       TextColor="Gray" />
+                                <Label Text="Pharma XYZ"
+                                       FontSize="11"
+                                       TextColor="#666"
+                                       LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Mensaje cuando no hay escaneos -->
+                <Frame BackgroundColor="#F8F9FA" 
+                       CornerRadius="15" 
+                       Padding="20"
+                       HasShadow="False"
+                       IsVisible="{Binding HayEscaneos, Converter={StaticResource InverseBoolConverter}}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label FontFamily="MaterialIcons"
+                               Text="&#xe8b6;"
+                               FontSize="30"
+                               TextColor="#cccccc"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="No hay escaneos recientes"
+                               TextColor="Gray"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+
+            <!-- Hábitos saludables -->
+            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                    <Label Grid.Column="0"
+                           Text="Hábitos saludables"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="Black"
+                           VerticalTextAlignment="Center" />
+
+                    <Button Grid.Column="1"
+                            Text="Ver todos"
+                            BackgroundColor="#FF9500"
+                            TextColor="White"
+                            CornerRadius="10"
+                            FontSize="11"
+                            Padding="8,5"
+                            WidthRequest="70"
+                            HeightRequest="26"
+                            Command="{Binding VerTodosHabitosCommand}"
+                            IsVisible="{Binding HayHabitos}" />
+                </Grid>
+
+                <!-- Lista de hábitos -->
+                <ScrollView Orientation="Horizontal"
+                           HorizontalScrollBarVisibility="Never"
+                           HeightRequest="140"
+                           IsVisible="{Binding HayHabitos}">
+                    <StackLayout Orientation="Horizontal" Spacing="15" Padding="0,5">
+                        <Frame BackgroundColor="White"
+                               CornerRadius="15"
+                               Padding="15"
+                               WidthRequest="280"
+                               HasShadow="True">
+                            <VerticalStackLayout Spacing="10">
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label FontFamily="MaterialIcons"
+                                           Text="&#xe8cc;"
+                                           FontSize="20"
+                                           TextColor="#007AFF"
+                                           VerticalOptions="Center" />
+                                    <Label Text="Beber al menos 8 vasos de agua al día"
+                                           FontAttributes="Bold"
+                                           FontSize="14"
+                                           TextColor="Black"
+                                           LineBreakMode="TailTruncation"
+                                           HorizontalOptions="FillAndExpand" />
+                                </HorizontalStackLayout>
+                                <Label Text="Mantenerte hidratado ayuda a tu organismo a funcionar mejor."
+                                       FontSize="12"
+                                       TextColor="Gray"
+                                       LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <Frame BackgroundColor="White"
+                               CornerRadius="15"
+                               Padding="15"
+                               WidthRequest="280"
+                               HasShadow="True">
+                            <VerticalStackLayout Spacing="10">
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label FontFamily="MaterialIcons"
+                                           Text="&#xe52f;"
+                                           FontSize="20"
+                                           TextColor="#4CAF50"
+                                           VerticalOptions="Center" />
+                                    <Label Text="Caminar 30 minutos diarios"
+                                           FontAttributes="Bold"
+                                           FontSize="14"
+                                           TextColor="Black"
+                                           LineBreakMode="TailTruncation"
+                                           HorizontalOptions="FillAndExpand" />
+                                </HorizontalStackLayout>
+                                <Label Text="El ejercicio ligero mejora tu salud cardiovascular."
+                                       FontSize="12"
+                                       TextColor="Gray"
+                                       LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Mensaje cuando no hay hábitos -->
+                <Frame BackgroundColor="#F8F9FA" 
+                       CornerRadius="15" 
+                       Padding="20"
+                       HasShadow="False"
+                       IsVisible="{Binding HayHabitos, Converter={StaticResource InverseBoolConverter}}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label FontFamily="MaterialIcons"
+                               Text="&#xe87c;"
+                               FontSize="30"
+                               TextColor="#cccccc"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="No hay hábitos disponibles"
+                               TextColor="Gray"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+
+            <!-- Síntomas -->
+            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                    <Label Grid.Column="0"
+                           Text="Síntomas recientes"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="Black"
+                           VerticalTextAlignment="Center" />
+
+                    <Button Grid.Column="1"
+                            Text="Gestionar"
+                            BackgroundColor="#9C27B0"
+                            TextColor="White"
+                            CornerRadius="10"
+                            FontSize="11"
+                            Padding="8,5"
+                            WidthRequest="75"
+                            HeightRequest="26"
+                            Command="{Binding GestionarSintomasCommand}" />
+                </Grid>
+
+                <!-- Lista de síntomas en chips -->
+                <StackLayout Orientation="Horizontal" Spacing="8" IsVisible="{Binding HaySintomas}">
+                    <Frame BackgroundColor="#E8E4FF"
+                           CornerRadius="20"
+                           Padding="12,8"
+                           HasShadow="False"
+                           HeightRequest="36">
+                        <Label Text="Dolor de cabeza"
+                               TextColor="#6B46C1"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center" />
                     </Frame>
-                    <Frame BackgroundColor="#f1f4ff"
-                           CornerRadius="15"
-                           Padding="10"
-                           WidthRequest="200"
-                           HasShadow="True">
-                        <VerticalStackLayout>
-                            <Label Text="Amoxicilina 500mg"
-                                   FontAttributes="Bold"
-                                   FontSize="14"/>
-                            <Label Text="4 de Abril, 10:43 a. m."
-                                   FontSize="12"
-                                   TextColor="Gray"/>
-                        </VerticalStackLayout>
-                    </Frame>
-                </HorizontalStackLayout>
-            </ScrollView>
 
-            <!-- Hábitos saludables (RESTAURADOS) -->
-            <Label Text="Hábitos saludables"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   TextColor="Black" />
-
-            <ScrollView Orientation="Horizontal"
-                        HorizontalScrollBarVisibility="Never"
-                        HeightRequest="140">
-                <HorizontalStackLayout Spacing="15" Padding="0,5">
-                    <!-- Hábito de ejemplo: hidratación -->
-                    <Frame BackgroundColor="White"
-                           CornerRadius="15"
-                           Padding="15"
-                           WidthRequest="280"
-                           HasShadow="True">
-                        <VerticalStackLayout Spacing="10">
-                            <Label Text="Beber al menos 8 vasos de agua al día"
-                                   FontAttributes="Bold"
-                                   FontSize="14"
-                                   TextColor="Black" />
-                            <Label Text="Mantenerte hidratado ayuda a tu organismo a funcionar mejor."
-                                   FontSize="12"
-                                   TextColor="Gray" />
-                        </VerticalStackLayout>
+                    <Frame BackgroundColor="#E8E4FF"
+                           CornerRadius="20"
+                           Padding="12,8"
+                           HasShadow="False"
+                           HeightRequest="36">
+                        <Label Text="Fiebre"
+                               TextColor="#6B46C1"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center" />
                     </Frame>
 
-                    <!-- Hábito de ejemplo: actividad física -->
-                    <Frame BackgroundColor="White"
-                           CornerRadius="15"
-                           Padding="15"
-                           WidthRequest="280"
-                           HasShadow="True">
-                        <VerticalStackLayout Spacing="10">
-                            <Label Text="Caminar 30 minutos diarios"
-                                   FontAttributes="Bold"
-                                   FontSize="14"
-                                   TextColor="Black" />
-                            <Label Text="El ejercicio ligero mejora tu salud cardiovascular."
-                                   FontSize="12"
-                                   TextColor="Gray" />
-                        </VerticalStackLayout>
+                    <Frame BackgroundColor="#E8E4FF"
+                           CornerRadius="20"
+                           Padding="12,8"
+                           HasShadow="False"
+                           HeightRequest="36">
+                        <Label Text="Náuseas"
+                               TextColor="#6B46C1"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center" />
                     </Frame>
-                </HorizontalStackLayout>
-            </ScrollView>
+                </StackLayout>
 
-            <!-- Síntomas (RESTAURADOS) -->
-            <Label Text="Síntomas"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   TextColor="Black" />
-
-            <HorizontalStackLayout Spacing="10">
-                <Button Text="Dolor de cabeza"
-                        BackgroundColor="#e0e7ff"
-                        TextColor="#3b71ff"
-                        CornerRadius="20"
-                        FontSize="12"/>
-                <Button Text="Fiebre"
-                        BackgroundColor="#e0e7ff"
-                        TextColor="#3b71ff"
-                        CornerRadius="20"
-                        FontSize="12"/>
-                <Button Text="Náuseas"
-                        BackgroundColor="#e0e7ff"
-                        TextColor="#3b71ff"
-                        CornerRadius="20"
-                        FontSize="12"/>
-            </HorizontalStackLayout>
+                <!-- Mensaje cuando no hay síntomas -->
+                <Frame BackgroundColor="#F8F9FA" 
+                       CornerRadius="15" 
+                       Padding="20"
+                       HasShadow="False"
+                       IsVisible="{Binding HaySintomas, Converter={StaticResource InverseBoolConverter}}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label FontFamily="MaterialIcons"
+                               Text="&#xe887;"
+                               FontSize="30"
+                               TextColor="#cccccc"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="No hay síntomas reportados"
+                               TextColor="Gray"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Toca en 'Gestionar' para agregar síntomas"
+                               TextColor="Gray"
+                               FontSize="12"
+                               HorizontalTextAlignment="Center"
+                               Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>

@@ -96,7 +96,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 else
                 {
                     // Si la API devuelve resultado = false o nulo, dispara el evento de error
-                    string errorMsg = infoMedicamento?.errores?.FirstOrDefault()?.Message ?? "Medicamento no encontrado en el sistema. :(";
+                    string errorMsg = infoMedicamento?.errores?.FirstOrDefault()?.mensaje ?? "Medicamento no encontrado en el sistema. :(";
                     MostrarError?.Invoke(this, errorMsg);
                 }
             }

@@ -1,0 +1,20 @@
+﻿using MediTrack.Frontend.Models.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MediTrack.Frontend.Models.Response
+{
+    public class ResObtenerAlergiasUsuario : ResBase
+    {
+        public List<Alergias> Alergias { get; set; }
+        public int TotalAlergias { get { return Alergias?.Count ?? 0; } }
+
+        public ResObtenerAlergiasUsuario()
+        {
+            Alergias = new List<Alergias>();
+        }
+    }
+}

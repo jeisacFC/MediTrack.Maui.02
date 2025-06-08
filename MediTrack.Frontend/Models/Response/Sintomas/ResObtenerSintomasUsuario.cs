@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Response
 {
-    public class ResObtenerUsuario : ResBase
+
+    public class ResObtenerSintomasUsuario : ResBase
     {
-        public Usuario Usuario { get; set; }
+        public List<UsuarioSintomaReportado> Sintomas { get; set; } = new List<UsuarioSintomaReportado>();
     }
 }
