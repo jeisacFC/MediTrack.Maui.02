@@ -16,6 +16,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [ObservableProperty] private string _scanResultText;
 
         public BarcodeReaderOptions BarcodeReaderOptions { get; private set; }
+        private readonly INavigationService _navigationService;
 
         // --- Comandos --- //
         public IAsyncRelayCommand<BarcodeDetectionEventArgs> ProcesarCodigosDetectadosCommand { get; }
@@ -31,9 +32,13 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         private readonly IApiService _apiService;
 
         // El constructor ahora recibe IApiService (Inyección de Dependencias)
-        public ScanViewModel(IApiService apiService)
+        public ScanViewModel(IApiService apiService, INavigationService navigationService)
         {
             _apiService = apiService;
+            _navigationService = navigationService;
+
+            var navInstanceId = _navigationService.GetHashCode();
+            System.Diagnostics.Debug.WriteLine($"ScanViewModel recibió NavigationService ID: {navInstanceId}");
 
             BarcodeReaderOptions = new ZXing.Net.Maui.BarcodeReaderOptions
             {
@@ -136,15 +141,17 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
         private async Task EjecutarCancelarEscaneo()
         {
-            DetenerEscaneo();
-
-            if (Shell.Current.Navigation.NavigationStack.Count > 1)
+            System.Diagnostics.Debug.WriteLine("=== INICIO EjecutarCancelarEscaneo ==="); // ← AGREGAR
+            try
             {
-                await Shell.Current.GoToAsync("..", true);
+                DetenerEscaneo();
+                System.Diagnostics.Debug.WriteLine("Llamando a VolverAPaginaAnteriorAsync...");
+                await _navigationService.VolverAPaginaAnteriorAsync();
+                System.Diagnostics.Debug.WriteLine("=== FIN EjecutarCancelarEscaneo ===");
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("No se pudo navegar hacia atrás, ya estamos en la raíz o es la única página.");
+                System.Diagnostics.Debug.WriteLine($"Error en navegación: {ex.Message}");
             }
         }
 

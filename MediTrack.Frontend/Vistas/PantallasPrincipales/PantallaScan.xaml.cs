@@ -60,9 +60,26 @@ public partial class PantallaScan : ContentPage
     // MANEJADOR PARA EL BOTÓN CANCELAR EN EL HEADER
     private async void Cancelar_Clicked_Header(object sender, EventArgs e)
     {
-        if (_viewModel?.CancelarEscaneoCommand?.CanExecute(null) == true)
+        System.Diagnostics.Debug.WriteLine("=== BOTÓN CANCELAR PRESIONADO (HEADER) ===");
+
+        try
         {
-            await _viewModel.CancelarEscaneoCommand.ExecuteAsync(null);
+            if (_viewModel?.CancelarEscaneoCommand != null)
+            {
+                System.Diagnostics.Debug.WriteLine("Ejecutando CancelarEscaneoCommand...");
+
+                // CORRECCIÓN: Usar Execute() en lugar de ExecuteAsync()
+                _viewModel.CancelarEscaneoCommand.Execute(null);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("CancelarEscaneoCommand es null");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error ejecutando comando cancelar: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
         }
     }
 
