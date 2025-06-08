@@ -28,7 +28,7 @@
 
             <Frame Style="{StaticResource FrameFormulario}">
                 <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xf58a;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
+                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
                     <Entry Placeholder="Nombre del medicamento"
                            Text="{Binding TerminoBusqueda.NombreMedicamento}"
                            HorizontalOptions="Fill"
@@ -38,7 +38,7 @@
 
             <Frame Style="{StaticResource FrameFormulario}">
                 <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xe94f;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
+                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
                     <Entry Placeholder="Dosis del medicamento"
                            Text="{Binding TerminoBusqueda.Dosis}"
                            HorizontalOptions="Fill"
