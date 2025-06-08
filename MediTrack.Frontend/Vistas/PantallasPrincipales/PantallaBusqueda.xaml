@@ -8,7 +8,7 @@
              BackgroundColor="{StaticResource ColorFondoClaro}"
              NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *, Auto">
 
         <Border Grid.Row="0"
                 StrokeThickness="0"
@@ -80,6 +80,6 @@
 
 
         <!-- Botón flotante -->
-        <vistas:BotonFlotanteEscaner />
+        <vistas:BotonFlotanteEscaner Grid.Row="2"  />
     </Grid>
 </ContentPage>

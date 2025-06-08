@@ -8,7 +8,7 @@
              BackgroundColor="#F2F2F7"
              Title="Agenda">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
 
         <!-- Contenedor azul estilo iOS -->
         <Frame Grid.Row="0" 
@@ -310,10 +310,11 @@
         </ScrollView>
 
 
+
         <!-- Botón flotante -->
-        <vistas:BotonFlotanteEscaner />
-
-
+        <vistas:BotonFlotanteEscaner Grid.Row="2"  />
 
     </Grid>
+    
+    
 </ContentPage>

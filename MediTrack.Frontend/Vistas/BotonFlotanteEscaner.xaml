@@ -7,9 +7,9 @@
                       VerticalOptions="End"> 
 
     <Button x:Name="FabButton"
-            Text="&#xe8b4;"
+            Text="&#xe412;"
             FontFamily="MaterialIcons"
-            FontSize="30"
+            FontSize="20"
             TextColor="White"
             BackgroundColor="#004aad"
             WidthRequest="50"
