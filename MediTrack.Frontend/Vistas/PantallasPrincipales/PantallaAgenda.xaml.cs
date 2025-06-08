@@ -1,4 +1,6 @@
 ﻿using MediTrack.Frontend.ViewModels.PantallasPrincipales;
+using MediTrack.Frontend.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls;
 using Syncfusion.Maui.Calendar;
 
@@ -14,34 +16,39 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             {
                 InitializeComponent();
 
-                // Crear ViewModel
-                _viewModel = new AgendaViewModel();
+                // Obtener ApiService desde DI o usar DependencyService como fallback
+                var apiService = Handler?.MauiContext?.Services?.GetService<IApiService>()
+                               ?? Microsoft.Maui.Controls.DependencyService.Get<IApiService>();
+
+                // Crear ViewModel con dependencia
+                _viewModel = new AgendaViewModel(apiService);
                 BindingContext = _viewModel;
 
-                // ✅ CONFIGURACIÓN SIMPLE
+                // Configurar calendario
                 ConfigurarCalendario();
 
-                System.Diagnostics.Debug.WriteLine("PantallaAgenda con Syncfusion inicializada");
+                System.Diagnostics.Debug.WriteLine("PantallaAgenda con Backend inicializada");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error en constructor: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Error en constructor de PantallaAgenda: {ex.Message}");
             }
         }
 
-        // ✅ MÉTODO SIMPLE Y LIMPIO
         private void ConfigurarCalendario()
         {
             try
             {
-                // Solo configurar lo básico
+                // Configuración básica del calendario
                 CalendarioSync.SelectionMode = CalendarSelectionMode.Single;
+                CalendarioSync.SelectedDate = DateTime.Today;
+                CalendarioSync.DisplayDate = DateTime.Today;
 
-                System.Diagnostics.Debug.WriteLine("✅ Calendario configurado");
+                System.Diagnostics.Debug.WriteLine("Calendario Syncfusion configurado");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error configurando calendario: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Error configurando calendario: {ex.Message}");
             }
         }
 
@@ -58,11 +65,11 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error en selección de calendario: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Error en selección de calendario: {ex.Message}");
             }
         }
 
-        // MEJORADO: Navegación anterior con animación
+        // Navegación anterior con animación
         private async void AnteriorMes(object sender, EventArgs e)
         {
             try
@@ -78,10 +85,10 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                     await boton.ScaleTo(1.0, 100, Easing.CubicOut);
                 }
 
-                // Actualizar PRIMERO el ViewModel
+                // Actualizar ViewModel primero
                 _viewModel.FechaSeleccionada = nuevaFecha;
 
-                // DESPUÉS actualizar Syncfusion
+                // Después actualizar Syncfusion
                 CalendarioSync.SelectedDate = nuevaFecha;
                 CalendarioSync.DisplayDate = nuevaFecha;
 
@@ -89,11 +96,11 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error navegando a mes anterior: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Error navegando a mes anterior: {ex.Message}");
             }
         }
 
-        // MEJORADO: Navegación siguiente con animación
+        // Navegación siguiente con animación
         private async void SiguienteMes(object sender, EventArgs e)
         {
             try
@@ -109,10 +116,10 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                     await boton.ScaleTo(1.0, 100, Easing.CubicOut);
                 }
 
-                // Actualizar PRIMERO el ViewModel
+                // Actualizar ViewModel primero
                 _viewModel.FechaSeleccionada = nuevaFecha;
 
-                // DESPUÉS actualizar Syncfusion
+                // Después actualizar Syncfusion
                 CalendarioSync.SelectedDate = nuevaFecha;
                 CalendarioSync.DisplayDate = nuevaFecha;
 
@@ -120,29 +127,31 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error navegando a mes siguiente: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Error navegando a mes siguiente: {ex.Message}");
             }
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             try
             {
                 base.OnAppearing();
 
-                // Asegurar que el calendario esté en el mes correcto
+                // Asegurar que el calendario esté sincronizado
                 if (_viewModel != null)
                 {
                     CalendarioSync.DisplayDate = _viewModel.FechaSeleccionada;
                     CalendarioSync.SelectedDate = _viewModel.FechaSeleccionada;
-                    _viewModel.CargarEventosDelDia();
+
+                    // Inicializar ViewModel y cargar eventos
+                    await _viewModel.InitializeAsync();
                 }
 
-                System.Diagnostics.Debug.WriteLine("PantallaAgenda OnAppearing");
+                System.Diagnostics.Debug.WriteLine("PantallaAgenda OnAppearing - conectada al backend");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error en OnAppearing: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Error en OnAppearing: {ex.Message}");
             }
         }
     }

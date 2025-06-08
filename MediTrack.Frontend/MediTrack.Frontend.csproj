@@ -345,9 +345,7 @@
 	  
 	  <Compile Include="Services\Interfaces\IApiService.cs" />
 	  <Compile Include="Models\Model\ElementoSeleccionable.cs" />
-	  <Compile Include="Models\Model\EventoAgenda.cs" />
 	  <Compile Include="Models\Model\MedicamentoModel.cs" />
-	  <Compile Include="Services\Implementaciones\EventosService.cs" />
 	  <Compile Include="Services\Interfaces\IBackNavigationHandler.cs" />
 	  <Compile Include="Services\Interfaces\INavigationService.cs" />
 	</ItemGroup>

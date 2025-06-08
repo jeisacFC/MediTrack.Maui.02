@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediTrack.Frontend.ViewModels.Base;
-using MediTrack.Frontend.Services.Implementaciones;
+using MediTrack.Frontend.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using MediTrack.Frontend.Models.Model;
+using MediTrack.Frontend.Models.Request;
+using System.Diagnostics;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
@@ -28,6 +29,9 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [ObservableProperty]
         private bool eventoGuardado = false;
 
+        // Propiedad para compatibilidad con el modal
+        public bool EventoCreado { get; private set; } = false;
+
         public ObservableCollection<string> TiposEvento { get; } = new()
         {
             "Medicamento",
@@ -38,16 +42,15 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             "Otro"
         };
 
-        public EventoAgenda? EventoCreado { get; private set; }
-
         private readonly DateTime _fechaSeleccionada;
-        private readonly EventosService _eventosService;
+        private readonly IApiService _apiService;
         private readonly CultureInfo _culturaEspañola = new("es-ES");
+        private int _idUsuarioActual = 0;
 
-        public AgregarEventoViewModel(DateTime fechaSeleccionada)
+        public AgregarEventoViewModel(DateTime fechaSeleccionada, IApiService apiService)
         {
             _fechaSeleccionada = fechaSeleccionada;
-            _eventosService = EventosService.Instance;
+            _apiService = apiService;
 
             Title = "Nuevo Evento";
             ConfigurarFecha();
@@ -56,7 +59,31 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
         public override async Task InitializeAsync()
         {
-            await Task.CompletedTask;
+            await ExecuteAsync(async () =>
+            {
+                await ObtenerIdUsuarioActual();
+            });
+        }
+
+        private async Task ObtenerIdUsuarioActual()
+        {
+            try
+            {
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!string.IsNullOrEmpty(userIdStr) && int.TryParse(userIdStr, out var userId))
+                {
+                    _idUsuarioActual = userId;
+                    Debug.WriteLine($"ID Usuario obtenido para nuevo evento: {_idUsuarioActual}");
+                }
+                else
+                {
+                    Debug.WriteLine("❌ No se pudo obtener ID del usuario desde SecureStorage");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Error obteniendo ID usuario: {ex.Message}");
+            }
         }
 
         private void ConfigurarFecha()
@@ -72,11 +99,11 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     FechaFormateada = char.ToUpper(fechaFormateadaTemp[0]) + fechaFormateadaTemp[1..];
                 }
 
-                System.Diagnostics.Debug.WriteLine($"Modal configurado para fecha: {FechaFormateada}");
+                Debug.WriteLine($"Modal configurado para fecha: {FechaFormateada}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error configurando fecha: {ex.Message}");
+                Debug.WriteLine($"❌ Error configurando fecha: {ex.Message}");
                 FechaFormateada = _fechaSeleccionada.ToString("dd/MM/yyyy");
             }
         }
@@ -99,7 +126,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error configurando hora inicial: {ex.Message}");
+                Debug.WriteLine($"❌ Error configurando hora inicial: {ex.Message}");
                 HoraEvento = new TimeSpan(9, 0, 0);
             }
         }
@@ -122,6 +149,17 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     return;
                 }
 
+                // Validar que tenemos usuario autenticado
+                if (_idUsuarioActual <= 0)
+                {
+                    await ObtenerIdUsuarioActual();
+                    if (_idUsuarioActual <= 0)
+                    {
+                        await ShowAlertAsync("❌ Error", "No se pudo obtener información del usuario. Intenta iniciar sesión nuevamente.");
+                        return;
+                    }
+                }
+
                 // Validar que la hora no sea en el pasado (solo para el día de hoy)
                 if (_fechaSeleccionada.Date == DateTime.Today)
                 {
@@ -138,37 +176,42 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 }
 
                 // Crear el evento
-                await CrearEvento();
+                await CrearEventoEnBackend();
             });
         }
 
-        private async Task CrearEvento()
+        private async Task CrearEventoEnBackend()
         {
             try
             {
+                Debug.WriteLine("Creando evento en el backend...");
+
                 // Crear fecha y hora completa
                 var fechaHoraCompleta = _fechaSeleccionada.Date.Add(HoraEvento);
 
-                // Determinar color según el tipo
-                var color = ObtenerColorPorTipo(TipoSeleccionado);
-
-                // Crear el evento
-                EventoCreado = new EventoAgenda
+                // Crear request para el backend
+                var request = new ReqInsertarEventoMedico
                 {
+                    IdUsuario = _idUsuarioActual,
                     Titulo = NombreEvento.Trim(),
                     Descripcion = string.IsNullOrWhiteSpace(DescripcionEvento) ? "" : DescripcionEvento.Trim(),
-                    FechaHora = fechaHoraCompleta,
-                    Tipo = TipoSeleccionado,
-                    Color = color,
-                    Completado = false
+                    FechaEvento = fechaHoraCompleta,
+                    FechaRecordatorio = fechaHoraCompleta.AddMinutes(-15) // 15 minutos antes por defecto
                 };
 
-                // Agregar al servicio y verificar resultado
-                bool exitoso = _eventosService.AgregarEvento(EventoCreado);
+                Debug.WriteLine($"Enviando evento al backend:");
+                Debug.WriteLine($"   - Usuario: {request.IdUsuario}");
+                Debug.WriteLine($"   - Título: {request.Titulo}");
+                Debug.WriteLine($"   - Fecha: {request.FechaEvento:yyyy-MM-dd HH:mm}");
+                Debug.WriteLine($"   - Descripción: {request.Descripcion}");
 
-                if (exitoso)
+                // Llamar al backend
+                var response = await _apiService.InsertarEventoAsync(request);
+
+                if (response != null && response.resultado)
                 {
                     EventoGuardado = true;
+                    EventoCreado = true; // Marcar como creado
 
                     // Mostrar confirmación
                     await ShowAlertAsync("✅ Éxito", $"Evento '{NombreEvento}' creado para las {HoraEvento:hh\\:mm}");
@@ -176,18 +219,22 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     // Cerrar modal
                     await CerrarModal();
 
-                    System.Diagnostics.Debug.WriteLine($"Evento creado exitosamente: {NombreEvento} - {fechaHoraCompleta:yyyy-MM-dd HH:mm}");
+                    Debug.WriteLine($"Evento creado exitosamente en el backend: {NombreEvento} - {fechaHoraCompleta:yyyy-MM-dd HH:mm}");
                 }
                 else
                 {
-                    await ShowAlertAsync("❌ Error", "No se pudo guardar el evento. Inténtalo de nuevo.");
-                    System.Diagnostics.Debug.WriteLine($"Error: No se pudo agregar el evento al servicio");
+                    var errorMsg = response?.Mensaje ?? "Error desconocido";
+                    var errores = response?.errores?.FirstOrDefault()?.mensaje ?? "";
+
+                    Debug.WriteLine($"❌ Error del backend: {errorMsg} - {errores}");
+
+                    await ShowAlertAsync("❌ Error", $"No se pudo guardar el evento: {errorMsg}");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error creando evento: {ex.Message}");
-                await ShowAlertAsync("❌ Error", "Ocurrió un error inesperado al guardar el evento");
+                Debug.WriteLine($"❌ Error creando evento: {ex.Message}");
+                await ShowAlertAsync("❌ Error", "Ocurrió un error de conexión al guardar el evento. Verifica tu conexión a internet.");
             }
         }
 
@@ -211,21 +258,8 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error cerrando modal: {ex.Message}");
+                Debug.WriteLine($"❌ Error cerrando modal: {ex.Message}");
             }
-        }
-
-        private string ObtenerColorPorTipo(string tipo)
-        {
-            return tipo switch
-            {
-                "Medicamento" => "#2196F3",    // Azul
-                "Cita médica" => "#FF5722",    // Rojo-naranja
-                "Análisis" => "#E91E63",       // Rosa
-                "Recordatorio" => "#9C27B0",   // Morado
-                "Ejercicio" => "#4CAF50",      // Verde
-                _ => "#607D8B"                 // Gris por defecto
-            };
         }
 
         // Comando para manejar el tap en el fondo (cerrar modal)
