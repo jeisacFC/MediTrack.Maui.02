@@ -35,6 +35,13 @@
               Title="Escanear"
               ContentTemplate="{DataTemplate pantallasPrincipales:PantallaScan}" />
 
+
+    <!--<ShellContent Route="pantallaBusqueda"
+          Title="Búsqueda"
+          ContentTemplate="{DataTemplate pantallasPrincipales:PantallaBusqueda}" />-->
+
+
+
     <!-- Barra inferior de navegación -->
     <TabBar>
 
@@ -60,16 +67,9 @@
             </ShellContent.ContentTemplate>
         </ShellContent>
 
-        <ShellContent Title="Búsqueda" Route="busqueda">
-            <ShellContent.Icon>
-                <FontImageSource Glyph="&#xe8b6;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
-            </ShellContent.Icon>
-            <ShellContent.ContentTemplate>
-                <DataTemplate>
-                    <pantallasPrincipales:PantallaBusqueda />
-                </DataTemplate>
-            </ShellContent.ContentTemplate>
-        </ShellContent>
+        <ShellContent Title="Búsqueda"
+                  Route="busqueda" Icon="{FontImageSource Glyph='&#xe8b6;', FontFamily='MaterialIcons', Size=28, Color='#3b71ff'}"
+                  ContentTemplate="{DataTemplate pantallasPrincipales:PantallaBusqueda}" />
 
         <ShellContent Title="Perfil" Route="perfil">
             <ShellContent.Icon>

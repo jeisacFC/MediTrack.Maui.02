@@ -1,43 +1,80 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:MediTrack.Frontend.ViewModels.PantallasPrincipales"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaBusqueda"
-             BackgroundColor="White"
-             Title="Buscar">
+             Title="Búsqueda de medicamentos"
+             BackgroundColor="{StaticResource ColorFondoClaro}"
+             NavigationPage.HasNavigationBar="False">
 
-    <VerticalStackLayout Padding="20" Spacing="20">
+    <Grid RowDefinitions="Auto, *">
 
-        <!-- Barra de búsqueda -->
-        <Frame CornerRadius="20" BackgroundColor="#f1f4ff" Padding="10">
-            <HorizontalStackLayout>
-                <Label FontFamily="MaterialIcons"
-                       Text="&#xe8b6;"
-                       FontSize="20"
-                       TextColor="Gray"
-                       VerticalOptions="Center" />
-                <Entry Placeholder="Buscar medicamentos..."
-                       BackgroundColor="Transparent"
-                       HorizontalOptions="FillAndExpand" />
-            </HorizontalStackLayout>
-        </Frame>
+        <Border Grid.Row="0"
+                StrokeThickness="0"
+                BackgroundColor="{StaticResource ColorPrimario}"
+                Padding="20,20,20,30">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="0,0,30,30" />
+            </Border.StrokeShape>
+            <Label Text="Buscar Medicamento"
+                   TextColor="{StaticResource ColorBlanco}"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   VerticalOptions="End"/>
+        </Border>
 
-        <!-- Resultados simulados -->
-        <CollectionView>
-            <CollectionView.ItemsSource>
-                <x:Array Type="{x:Type x:String}">
-                    <x:String>Paracetamol 500mg</x:String>
-                    <x:String>Omeprazol 20mg</x:String>
-                    <x:String>Ibuprofeno 200mg</x:String>
-                </x:Array>
-            </CollectionView.ItemsSource>
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BackgroundColor="#f1f4ff" CornerRadius="15" Padding="10" Margin="0,5">
-                        <Label Text="{Binding}" FontAttributes="Bold" FontSize="14" />
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <VerticalStackLayout Grid.Row="1" Padding="25" Spacing="20">
 
-    </VerticalStackLayout>
+            <Frame Style="{StaticResource FrameFormulario}">
+                <HorizontalStackLayout Spacing="10">
+                    <Label FontFamily="MaterialIcons" Text="&#xf58a;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
+                    <Entry Placeholder="Nombre del medicamento"
+                           Text="{Binding TerminoBusqueda.NombreMedicamento}"
+                           HorizontalOptions="Fill"
+                           Style="{StaticResource EntryBaseStyle}"/>
+                </HorizontalStackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource FrameFormulario}">
+                <HorizontalStackLayout Spacing="10">
+                    <Label FontFamily="MaterialIcons" Text="&#xe94f;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
+                    <Entry Placeholder="Dosis del medicamento"
+                           Text="{Binding TerminoBusqueda.Dosis}"
+                           HorizontalOptions="Fill"
+                           Style="{StaticResource EntryBaseStyle}"/>
+                </HorizontalStackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource FrameFormulario}">
+                <HorizontalStackLayout Spacing="10">
+                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
+                    <Entry Placeholder="Principio Activo"
+                           Text="{Binding TerminoBusqueda.PrincipioActivo}" 
+                           HorizontalOptions="Fill"
+                           Style="{StaticResource EntryBaseStyle}"/>
+                </HorizontalStackLayout>
+            </Frame>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource ColorPrimario}" Margin="0,10"/>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
+                <Button Grid.Column="0"
+                        Text="Buscar"
+                        Command="{Binding BuscarCommand}"
+                        IsEnabled="{Binding IsNotBusy}"
+                        Style="{StaticResource BotonPrimario}">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Color="White" Size="20"/>
+                    </Button.ImageSource>
+                </Button>
+
+                <Button Grid.Column="1"
+                        Text="Limpiar"
+                        Command="{Binding LimpiarCommand}"
+                        Style="{StaticResource BotonSecundario}"/>
+            </Grid>
+
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>
