@@ -79,7 +79,7 @@ public partial class BusquedaViewModel : ObservableObject
             }
             else
             {
-                string errorMsg = resultado?.errores?.FirstOrDefault()?.Message ?? "No se encontró ningún medicamento con esos criterios.";
+                string errorMsg = resultado?.errores?.FirstOrDefault()?.mensaje ?? "No se encontró ningún medicamento con esos criterios.";
                 BusquedaFallida?.Invoke(this, errorMsg);
             }
         }

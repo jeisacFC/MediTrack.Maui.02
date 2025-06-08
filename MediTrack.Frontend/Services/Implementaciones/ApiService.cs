@@ -102,14 +102,14 @@ public class ApiService : IApiService
             else
             {
                 // Manejo de error si la llamada no fue exitosa
-                Debug.WriteLine($"Error de API en Búsqueda Manual: {response.StatusCode}");
-                return new ResBuscarMedicamento { resultado = false, errores = new List<Error> { new Error { Message = $"Error del servidor: {response.StatusCode}" } } };
+                Debug.WriteLine($"Errores de API en Búsqueda Manual: {response.StatusCode}");
+                return new ResBuscarMedicamento { resultado = false, errores = new List<Errores> { new Errores { mensaje = $"Errores del servidor: {response.StatusCode}" } } };
             }
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error de conexión en BuscarMedicamentoManualAsync: {ex.Message}");
-            return new ResBuscarMedicamento { resultado = false, errores = new List<Error> { new Error { Message = "No se pudo conectar con el servidor." } } };
+            Debug.WriteLine($"Errores de conexión en BuscarMedicamentoManualAsync: {ex.Message}");
+            return new ResBuscarMedicamento { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
         }
     }
 
@@ -841,12 +841,12 @@ public class ApiService : IApiService
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta exitosa de logout: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta exitosa de logout: {ex.Message}");
                     return new ResLogout
                     {
                         resultado = false,
                         LogoutExitoso = false,
-                        Mensaje = "Error procesando respuesta del servidor",
+                        Mensaje = "Errores procesando respuesta del servidor",
                         FechaLogout = DateTime.Now,
                         TokensInvalidados = 0
                     };
@@ -854,7 +854,7 @@ public class ApiService : IApiService
             }
             else
             {
-                Debug.WriteLine($"Error HTTP en logout: {response.StatusCode}");
+                Debug.WriteLine($"Errores HTTP en logout: {response.StatusCode}");
                 Debug.WriteLine($"Contenido del error: {responseContent}");
 
                 try
@@ -866,20 +866,20 @@ public class ApiService : IApiService
 
                     if (errorResponse != null)
                     {
-                        Debug.WriteLine($"Error deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
+                        Debug.WriteLine($"Errores deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
                         return errorResponse;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta de error de logout: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta de error de logout: {ex.Message}");
                 }
 
                 return new ResLogout
                 {
                     resultado = false,
                     LogoutExitoso = false,
-                    Mensaje = $"Error del servidor: {response.StatusCode} - {responseContent}",
+                    Mensaje = $"Errores del servidor: {response.StatusCode} - {responseContent}",
                     FechaLogout = DateTime.Now,
                     TokensInvalidados = 0
                 };
@@ -887,12 +887,12 @@ public class ApiService : IApiService
         }
         catch (HttpRequestException httpEx)
         {
-            Debug.WriteLine($"Error HTTP en logout: {httpEx.Message}");
+            Debug.WriteLine($"Errores HTTP en logout: {httpEx.Message}");
             return new ResLogout
             {
                 resultado = false,
                 LogoutExitoso = false,
-                Mensaje = "Error de conexión. Verifica que el servidor esté corriendo.",
+                Mensaje = "Errores de conexión. Verifica que el servidor esté corriendo.",
                 FechaLogout = DateTime.Now,
                 TokensInvalidados = 0
             };
@@ -911,7 +911,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error general en logout: {ex.Message}");
+            Debug.WriteLine($"Errores general en logout: {ex.Message}");
             Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 
             // En caso de error de comunicación, limpiar datos locales como medida de seguridad
@@ -926,14 +926,14 @@ public class ApiService : IApiService
             }
             catch (Exception cleanupEx)
             {
-                Debug.WriteLine($"Error limpiando datos locales: {cleanupEx.Message}");
+                Debug.WriteLine($"Errores limpiando datos locales: {cleanupEx.Message}");
             }
 
             return new ResLogout
             {
                 resultado = false,
                 LogoutExitoso = false,
-                Mensaje = "Error de conexión. No se pudo comunicar con el servidor.",
+                Mensaje = "Errores de conexión. No se pudo comunicar con el servidor.",
                 FechaLogout = DateTime.Now,
                 TokensInvalidados = 0
             };
@@ -958,7 +958,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error cargando token: {ex.Message}");
+            Debug.WriteLine($"Errores cargando token: {ex.Message}");
         }
     }
 
