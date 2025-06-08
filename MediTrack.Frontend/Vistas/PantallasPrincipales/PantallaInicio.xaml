@@ -7,10 +7,6 @@
              BackgroundColor="White"
              Title="Inicio">
 
-    <ContentPage.BindingContext>
-        <vm:InicioViewModel />
-    </ContentPage.BindingContext>
-
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="25">
 
@@ -228,7 +224,7 @@
                            TextColor="Black"
                            VerticalTextAlignment="Center" />
 
-                    <Button Grid.Column="1"
+                    <!--<Button Grid.Column="1"
                             Text="Ver todos"
                             BackgroundColor="#FF9500"
                             TextColor="White"
@@ -238,66 +234,46 @@
                             WidthRequest="70"
                             HeightRequest="26"
                             Command="{Binding VerTodosHabitosCommand}"
-                            IsVisible="{Binding HayHabitos}" />
+                            IsVisible="{Binding HayHabitos}" />-->
                 </Grid>
+
+                <!-- Spinner de carga -->
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                     IsVisible="{Binding IsLoading}"
+                     HorizontalOptions="Center" />
 
                 <!-- Lista de hábitos -->
                 <ScrollView Orientation="Horizontal"
                            HorizontalScrollBarVisibility="Never"
                            HeightRequest="140"
                            IsVisible="{Binding HayHabitos}">
-                    <StackLayout Orientation="Horizontal" Spacing="15" Padding="0,5">
-                        <Frame BackgroundColor="White"
-                               CornerRadius="15"
-                               Padding="15"
-                               WidthRequest="280"
-                               HasShadow="True">
-                            <VerticalStackLayout Spacing="10">
-                                <HorizontalStackLayout Spacing="8">
-                                    <Label FontFamily="MaterialIcons"
-                                           Text="&#xe8cc;"
-                                           FontSize="20"
-                                           TextColor="#007AFF"
-                                           VerticalOptions="Center" />
-                                    <Label Text="Beber al menos 8 vasos de agua al día"
-                                           FontAttributes="Bold"
-                                           FontSize="14"
-                                           TextColor="Black"
-                                           LineBreakMode="TailTruncation"
-                                           HorizontalOptions="FillAndExpand" />
-                                </HorizontalStackLayout>
-                                <Label Text="Mantenerte hidratado ayuda a tu organismo a funcionar mejor."
-                                       FontSize="12"
-                                       TextColor="Gray"
-                                       LineBreakMode="WordWrap" />
-                            </VerticalStackLayout>
-                        </Frame>
-
-                        <Frame BackgroundColor="White"
-                               CornerRadius="15"
-                               Padding="15"
-                               WidthRequest="280"
-                               HasShadow="True">
-                            <VerticalStackLayout Spacing="10">
-                                <HorizontalStackLayout Spacing="8">
-                                    <Label FontFamily="MaterialIcons"
-                                           Text="&#xe52f;"
-                                           FontSize="20"
-                                           TextColor="#4CAF50"
-                                           VerticalOptions="Center" />
-                                    <Label Text="Caminar 30 minutos diarios"
-                                           FontAttributes="Bold"
-                                           FontSize="14"
-                                           TextColor="Black"
-                                           LineBreakMode="TailTruncation"
-                                           HorizontalOptions="FillAndExpand" />
-                                </HorizontalStackLayout>
-                                <Label Text="El ejercicio ligero mejora tu salud cardiovascular."
-                                       FontSize="12"
-                                       TextColor="Gray"
-                                       LineBreakMode="WordWrap" />
-                            </VerticalStackLayout>
-                        </Frame>
+                    <StackLayout Orientation="Horizontal" Spacing="15" Padding="0,5" BindableLayout.ItemsSource="{Binding HabitosSaludables}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="White"
+                                    CornerRadius="15"
+                                    Padding="15"
+                                    WidthRequest="280"
+                                    HasShadow="True">
+                                    <VerticalStackLayout Spacing="10">
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Label FontFamily="MaterialIcons"
+                                                Text="&#xE90F;"
+                                                FontSize="20"
+                                                VerticalOptions="Center" />
+                                            <Label Text="{Binding Titulo}"
+                                                 FontAttributes="Bold"
+                                                 FontSize="14"
+                                                 LineBreakMode="TailTruncation"
+                                                 HorizontalOptions="FillAndExpand" />
+                                        </HorizontalStackLayout>
+                                        <Label Text="{Binding Descripcion}"
+                                             FontSize="12"
+                                             LineBreakMode="WordWrap" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
                     </StackLayout>
                 </ScrollView>
 

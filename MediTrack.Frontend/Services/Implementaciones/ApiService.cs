@@ -74,6 +74,72 @@ public class ApiService : IApiService
 
     #endregion
 
+    #region IA
+    public async Task<ResHabitosSaludables?> ObtenerHabitosAsync(ReqObtenerUsuario request)
+    {
+        const string endpoint = "api/habitos";   
+        try
+        {
+            // Serializar petición
+            var json = JsonSerializer.Serialize(request);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            // Leer flujo
+            using var stream = await response.Content.ReadAsStreamAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Deserializar y devolver
+                return await JsonSerializer.DeserializeAsync<ResHabitosSaludables>(
+                    stream,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+            }
+            else
+            {
+                Debug.WriteLine($"API devolvió {(int)response.StatusCode}: {response.ReasonPhrase}");
+                // Opcional: leer detalle de error
+                var errorJson = await new StreamReader(stream).ReadToEndAsync();
+                Debug.WriteLine($"Detalle: {errorJson}");
+
+                // Puedes retornar null o un objeto marcando resultado=false
+                return new ResHabitosSaludables
+                {
+                    resultado = false,
+                    Habitos = new List<string>(),
+                    Mensaje = $"Error del servidor {(int)response.StatusCode}"
+                };
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Debug.WriteLine($"Error HTTP: {ex.Message}");
+            return new ResHabitosSaludables
+            {
+                resultado = false,
+                Habitos = new List<string>(),
+                Mensaje = "No se pudo conectar con el servidor"
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error inesperado: {ex.Message}");
+            return new ResHabitosSaludables
+            {
+                resultado = false,
+                Habitos = new List<string>(),
+                Mensaje = ex.Message
+            };
+        }
+    }
+
+
+
+    #endregion
+
     #region AUTENTICACIÓN
 
     public async Task<ResLogin> LoginAsync(ReqLogin request)

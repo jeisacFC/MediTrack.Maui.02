@@ -6,10 +6,10 @@ public partial class PantallaInicio : ContentPage
 {
     private InicioViewModel _viewModel;
 
-    public PantallaInicio()
+    public PantallaInicio(InicioViewModel viewModel)
     {
         InitializeComponent();
-        _viewModel = new InicioViewModel();
+        _viewModel = viewModel;
         BindingContext = _viewModel;
     }
 

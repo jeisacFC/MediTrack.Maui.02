@@ -5,6 +5,8 @@ using System.Globalization;
 using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Models.Model;
 using MediTrack.Frontend.Services.Interfaces;
+using MediTrack.Frontend.Models.Request;
+using System.Diagnostics;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
@@ -44,10 +46,18 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         private readonly CultureInfo _culturaEspañola = new("es-ES");
         private readonly int _idUsuarioActual = 1; // TODO: Obtener del servicio de autenticación
 
-        public InicioViewModel()
+        private readonly IApiService _apiService;
+        public IAsyncRelayCommand CargarHabitosCommand { get; }
+
+        public InicioViewModel(IApiService apiService)
+
         {
             try
             {
+                _apiService = apiService;
+                CargarHabitosCommand = new AsyncRelayCommand(CargarHabitosSaludables);
+
+
                 // Usar servicios
                 _eventosService = EventosService.Instance;
 
@@ -201,53 +211,40 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
         private async Task CargarHabitosSaludables()
         {
+            IsLoading = true;
             try
             {
-                // Limpiar lista
                 HabitosSaludables.Clear();
+                // Recuperar userId de SecureStorage
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                    throw new InvalidOperationException("Usuario no autenticado.");
 
-                // TODO: Conectar con endpoint de IA para hábitos
-                // var response = await _apiService.ObtenerHabitosAsync(_idUsuarioActual);
+                // Llamar al servicio
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                var res = await _apiService.ObtenerHabitosAsync(req);
 
-                // Por ahora, datos de ejemplo
-                var habitosEjemplo = new List<HabitoSaludable>
+                if (res?.Habitos != null)
                 {
-                    new HabitoSaludable
+                    foreach (var texto in res.Habitos)
                     {
-                        Titulo = "Beber al menos 8 vasos de agua al día",
-                        Descripcion = "Mantenerte hidratado ayuda a tu organismo a funcionar mejor.",
-                        Icono = "💧",
-                        Prioridad = 1
-                    },
-                    new HabitoSaludable
-                    {
-                        Titulo = "Caminar 30 minutos diarios",
-                        Descripcion = "El ejercicio ligero mejora tu salud cardiovascular.",
-                        Icono = "🚶",
-                        Prioridad = 2
-                    },
-                    new HabitoSaludable
-                    {
-                        Titulo = "Dormir 7-8 horas cada noche",
-                        Descripcion = "Un buen descanso es fundamental para tu recuperación.",
-                        Icono = "😴",
-                        Prioridad = 3
+                        HabitosSaludables.Add(new HabitoSaludable
+                        {
+                            Titulo = "",
+                            Descripcion = texto,
+                        });
                     }
-                };
-
-                foreach (var habito in habitosEjemplo)
-                {
-                    HabitosSaludables.Add(habito);
                 }
-
                 HayHabitos = HabitosSaludables.Any();
-
-                System.Diagnostics.Debug.WriteLine($"Cargados {HabitosSaludables.Count} hábitos saludables");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error cargando hábitos saludables: {ex.Message}");
+                Debug.WriteLine($"Error al cargar hábitos: {ex.Message}");
                 HayHabitos = false;
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
