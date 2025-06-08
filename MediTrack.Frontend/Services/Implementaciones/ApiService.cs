@@ -57,18 +57,18 @@ public class ApiService : IApiService
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"Error de API: {response.StatusCode}. Contenido: {errorContent}");
+                Debug.WriteLine($"Errores de API: {response.StatusCode}. Contenido: {errorContent}");
                 return null;
             }
         }
         catch (HttpRequestException httpEx)
         {
-            Debug.WriteLine($"Error HTTPS en escanear medicamento: {httpEx.Message}");
+            Debug.WriteLine($"Errores HTTPS en escanear medicamento: {httpEx.Message}");
             return null;
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error de conexión en ApiService: {ex.Message}");
+            Debug.WriteLine($"Errores de conexión en ApiService: {ex.Message}");
             return null;
         }
     }
@@ -249,13 +249,13 @@ public class ApiService : IApiService
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta exitosa: {ex.Message}");
-                    return new ResLogin { resultado = false, Mensaje = "Error procesando respuesta del servidor" };
+                    Debug.WriteLine($"Errores deserializando respuesta exitosa: {ex.Message}");
+                    return new ResLogin { resultado = false, Mensaje = "Errores procesando respuesta del servidor" };
                 }
             }
             else
             {
-                Debug.WriteLine($"Error HTTP: {response.StatusCode}");
+                Debug.WriteLine($"Errores HTTP: {response.StatusCode}");
                 Debug.WriteLine($"Contenido del error: {responseContent}");
 
                 try
@@ -267,29 +267,29 @@ public class ApiService : IApiService
 
                     if (errorResponse != null)
                     {
-                        Debug.WriteLine($"Error deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
+                        Debug.WriteLine($"Errores deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
                         return errorResponse;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta de error: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta de error: {ex.Message}");
                 }
 
                 return new ResLogin
                 {
                     resultado = false,
-                    Mensaje = $"Error del servidor: {response.StatusCode} - {responseContent}"
+                    Mensaje = $"Errores del servidor: {response.StatusCode} - {responseContent}"
                 };
             }
         }
         catch (HttpRequestException httpEx)
         {
-            Debug.WriteLine($"Error HTTPS en login: {httpEx.Message}");
+            Debug.WriteLine($"Errores HTTPS en login: {httpEx.Message}");
             return new ResLogin
             {
                 resultado = false,
-                Mensaje = "Error de conexión HTTPS. Verifica que el servidor esté corriendo con SSL."
+                Mensaje = "Errores de conexión HTTPS. Verifica que el servidor esté corriendo con SSL."
             };
         }
         catch (TaskCanceledException timeoutEx)
@@ -303,12 +303,12 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error general en login: {ex.Message}");
+            Debug.WriteLine($"Errores general en login: {ex.Message}");
             Debug.WriteLine($"Stack trace: {ex.StackTrace}");
             return new ResLogin
             {
                 resultado = false,
-                Mensaje = "Error de conexión. No se pudo comunicar con el servidor."
+                Mensaje = "Errores de conexión. No se pudo comunicar con el servidor."
             };
         }
     }
@@ -384,14 +384,14 @@ public class ApiService : IApiService
                     // Mapear errores si existen
                     if (backendResponse.TryGetProperty("errores", out var errores) && errores.ValueKind == JsonValueKind.Array)
                     {
-                        var erroresList = new List<Error>();
+                        var erroresList = new List<Errores>();
                         foreach (var error in errores.EnumerateArray())
                         {
-                            var errorDetail = new Error();
-                            if (error.TryGetProperty("message", out var errorMessage))
-                                errorDetail.Message = errorMessage.GetString();
-                            else if (error.TryGetProperty("Message", out var errorMessageMayus))
-                                errorDetail.Message = errorMessageMayus.GetString();
+                            var errorDetail = new Errores();
+                            if (error.TryGetProperty("mensaje", out var errormensaje))
+                                errorDetail.mensaje = errormensaje.GetString();
+                            else if (error.TryGetProperty("mensaje", out var errormensajeMayus))
+                                errorDetail.mensaje = errormensajeMayus.GetString();
 
                             erroresList.Add(errorDetail);
                         }
@@ -403,21 +403,21 @@ public class ApiService : IApiService
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta exitosa: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta exitosa: {ex.Message}");
                     return new ResRegister
                     {
                         resultado = false,
-                        Mensaje = "Error procesando respuesta del servidor",
-                        errores = new List<Error>
+                        Mensaje = "Errores procesando respuesta del servidor",
+                        errores = new List<Errores>
                     {
-                        new Error { Message = "Error procesando respuesta del servidor" }
+                        new Errores { mensaje = "Errores procesando respuesta del servidor" }
                     }
                     };
                 }
             }
             else
             {
-                Debug.WriteLine($"Error HTTP: {response.StatusCode}");
+                Debug.WriteLine($"Errores HTTP: {response.StatusCode}");
                 Debug.WriteLine($"Contenido del error: {responseContent}");
 
                 try
@@ -429,36 +429,36 @@ public class ApiService : IApiService
 
                     if (errorResponse != null)
                     {
-                        Debug.WriteLine($"Error deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
+                        Debug.WriteLine($"Errores deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
                         return errorResponse;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta de error: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta de error: {ex.Message}");
                 }
 
                 return new ResRegister
                 {
                     resultado = false,
-                    Mensaje = $"Error del servidor: {response.StatusCode} - {responseContent}",
-                    errores = new List<Error>
+                    Mensaje = $"Errores del servidor: {response.StatusCode} - {responseContent}",
+                    errores = new List<Errores>
                 {
-                    new Error { Message = $"Error del servidor: {response.StatusCode}" }
+                    new Errores { mensaje = $"Errores del servidor: {response.StatusCode}" }
                 }
                 };
             }
         }
         catch (HttpRequestException httpEx)
         {
-            Debug.WriteLine($"Error HTTPS en registro: {httpEx.Message}");
+            Debug.WriteLine($"Errores HTTPS en registro: {httpEx.Message}");
             return new ResRegister
             {
                 resultado = false,
-                Mensaje = "Error de conexión HTTPS. Verifica que el servidor esté corriendo con SSL.",
-                errores = new List<Error>
+                Mensaje = "Errores de conexión HTTPS. Verifica que el servidor esté corriendo con SSL.",
+                errores = new List<Errores>
             {
-                new Error { Message = "Error de conexión HTTPS" }
+                new Errores { mensaje = "Errores de conexión HTTPS" }
             }
             };
         }
@@ -469,23 +469,23 @@ public class ApiService : IApiService
             {
                 resultado = false,
                 Mensaje = "Tiempo de espera agotado. Intenta nuevamente.",
-                errores = new List<Error>
+                errores = new List<Errores>
             {
-                new Error { Message = "Tiempo de espera agotado" }
+                new Errores { mensaje = "Tiempo de espera agotado" }
             }
             };
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error general en registro: {ex.Message}");
+            Debug.WriteLine($"Errores general en registro: {ex.Message}");
             Debug.WriteLine($"Stack trace: {ex.StackTrace}");
             return new ResRegister
             {
                 resultado = false,
-                Mensaje = "Error de conexión. No se pudo comunicar con el servidor.",
-                errores = new List<Error>
+                Mensaje = "Errores de conexión. No se pudo comunicar con el servidor.",
+                errores = new List<Errores>
             {
-                new Error { Message = "Error de conexión general" }
+                new Errores { mensaje = "Errores de conexión general" }
             }
             };
         }
@@ -547,7 +547,7 @@ public class ApiService : IApiService
                     // Mapear datos del usuario si existen
                     if (backendResponse.TryGetProperty("usuario", out var usuario) && usuario.ValueKind == JsonValueKind.Object)
                     {
-                        var usuarioObj = new Usuario();
+                        var usuarioObj = new Usuarios();
 
                         if (usuario.TryGetProperty("id_usuario", out var idUsuario))
                             usuarioObj.id_usuario = idUsuario.GetInt32();
@@ -559,10 +559,10 @@ public class ApiService : IApiService
                         else if (usuario.TryGetProperty("Email", out var emailMayus))
                             usuarioObj.email = emailMayus.GetString();
 
-                        if (usuario.TryGetProperty("contraseña", out var contraseña))
-                            usuarioObj.contraseña = contraseña.GetString();
-                        else if (usuario.TryGetProperty("Contraseña", out var contraseñaMayus))
-                            usuarioObj.contraseña = contraseñaMayus.GetString();
+                        if (usuario.TryGetProperty("contraseña", out var contrasena))
+                            usuarioObj.contrasena = contrasena.GetString();
+                        else if (usuario.TryGetProperty("Contraseña", out var contrasenaMayus))
+                            usuarioObj.contrasena = contrasenaMayus.GetString();
 
                         if (usuario.TryGetProperty("fecha_registro", out var fechaRegistro))
                             usuarioObj.fecha_registro = fechaRegistro.GetDateTime();
@@ -620,14 +620,14 @@ public class ApiService : IApiService
                     // Mapear errores si existen
                     if (backendResponse.TryGetProperty("errores", out var errores) && errores.ValueKind == JsonValueKind.Array)
                     {
-                        var erroresList = new List<Error>();
+                        var erroresList = new List<Errores>();
                         foreach (var error in errores.EnumerateArray())
                         {
-                            var errorDetail = new Error();
-                            if (error.TryGetProperty("message", out var errorMessage))
-                                errorDetail.Message = errorMessage.GetString();
-                            else if (error.TryGetProperty("Message", out var errorMessageMayus))
-                                errorDetail.Message = errorMessageMayus.GetString();
+                            var errorDetail = new Errores();
+                            if (error.TryGetProperty("mensaje", out var errormensaje))
+                                errorDetail.mensaje = errormensaje.GetString();
+                            else if (error.TryGetProperty("mensaje", out var errormensajeMayus))
+                                errorDetail.mensaje = errormensajeMayus.GetString();
 
                             erroresList.Add(errorDetail);
                         }
@@ -639,21 +639,21 @@ public class ApiService : IApiService
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta exitosa: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta exitosa: {ex.Message}");
                     return new ResObtenerUsuario
                     {
                         resultado = false,
-                        Mensaje = "Error procesando respuesta del servidor",
-                        errores = new List<Error>
+                        Mensaje = "Errores procesando respuesta del servidor",
+                        errores = new List<Errores>
                     {
-                        new Error { Message = "Error procesando respuesta del servidor" }
+                        new Errores { mensaje = "Errores procesando respuesta del servidor" }
                     }
                     };
                 }
             }
             else
             {
-                Debug.WriteLine($"Error HTTP: {response.StatusCode}");
+                Debug.WriteLine($"Errores HTTP: {response.StatusCode}");
                 Debug.WriteLine($"Contenido del error: {responseContent}");
 
                 try
@@ -665,13 +665,13 @@ public class ApiService : IApiService
 
                     if (errorResponse != null)
                     {
-                        Debug.WriteLine($"Error deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
+                        Debug.WriteLine($"Errores deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
                         return errorResponse;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta de error: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta de error: {ex.Message}");
                 }
 
                 // Manejar códigos de estado específicos
@@ -680,30 +680,30 @@ public class ApiService : IApiService
                     HttpStatusCode.Unauthorized => "Usuario no autenticado",
                     HttpStatusCode.NotFound => "Usuario no encontrado",
                     HttpStatusCode.Forbidden => "No tienes permisos para acceder a este recurso",
-                    _ => $"Error del servidor: {response.StatusCode} - {responseContent}"
+                    _ => $"Errores del servidor: {response.StatusCode} - {responseContent}"
                 };
 
                 return new ResObtenerUsuario
                 {
                     resultado = false,
                     Mensaje = mensajeError,
-                    errores = new List<Error>
+                    errores = new List<Errores>
                 {
-                    new Error { Message = $"Error del servidor: {response.StatusCode}" }
+                    new Errores { mensaje = $"Errores del servidor: {response.StatusCode}" }
                 }
                 };
             }
         }
         catch (HttpRequestException httpEx)
         {
-            Debug.WriteLine($"Error HTTPS en obtener usuario: {httpEx.Message}");
+            Debug.WriteLine($"Errores HTTPS en obtener usuario: {httpEx.Message}");
             return new ResObtenerUsuario
             {
                 resultado = false,
-                Mensaje = "Error de conexión HTTPS. Verifica que el servidor esté corriendo con SSL.",
-                errores = new List<Error>
+                Mensaje = "Errores de conexión HTTPS. Verifica que el servidor esté corriendo con SSL.",
+                errores = new List<Errores>
             {
-                new Error { Message = "Error de conexión HTTPS" }
+                new Errores { mensaje = "Errores de conexión HTTPS" }
             }
             };
         }
@@ -714,23 +714,23 @@ public class ApiService : IApiService
             {
                 resultado = false,
                 Mensaje = "Tiempo de espera agotado. Intenta nuevamente.",
-                errores = new List<Error>
+                errores = new List<Errores>
             {
-                new Error { Message = "Tiempo de espera agotado" }
+                new Errores { mensaje = "Tiempo de espera agotado" }
             }
             };
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error general en obtener usuario: {ex.Message}");
+            Debug.WriteLine($"Errores general en obtener usuario: {ex.Message}");
             Debug.WriteLine($"Stack trace: {ex.StackTrace}");
             return new ResObtenerUsuario
             {
                 resultado = false,
-                Mensaje = "Error de conexión. No se pudo comunicar con el servidor.",
-                errores = new List<Error>
+                Mensaje = "Errores de conexión. No se pudo comunicar con el servidor.",
+                errores = new List<Errores>
             {
-                new Error { Message = "Error de conexión general" }
+                new Errores { mensaje = "Errores de conexión general" }
             }
             };
         }

@@ -129,7 +129,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasInicio
                 else
                 {
                     // Registro fallido
-                    string errorMsg = response?.errores?.FirstOrDefault()?.Message ??
+                    string errorMsg = response?.errores?.FirstOrDefault()?.mensaje ??
                                      response?.Mensaje ??
                                      "Error en el registro. Verifique los datos ingresados.";
 

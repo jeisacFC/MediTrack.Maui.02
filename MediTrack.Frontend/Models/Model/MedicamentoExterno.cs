@@ -13,6 +13,7 @@ namespace MediTrack.Frontend.Models.Model
         public string NombreComercial { get; set; }
         public string PrincipioActivo { get; set; }
         public string Dosis { get; set; }
-        public string Fabricante { get; set; }
+        public string Fabricante { get; set; } 
+        public Fabricantes FabricanteEnum { get; set; }
     }
 }
