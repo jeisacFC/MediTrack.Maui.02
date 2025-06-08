@@ -30,6 +30,15 @@
     <ShellContent Route="olvidoContrasena"
                   ContentTemplate="{DataTemplate pantallasInicio:PantallaOlvidoContrasena}" />
 
+
+    <ShellContent Route="pantallaScan"
+              Title="Escanear"
+              ContentTemplate="{DataTemplate pantallasPrincipales:PantallaScan}" />
+
+
+  
+
+    <!-- Barra inferior de navegación -->
     <TabBar>
 
         <ShellContent Title="Inicio"
@@ -45,8 +54,8 @@
                   ContentTemplate="{DataTemplate pantallasPrincipales:PantallaBusqueda}" />
 
         <ShellContent Title="Perfil"
-                    Route="busqueda" Icon="{FontImageSource Glyph='&#xe7fd;', FontFamily='MaterialIcons', Size=28, Color='#3b71ff'}"
+                    Route="perfil" Icon="{FontImageSource Glyph='&#xe7fd;', FontFamily='MaterialIcons', Size=28, Color='#3b71ff'}"
                     ContentTemplate="{DataTemplate pantallasPrincipales:PantallaPerfil}" />
-            
-    </TabBar>   
+
+    </TabBar>
 </Shell>

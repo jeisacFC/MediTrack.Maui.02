@@ -1,5 +1,6 @@
 using MediTrack.Frontend.ViewModels.PantallasInicio;
 using MediTrack.Frontend.Popups;
+using MediTrack.Frontend.Vistas.Base;
 using System;
 using Microsoft.Maui.Controls;
 

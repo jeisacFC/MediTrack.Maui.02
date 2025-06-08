@@ -1,9 +1,10 @@
-using CommunityToolkit.Maui.Views; // Para this.ShowPopupAsync()
-using MediTrack.Frontend.Popups;   // Para InstruccionesEscaneoPopup
-using MediTrack.Frontend.ViewModels.PantallasPrincipales; // Para ScanViewModel
+using CommunityToolkit.Maui.Views; 
+using MediTrack.Frontend.Popups;   
+using MediTrack.Frontend.ViewModels.PantallasPrincipales; 
 using System.Diagnostics;
-using ZXing.Net.Maui; // Para BarcodeDetectionEventArgs
-using MediTrack.Frontend.Models.Response; // Para IBarcodeScannerService
+using ZXing.Net.Maui; 
+using MediTrack.Frontend.Models.Response; 
+using MediTrack.Frontend.Vistas.Base;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
@@ -60,9 +61,26 @@ public partial class PantallaScan : ContentPage
     // MANEJADOR PARA EL BOTÓN CANCELAR EN EL HEADER
     private async void Cancelar_Clicked_Header(object sender, EventArgs e)
     {
-        if (_viewModel?.CancelarEscaneoCommand?.CanExecute(null) == true)
+        System.Diagnostics.Debug.WriteLine("=== BOTÓN CANCELAR PRESIONADO (HEADER) ===");
+
+        try
         {
-            await _viewModel.CancelarEscaneoCommand.ExecuteAsync(null);
+            if (_viewModel?.CancelarEscaneoCommand != null)
+            {
+                System.Diagnostics.Debug.WriteLine("Ejecutando CancelarEscaneoCommand...");
+
+                // CORRECCIÓN: Usar Execute() en lugar de ExecuteAsync()
+                _viewModel.CancelarEscaneoCommand.Execute(null);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("CancelarEscaneoCommand es null");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error ejecutando comando cancelar: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
         }
     }
 
