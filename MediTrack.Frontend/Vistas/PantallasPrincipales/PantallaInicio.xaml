@@ -8,8 +8,13 @@
              BackgroundColor="White"
              Title="Inicio">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="25">
+    <ContentPage.BindingContext>
+        <vm:InicioViewModel />
+    </ContentPage.BindingContext>
+    <Grid>
+
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="25">
 
                 <!-- Loading Indicator -->
                 <ActivityIndicator IsVisible="{Binding IsLoading}"
@@ -41,24 +46,24 @@
                          IsVisible="{Binding HayMedicamentos}" />
                     </Grid>
 
-                <!-- Lista de medicamentos del backend -->
-                <CollectionView ItemsSource="{Binding MedicamentosHoy}"
-                               IsVisible="{Binding HayMedicamentos}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Frame BackgroundColor="White"
-                                   CornerRadius="10"
+                    <!-- Lista de medicamentos -->
+                    <CollectionView ItemsSource="{Binding MedicamentosHoy}"
+                            IsVisible="{Binding HayMedicamentos}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="White"
+                                CornerRadius="10"
+                                Padding="0"
+                                Margin="0,3"
+                                HasShadow="True"
+                                HeightRequest="75">
+                                    <Grid ColumnDefinitions="4,*,Auto" 
                                    Padding="0"
                                    HeightRequest="75">
 
-                                    <!-- Barra de color lateral basada en tipo -->
-                                    <BoxView Grid.Column="0">
-                                        <BoxView.BackgroundColor>
-                                            <MultiBinding Converter="{StaticResource TipoEventoToColorConverter}">
-                                                <Binding Path="Tipo" />
-                                            </MultiBinding>
-                                        </BoxView.BackgroundColor>
-                                    </BoxView>
+                                        <!-- Barra de color lateral -->
+                                        <BoxView Grid.Column="0"
+                                          BackgroundColor="{Binding Color}" />
 
                                         <!-- Contenido del medicamento -->
                                         <VerticalStackLayout Grid.Column="1" 
@@ -170,38 +175,6 @@
                                     TextColor="#666"
                                     LineBreakMode="TailTruncation" />
                                 </VerticalStackLayout>
-                                        <!-- Hora con ícono de Material Icons -->
-                                        <HorizontalStackLayout Spacing="4">
-                                            <Label Text="&#xe8b5;"
-                                                   FontFamily="MaterialIcons"
-                                                   FontSize="12"
-                                                   TextColor="#007AFF"
-                                                   VerticalOptions="Center" />
-                                            <Label Text="{Binding FechaHora, StringFormat='{0:HH:mm}'}"
-                                                   FontSize="12"
-                                                   TextColor="#007AFF"
-                                                   VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
-                                    </VerticalStackLayout>
-
-                                    <!-- Estado del medicamento (temporal hasta que se implemente en backend) -->
-                                    <Button Grid.Column="2"
-                                            BackgroundColor="#4CAF50"
-                                            TextColor="White"
-                                            CornerRadius="12"
-                                            FontSize="16"
-                                            Padding="8,4"
-                                            Margin="10"
-                                            WidthRequest="40"
-                                            HeightRequest="28"
-                                            VerticalOptions="Center"
-                                            Command="{Binding BindingContext.MarcarTomadoCommand, Source={x:Reference Pagina}}"
-                                            CommandParameter="{Binding .}">
-                                        <Button.ImageSource>
-                                            <FontImageSource Glyph="&#xe86c;" FontFamily="MaterialIcons" Size="16" Color="White" />
-                                        </Button.ImageSource>
-                                    </Button>
-                                </Grid>
                             </Frame>
 
                             <Frame BackgroundColor="#E8F5E8"

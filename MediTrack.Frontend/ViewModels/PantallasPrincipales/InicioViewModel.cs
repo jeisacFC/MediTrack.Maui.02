@@ -2,18 +2,16 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Models.Model;
-using MediTrack.Frontend.Models.Response;
-using MediTrack.Frontend.Models.Request;
 using MediTrack.Frontend.Services.Interfaces;
-using System.Diagnostics;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
     public partial class InicioViewModel : ObservableObject
     {
         [ObservableProperty]
-        private ObservableCollection<ResEventoCalendario> medicamentosHoy = new();
+        private ObservableCollection<EventoAgenda> medicamentosHoy = new();
 
         [ObservableProperty]
         private ObservableCollection<EscaneoReciente> escaneosRecientes = new();
@@ -42,59 +40,30 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [ObservableProperty]
         private bool haySintomas = false;
 
-        private readonly IApiService _apiService;
+        private readonly EventosService _eventosService;
         private readonly CultureInfo _culturaEspañola = new("es-ES");
-        private int _idUsuarioActual = 0;
+        private readonly int _idUsuarioActual = 1; // TODO: Obtener del servicio de autenticación
 
-        public InicioViewModel(IApiService apiService)
+        public InicioViewModel()
         {
             try
             {
-                _apiService = apiService;
+                // Usar servicios
+                _eventosService = EventosService.Instance;
+
+                // Suscribirse a cambios en medicamentos
+                _eventosService.EventoActualizado += OnEventoActualizado;
 
                 // Configurar cultura española
                 CultureInfo.CurrentCulture = _culturaEspañola;
                 CultureInfo.CurrentUICulture = _culturaEspañola;
 
                 ActualizarFechaHoy();
+                _ = CargarDatosIniciales();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error en InicioViewModel: {ex.Message}");
-            }
-        }
-
-        public async Task InitializeAsync()
-        {
-            try
-            {
-                await ObtenerIdUsuarioActual();
-                await CargarDatosIniciales();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error inicializando InicioViewModel: {ex.Message}");
-            }
-        }
-
-        private async Task ObtenerIdUsuarioActual()
-        {
-            try
-            {
-                var userIdStr = await SecureStorage.GetAsync("user_id");
-                if (!string.IsNullOrEmpty(userIdStr) && int.TryParse(userIdStr, out var userId))
-                {
-                    _idUsuarioActual = userId;
-                    Debug.WriteLine($"ID Usuario obtenido para Inicio: {_idUsuarioActual}");
-                }
-                else
-                {
-                    Debug.WriteLine("No se pudo obtener ID del usuario desde SecureStorage");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error obteniendo ID usuario: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error en InicioViewModel: {ex.Message}");
             }
         }
 
@@ -103,12 +72,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             try
             {
                 IsLoading = true;
-
-                if (_idUsuarioActual <= 0)
-                {
-                    Debug.WriteLine("No hay usuario autenticado para cargar datos");
-                    return;
-                }
 
                 // Cargar todos los datos en paralelo
                 var tareas = new List<Task>
@@ -123,11 +86,20 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error cargando datos iniciales: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error cargando datos iniciales: {ex.Message}");
             }
             finally
             {
                 IsLoading = false;
+            }
+        }
+
+        private void OnEventoActualizado(object sender, EventoAgenda evento)
+        {
+            // Recargar medicamentos cuando hay cambios
+            if (evento.Tipo == "Medicamento" && evento.FechaHora.Date == DateTime.Today)
+            {
+                _ = CargarMedicamentosHoy();
             }
         }
 
@@ -145,7 +117,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error actualizando fecha: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error actualizando fecha: {ex.Message}");
                 FechaHoy = DateTime.Today.ToString("dd/MM/yyyy");
             }
         }
@@ -157,36 +129,25 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 // Limpiar lista
                 MedicamentosHoy.Clear();
 
-                // Llamar al backend para obtener eventos del usuario
-                var request = new ReqObtenerUsuario { IdUsuario = _idUsuarioActual };
-                var response = await _apiService.ObtenerEventosAsync(request);
+                // Usar servicio local (EventosService) por ahora
+                var medicamentos = _eventosService.ObtenerMedicamentosHoy();
 
-                if (response != null && response.resultado && response.Eventos != null)
+                foreach (var medicamento in medicamentos)
                 {
-                    // Filtrar solo medicamentos de hoy
-                    var medicamentosDeHoy = response.Eventos
-                        .Where(e => e.FechaHora.Date == DateTime.Today &&
-                                   e.Tipo?.ToLower().Contains("medicamento") == true)
-                        .OrderBy(e => e.FechaHora)
-                        .ToList();
-
-                    foreach (var medicamento in medicamentosDeHoy)
-                    {
-                        MedicamentosHoy.Add(medicamento);
-                    }
-
-                    Debug.WriteLine($"Cargados {MedicamentosHoy.Count} medicamentos para hoy desde backend");
-                }
-                else
-                {
-                    Debug.WriteLine($"No se obtuvieron eventos del backend: {response?.Mensaje ?? "Respuesta nula"}");
+                    MedicamentosHoy.Add(medicamento);
                 }
 
                 HayMedicamentos = MedicamentosHoy.Any();
+
+                System.Diagnostics.Debug.WriteLine($"Cargados {MedicamentosHoy.Count} medicamentos para hoy");
+
+                // TODO: Aquí conectar con el backend real
+                // var response = await _apiService.ListarMedicamentosUsuarioAsync(_idUsuarioActual);
+                // if (response?.EsExitoso == true) { ... }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error cargando medicamentos: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error cargando medicamentos: {ex.Message}");
                 HayMedicamentos = false;
             }
         }
@@ -198,7 +159,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 // Limpiar lista
                 EscaneosRecientes.Clear();
 
-                // TODO: Conectar con backend real cuando esté disponible el endpoint
+                // TODO: Conectar con backend real
                 // Por ahora, datos de ejemplo
                 var escaneosEjemplo = new List<EscaneoReciente>
                 {
@@ -229,11 +190,11 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
                 HayEscaneos = EscaneosRecientes.Any();
 
-                Debug.WriteLine($"Cargados {EscaneosRecientes.Count} escaneos recientes (datos de ejemplo)");
+                System.Diagnostics.Debug.WriteLine($"Cargados {EscaneosRecientes.Count} escaneos recientes");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error cargando escaneos recientes: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error cargando escaneos recientes: {ex.Message}");
                 HayEscaneos = false;
             }
         }
@@ -245,9 +206,8 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 // Limpiar lista
                 HabitosSaludables.Clear();
 
-                // TODO: Conectar con endpoint de IA para hábitos cuando esté disponible
-                // var request = new ReqObtenerUsuario { IdUsuario = _idUsuarioActual };
-                // var response = await _apiService.ObtenerHabitosAsync(request);
+                // TODO: Conectar con endpoint de IA para hábitos
+                // var response = await _apiService.ObtenerHabitosAsync(_idUsuarioActual);
 
                 // Por ahora, datos de ejemplo
                 var habitosEjemplo = new List<HabitoSaludable>
@@ -256,21 +216,21 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     {
                         Titulo = "Beber al menos 8 vasos de agua al día",
                         Descripcion = "Mantenerte hidratado ayuda a tu organismo a funcionar mejor.",
-                        Icono = "droplet",
+                        Icono = "💧",
                         Prioridad = 1
                     },
                     new HabitoSaludable
                     {
                         Titulo = "Caminar 30 minutos diarios",
                         Descripcion = "El ejercicio ligero mejora tu salud cardiovascular.",
-                        Icono = "directions_walk",
+                        Icono = "🚶",
                         Prioridad = 2
                     },
                     new HabitoSaludable
                     {
                         Titulo = "Dormir 7-8 horas cada noche",
                         Descripcion = "Un buen descanso es fundamental para tu recuperación.",
-                        Icono = "hotel",
+                        Icono = "😴",
                         Prioridad = 3
                     }
                 };
@@ -282,11 +242,11 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
                 HayHabitos = HabitosSaludables.Any();
 
-                Debug.WriteLine($"Cargados {HabitosSaludables.Count} hábitos saludables (datos de ejemplo)");
+                System.Diagnostics.Debug.WriteLine($"Cargados {HabitosSaludables.Count} hábitos saludables");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error cargando hábitos saludables: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error cargando hábitos saludables: {ex.Message}");
                 HayHabitos = false;
             }
         }
@@ -298,9 +258,8 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 // Limpiar lista
                 SintomasUsuario.Clear();
 
-                // TODO: Conectar con backend real para síntomas del usuario cuando esté disponible
-                // var request = new ReqObtenerUsuario { IdUsuario = _idUsuarioActual };
-                // var response = await _apiService.ObtenerSintomasUsuarioAsync(request);
+                // TODO: Conectar con backend real para síntomas del usuario
+                // var response = await _apiService.ObtenerSintomasUsuarioAsync(_idUsuarioActual);
 
                 // Por ahora, datos de ejemplo
                 var sintomasEjemplo = new List<SintomaUsuario>
@@ -335,30 +294,33 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
                 HaySintomas = SintomasUsuario.Any();
 
-                Debug.WriteLine($"Cargados {SintomasUsuario.Count} síntomas del usuario (datos de ejemplo)");
+                System.Diagnostics.Debug.WriteLine($"Cargados {SintomasUsuario.Count} síntomas del usuario");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error cargando síntomas del usuario: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error cargando síntomas del usuario: {ex.Message}");
                 HaySintomas = false;
             }
         }
 
         [RelayCommand]
-        private async Task MarcarTomado(ResEventoCalendario medicamento)
+        private void MarcarTomado(EventoAgenda medicamento)
         {
             try
             {
-                if (medicamento == null) return;
+                if (medicamento != null)
+                {
+                    medicamento.Completado = !medicamento.Completado;
 
-                // TODO: Implementar cuando tengamos IDs y estado en el backend
-                await Shell.Current.DisplayAlert("Función", "Marcar medicamento como tomado estará disponible cuando se implemente el estado en el backend", "OK");
+                    // Notificar al servicio que hubo cambios
+                    _eventosService.ActualizarEstadoEvento(medicamento);
 
-                Debug.WriteLine($"Medicamento {medicamento.Titulo} - función pendiente");
+                    System.Diagnostics.Debug.WriteLine($"Medicamento {medicamento.Titulo} marcado como {(medicamento.Completado ? "tomado" : "pendiente")}");
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error marcando medicamento: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error marcando medicamento: {ex.Message}");
             }
         }
 
@@ -372,7 +334,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error navegando a agenda: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error navegando a agenda: {ex.Message}");
             }
         }
 
@@ -386,7 +348,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error navegando a escaneos: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error navegando a escaneos: {ex.Message}");
             }
         }
 
@@ -400,7 +362,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error navegando a hábitos: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error navegando a hábitos: {ex.Message}");
             }
         }
 
@@ -418,7 +380,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error agregando síntoma: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error agregando síntoma: {ex.Message}");
             }
         }
 
@@ -432,7 +394,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error navegando a síntomas: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error navegando a síntomas: {ex.Message}");
             }
         }
 
@@ -445,7 +407,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error refrescando datos: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error refrescando datos: {ex.Message}");
             }
         }
 
@@ -454,9 +416,18 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             await CargarDatosIniciales();
         }
+
+        // Cleanup
+        ~InicioViewModel()
+        {
+            if (_eventosService != null)
+            {
+                _eventosService.EventoActualizado -= OnEventoActualizado;
+            }
+        }
     }
 
-    // Modelos para la vista (mantener los mismos)
+    // Modelos para la vista
     public class EscaneoReciente
     {
         public string NombreComercial { get; set; } = "";
@@ -469,7 +440,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
     {
         public string Titulo { get; set; } = "";
         public string Descripcion { get; set; } = "";
-        public string Icono { get; set; } = ""; // Usar nombres de Material Icons
+        public string Icono { get; set; } = "";
         public int Prioridad { get; set; }
     }
 
