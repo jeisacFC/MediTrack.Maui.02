@@ -13,25 +13,22 @@ public partial class PantallaBusqueda : ContentPage
     {
         InitializeComponent();
         _viewModel = viewModel;
-        // ¡ESTA ES LA LÍNEA QUE FALTABA!
-        BindingContext = _viewModel;
+        BindingContext = viewModel; // Usar directamente el parámetro como en PantallaScan
 
+        // SUSCRIBIRSE A LOS EVENTOS DEL VIEWMODEL (como en PantallaScan)
+        viewModel.BusquedaExitosa += OnBusquedaExitosa;
+        viewModel.BusquedaFallida += OnBusquedaFallida;
     }
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-        // Suscribirse a los eventos del ViewModel cuando la página aparece
-        _viewModel.BusquedaExitosa += OnBusquedaExitosa;
-        _viewModel.BusquedaFallida += OnBusquedaFallida;
-    }
-
+    // LIMPIAR EVENTOS AL SALIR (como en PantallaScan)
     protected override void OnDisappearing()
     {
+        if (_viewModel != null)
+        {
+            _viewModel.BusquedaExitosa -= OnBusquedaExitosa;
+            _viewModel.BusquedaFallida -= OnBusquedaFallida;
+        }
         base.OnDisappearing();
-        // Des-suscribirse de los eventos para evitar fugas de memoria
-        _viewModel.BusquedaExitosa -= OnBusquedaExitosa;
-        _viewModel.BusquedaFallida -= OnBusquedaFallida;
     }
 
     private async void OnBusquedaExitosa(object sender, ResBuscarMedicamento resultado)
