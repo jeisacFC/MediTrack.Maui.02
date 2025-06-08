@@ -88,7 +88,6 @@
 	  <Compile Include="Models\Model\EscaneosMedicamentos.cs" />
 	  
 	  <Compile Include="Models\Model\EstadoEnum.cs" />
-	  
 	  <Compile Include="Models\Model\EstadoSesionEnum.cs" />
 	  
 	  <Compile Include="Models\Model\EventosMedicos.cs" />
@@ -100,7 +99,6 @@
 	  <Compile Include="Models\Model\FrecuenciaEnum.cs" />
 	  
 	  <Compile Include="Models\Model\GeneroEnum.cs" />
-	  
 	  <Compile Include="Models\Model\HistorialRecordatorios.cs" />
 	  
 	  <Compile Include="Models\Model\InteraccionesMedicamentos.cs" />
