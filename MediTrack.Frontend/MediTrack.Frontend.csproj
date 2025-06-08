@@ -79,7 +79,6 @@
 	  <Compile Include="Models\Model\CondicionesMedicas.cs" />
 	  
 	  <Compile Include="Models\Model\Direcciones.cs" />
-	  
 	  <Compile Include="Models\Model\EfectosSecundarios.cs" />
 	  
 	  <Compile Include="Models\Model\Errores.cs" />
@@ -204,7 +203,7 @@
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqAutenticarUsuario.cs" />
 	  
-	  <Compile Include="Models\Request\Usuarios\ReqCambiarContraseña.cs" />
+	  <Compile Include="Models\Request\Usuarios\ReqCambiarContrasena.cs" />
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqInsertarUsuario.cs" />
 	  
@@ -214,11 +213,11 @@
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqObtenerUsuario.cs" />
 	  
-	  <Compile Include="Models\Request\Usuarios\ReqOlvidarContraseña.cs" />
+	  <Compile Include="Models\Request\Usuarios\ReqOlvidarContrasena.cs" />
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqRefreshToken.cs" />
 	  
-	  <Compile Include="Models\Request\Usuarios\ReqRestablecerContraseña.cs" />
+	  <Compile Include="Models\Request\Usuarios\ReqRestablecerContrasena.cs" />
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqSolicitarResetPassword.cs" />
 	  
@@ -318,7 +317,7 @@
 	  
 	  <Compile Include="Models\Response\Usuarios\ResAutenticarUsuario.cs" />
 	  
-	  <Compile Include="Models\Response\Usuarios\ResCambiarContraseña.cs" />
+	  <Compile Include="Models\Response\Usuarios\ResCambiarContrasena.cs" />
 	  
 	  <Compile Include="Models\Response\Usuarios\ResInsertarUsuario.cs" />
 	  
@@ -332,7 +331,7 @@
 	  
 	  <Compile Include="Models\Response\Usuarios\ResRefreshToken.cs" />
 	  
-	  <Compile Include="Models\Response\Usuarios\ResRestablecerContraseña.cs" />
+	  <Compile Include="Models\Response\Usuarios\ResRestablecerContrasena.cs" />
 	  
 	  <Compile Include="Models\Response\Usuarios\ResSolicitarResetPassword.cs" />
 	  

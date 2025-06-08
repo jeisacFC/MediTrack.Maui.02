@@ -17,13 +17,7 @@ namespace MediTrack.Frontend.Models.Model
         [JsonProperty("email")]
         [JsonPropertyName("email")]
         public string email { get; set; }
-
-        [JsonProperty("contraseña")]
-        [JsonPropertyName("contraseña")]
-        public string contraseña { get; set; }
-
-        [JsonProperty("fecha_registro")]
-        [JsonPropertyName("fecha_registro")]
+        public string contrasena { get; set; }
         public DateTime fecha_registro { get; set; }
 
         [JsonProperty("notificaciones_push")]

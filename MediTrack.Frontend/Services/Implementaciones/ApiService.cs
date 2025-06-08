@@ -45,6 +45,7 @@ public class ApiService : IApiService
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             Debug.WriteLine($"Llamando a POST (HTTPS): {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
 
             var response = await _httpClient.PostAsync(endpoint, content);
             var responseStream = await response.Content.ReadAsStreamAsync();
@@ -74,6 +75,45 @@ public class ApiService : IApiService
         {
             Debug.WriteLine($"Errores de conexión en ApiService: {ex.Message}");
             return null;
+        }
+    }
+
+    public async Task<ResBuscarMedicamento> BuscarMedicamentoManualAsync(ReqBuscarMedicamento request)
+    {
+        var endpoint = "api/medicamentos/buscar"; // Endpoint específico para la búsqueda manual
+
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de Búsqueda Manual: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Deserializa la respuesta JSON al tipo ResBuscarMedicamento
+                return JsonSerializer.Deserialize<ResBuscarMedicamento>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                // Manejo de error si la llamada no fue exitosa
+                Debug.WriteLine($"Errores de API en Búsqueda Manual: {response.StatusCode}");
+                return new ResBuscarMedicamento { resultado = false, errores = new List<Errores> { new Errores { mensaje = $"Errores del servidor: {response.StatusCode}" } } };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en BuscarMedicamentoManualAsync: {ex.Message}");
+            return new ResBuscarMedicamento { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
         }
     }
 
@@ -513,10 +553,10 @@ public class ApiService : IApiService
                         else if (usuario.TryGetProperty("Email", out var emailMayus))
                             usuarioObj.email = emailMayus.GetString();
 
-                        if (usuario.TryGetProperty("contraseña", out var contraseña))
-                            usuarioObj.contraseña = contraseña.GetString();
-                        else if (usuario.TryGetProperty("Contraseña", out var contraseñaMayus))
-                            usuarioObj.contraseña = contraseñaMayus.GetString();
+                        if (usuario.TryGetProperty("contraseña", out var contrasena))
+                            usuarioObj.contrasena = contrasena.GetString();
+                        else if (usuario.TryGetProperty("Contraseña", out var contrasenaMayus))
+                            usuarioObj.contrasena = contrasenaMayus.GetString();
 
                         if (usuario.TryGetProperty("fecha_registro", out var fechaRegistro))
                             usuarioObj.fecha_registro = fechaRegistro.GetDateTime();
@@ -805,12 +845,12 @@ public class ApiService : IApiService
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta exitosa de logout: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta exitosa de logout: {ex.Message}");
                     return new ResLogout
                     {
                         resultado = false,
                         LogoutExitoso = false,
-                        Mensaje = "Error procesando respuesta del servidor",
+                        Mensaje = "Errores procesando respuesta del servidor",
                         FechaLogout = DateTime.Now,
                         TokensInvalidados = 0
                     };
@@ -818,7 +858,7 @@ public class ApiService : IApiService
             }
             else
             {
-                Debug.WriteLine($"Error HTTP en logout: {response.StatusCode}");
+                Debug.WriteLine($"Errores HTTP en logout: {response.StatusCode}");
                 Debug.WriteLine($"Contenido del error: {responseContent}");
 
                 try
@@ -830,20 +870,20 @@ public class ApiService : IApiService
 
                     if (errorResponse != null)
                     {
-                        Debug.WriteLine($"Error deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
+                        Debug.WriteLine($"Errores deserializado - resultado: {errorResponse.resultado}, mensaje: {errorResponse.Mensaje}");
                         return errorResponse;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deserializando respuesta de error de logout: {ex.Message}");
+                    Debug.WriteLine($"Errores deserializando respuesta de error de logout: {ex.Message}");
                 }
 
                 return new ResLogout
                 {
                     resultado = false,
                     LogoutExitoso = false,
-                    Mensaje = $"Error del servidor: {response.StatusCode} - {responseContent}",
+                    Mensaje = $"Errores del servidor: {response.StatusCode} - {responseContent}",
                     FechaLogout = DateTime.Now,
                     TokensInvalidados = 0
                 };
@@ -851,12 +891,12 @@ public class ApiService : IApiService
         }
         catch (HttpRequestException httpEx)
         {
-            Debug.WriteLine($"Error HTTP en logout: {httpEx.Message}");
+            Debug.WriteLine($"Errores HTTP en logout: {httpEx.Message}");
             return new ResLogout
             {
                 resultado = false,
                 LogoutExitoso = false,
-                Mensaje = "Error de conexión. Verifica que el servidor esté corriendo.",
+                Mensaje = "Errores de conexión. Verifica que el servidor esté corriendo.",
                 FechaLogout = DateTime.Now,
                 TokensInvalidados = 0
             };
@@ -875,7 +915,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error general en logout: {ex.Message}");
+            Debug.WriteLine($"Errores general en logout: {ex.Message}");
             Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 
             // En caso de error de comunicación, limpiar datos locales como medida de seguridad
@@ -890,14 +930,14 @@ public class ApiService : IApiService
             }
             catch (Exception cleanupEx)
             {
-                Debug.WriteLine($"Error limpiando datos locales: {cleanupEx.Message}");
+                Debug.WriteLine($"Errores limpiando datos locales: {cleanupEx.Message}");
             }
 
             return new ResLogout
             {
                 resultado = false,
                 LogoutExitoso = false,
-                Mensaje = "Error de conexión. No se pudo comunicar con el servidor.",
+                Mensaje = "Errores de conexión. No se pudo comunicar con el servidor.",
                 FechaLogout = DateTime.Now,
                 TokensInvalidados = 0
             };
@@ -922,7 +962,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error cargando token: {ex.Message}");
+            Debug.WriteLine($"Errores cargando token: {ex.Message}");
         }
     }
 
