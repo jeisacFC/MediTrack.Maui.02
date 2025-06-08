@@ -8,7 +8,7 @@ namespace MediTrack.Frontend.Models.Request
 {
     public class ReqAutenticarUsuario : ReqBase
     {
-        public string Email { get; set; }
-        public string Contraseña { get; set; }
+        public string email { get; set; }
+        public string contrasena { get; set; }
     }
 }
