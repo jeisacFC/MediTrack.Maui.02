@@ -10,12 +10,12 @@ namespace MediTrack.Frontend.Models;
     public class ResBase
     {
         public bool resultado { get; set; }
-        public List<Error> errores { get; set; } 
+        public List<Errores> errores { get; set; } 
         public int Codigo { get; set; }
         public string Mensaje { get; set; }
 
         public ResBase()
         {
-            errores = new List<Error>();
+            errores = new List<Errores>();
         }
     }
