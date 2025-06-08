@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Response
 {
-    public class ResCambiarContraseña : ResBase
+    public class ResCambiarContrasena : ResBase
     {
         public bool CambioExitoso { get; set; }
     }

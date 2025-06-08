@@ -559,10 +559,10 @@ public class ApiService : IApiService
                         else if (usuario.TryGetProperty("Email", out var emailMayus))
                             usuarioObj.email = emailMayus.GetString();
 
-                        if (usuario.TryGetProperty("contraseña", out var contraseña))
-                            usuarioObj.contraseña = contraseña.GetString();
-                        else if (usuario.TryGetProperty("Contraseña", out var contraseñaMayus))
-                            usuarioObj.contraseña = contraseñaMayus.GetString();
+                        if (usuario.TryGetProperty("contraseña", out var contrasena))
+                            usuarioObj.contrasena = contrasena.GetString();
+                        else if (usuario.TryGetProperty("Contraseña", out var contrasenaMayus))
+                            usuarioObj.contrasena = contrasenaMayus.GetString();
 
                         if (usuario.TryGetProperty("fecha_registro", out var fechaRegistro))
                             usuarioObj.fecha_registro = fechaRegistro.GetDateTime();

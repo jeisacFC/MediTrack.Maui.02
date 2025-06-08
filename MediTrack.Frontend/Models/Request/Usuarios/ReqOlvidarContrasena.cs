@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Request
 {
-    public class ReqOlvidarContraseña : ReqBase
+    public class ReqOlvidarContrasena : ReqBase
     {
         public string Email { get; set; }
     }

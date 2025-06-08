@@ -13,7 +13,6 @@ namespace MediTrack.Frontend.Models.Model
         public string PrincipioActivo { get; set; }
         public string Dosis { get; set; }
         public string Fabricante { get; set; }
-
         public List<string> Usos { get; set; } = new List<string>();
         public List<string> Advertencias { get; set; } = new List<string>();
         public List<string> EfectosSecundarios { get; set; } = new List<string>();

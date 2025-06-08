@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Request
 {
-    public class ReqRestablecerContraseña : ReqBase
+    public class ReqRestablecerContrasena : ReqBase
     {
         public string Token { get; set; }
-        public string NuevaContraseña { get; set; }
-        public string ConfirmarContraseña { get; set; }
+        public string NuevaContrasena { get; set; }
+        public string ConfirmarContrasena { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace MediTrack.Frontend.Models.Model
     {
         public int id_usuario { get; set; }
         public string email { get; set; }
-        public string contraseña { get; set; }
+        public string contrasena { get; set; }
         public DateTime fecha_registro { get; set; }
         public bool notificaciones_push { get; set; }
         public  DateTime ultimo_acceso { get; set; }
