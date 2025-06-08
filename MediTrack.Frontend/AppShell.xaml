@@ -30,7 +30,6 @@
     <ShellContent Route="olvidoContrasena"
                   ContentTemplate="{DataTemplate pantallasInicio:PantallaOlvidoContrasena}" />
 
-
     <ShellContent Route="pantallaScan"
               Title="Escanear"
               ContentTemplate="{DataTemplate pantallasPrincipales:PantallaScan}" />

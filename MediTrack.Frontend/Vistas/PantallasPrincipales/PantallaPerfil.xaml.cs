@@ -1,161 +1,194 @@
 using MediTrack.Frontend.ViewModels;
-using MediTrack.Frontend.Models.Model;
+using MediTrack.Frontend.Vistas;
 using System.Diagnostics;
 
-namespace MediTrack.Frontend.Vistas.PantallasPrincipales
+namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
+
+public partial class PantallaPerfil : BaseContentPage
 {
-    public partial class PantallaPerfil : BaseContentPage
+    private PerfilViewModel _viewModel;
+
+    public PantallaPerfil()
     {
-        private PerfilViewModel _viewModel;
+        InitializeComponent();
+    }
 
-        public PantallaPerfil(PerfilViewModel viewModel)
+    public PantallaPerfil(PerfilViewModel viewModel)
+    {
+        InitializeComponent();
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        try
         {
-            InitializeComponent();
-            _viewModel = viewModel;
-            BindingContext = _viewModel;
-        }
-        public PantallaPerfil()
-        {
-            // Resuelve el ViewModel desde el contenedor
-#pragma warning disable CS8602 
-            var viewModel = Application.Current.Handler.MauiContext.Services.GetService<PerfilViewModel>();
-#pragma warning restore CS8602 
-
-            _viewModel = viewModel ?? throw new Exception("No se pudo resolver PerfilViewModel");
-            BindingContext = _viewModel;
-        }
-
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-
-            try
+            if (_viewModel != null)
             {
                 await _viewModel.InitializeAsync();
+                Debug.WriteLine("=== VIEWMODEL INICIALIZADO CORRECTAMENTE ===");
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine($"Error en OnAppearing de PantallaPerfil: {ex.Message}");
-                await DisplayAlert("Error", "Error al cargar los datos del perfil", "OK");
+                Debug.WriteLine("ERROR: ViewModel es null en OnAppearing");
             }
         }
-
-        /// <summary>
-        /// Maneja el evento de cambio en el switch de notificaciones
-        /// </summary>
-        private async void OnToggleNotificaciones(object sender, ToggledEventArgs e)
+        catch (Exception ex)
         {
-            try
-            {
-                if (_viewModel != null)
-                {
-                    // Ejecutar el comando para alternar notificaciones
-                    if (_viewModel.AlternarNotificacionesCommand.CanExecute(null))
-                    {
-                        await _viewModel.AlternarNotificacionesCommand.ExecuteAsync(null);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error en OnToggleNotificaciones: {ex.Message}");
-                await DisplayAlert("Error", "Error al cambiar la configuración de notificaciones", "OK");
+            Debug.WriteLine($"ERROR en OnAppearing de PantallaPerfil: {ex.Message}");
+            Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+        }
+    }
 
-                // Revertir el switch si hay error
-                if (sender is Microsoft.Maui.Controls.Switch switchControl)
+    /// <summary>
+    /// Maneja el evento de cambio en las condiciones médicas seleccionadas
+    /// </summary>
+    private void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
+    {
+        try
+        {
+            Debug.WriteLine($"=== CONDICIONES MÉDICAS SELECCIONADAS: {e.CurrentSelection.Count} ===");
+            _viewModel?.OnCondicionesMedicasSeleccionadas(sender, e);
+
+            // Log de las condiciones seleccionadas
+            foreach (var item in e.CurrentSelection)
+            {
+                if (item is MediTrack.Frontend.Models.Model.CondicionesMedicas condicion)
                 {
-                    switchControl.IsToggled = !e.Value;
+                    Debug.WriteLine($"Condición seleccionada: {condicion.nombre_condicion}");
                 }
             }
         }
-
-        /// <summary>
-        /// Maneja la selección de condiciones médicas
-        /// </summary>
-        private void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
+        catch (Exception ex)
         {
-            try
+            Debug.WriteLine($"Error en OnCondicionesMedicasSeleccionadas: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Maneja el evento de cambio en las alergias seleccionadas
+    /// </summary>
+    private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
+    {
+        try
+        {
+            Debug.WriteLine($"=== ALERGIAS SELECCIONADAS: {e.CurrentSelection.Count} ===");
+            _viewModel?.OnAlergiasSeleccionadas(sender, e);
+
+            // Log de las alergias seleccionadas
+            foreach (var item in e.CurrentSelection)
             {
-                _viewModel?.OnCondicionesMedicasSeleccionadas(sender, e);
-
-                // Log para debugging
-                Debug.WriteLine($"Condiciones médicas seleccionadas: {e.CurrentSelection.Count}");
-
-                foreach (CondicionesMedicas condicion in e.CurrentSelection)
+                if (item is MediTrack.Frontend.Models.Model.Alergias alergia)
                 {
-                    Debug.WriteLine($"- {condicion.nombre_condicion}");
+                    Debug.WriteLine($"Alergia seleccionada: {alergia.nombre_alergia}");
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error en OnCondicionesMedicasSeleccionadas: {ex.Message}");
-            }
         }
-
-        /// <summary>
-        /// Maneja la selección de alergias
-        /// </summary>
-        private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
+        catch (Exception ex)
         {
-            try
+            Debug.WriteLine($"Error en OnAlergiasSeleccionadas: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Maneja el evento de cambio del switch de notificaciones
+    /// </summary>
+    public async void OnToggleNotificaciones(object sender, ToggledEventArgs e)
+    {
+        try
+        {
+            Debug.WriteLine($"=== TOGGLE NOTIFICACIONES: {e.Value} ===");
+
+            if (_viewModel != null)
             {
-                _viewModel?.OnAlergiasSeleccionadas(sender, e);
+                // Actualizar el valor en el ViewModel
+                _viewModel.Usuario.notificaciones_push = e.Value;
 
-                // Log para debugging
-                Debug.WriteLine($"Alergias seleccionadas: {e.CurrentSelection.Count}");
-
-                foreach (Alergias alergia in e.CurrentSelection)
+                // Ejecutar el comando para actualizar en el servidor
+                if (_viewModel.AlternarNotificacionesCommand.CanExecute(null))
                 {
-                    Debug.WriteLine($"- {alergia.nombre_alergia}");
+                    await _viewModel.AlternarNotificacionesCommand.ExecuteAsync(null);
                 }
             }
-            catch (Exception ex)
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en OnToggleNotificaciones: {ex.Message}");
+
+            // Mostrar mensaje de error al usuario
+            if (_viewModel != null)
             {
-                Debug.WriteLine($"Error en OnAlergiasSeleccionadas: {ex.Message}");
+                await _viewModel.ShowAlertAsync("Error",
+                    "No se pudo actualizar la configuración de notificaciones. Inténtalo de nuevo.");
             }
+        }
+    }
+
+
+    private async void OnRefresh(object sender, EventArgs e)
+    {
+        try
+        {
+            Debug.WriteLine("=== INICIANDO REFRESH MANUAL ===");
+
+            if (_viewModel != null && _viewModel.RefrescarPerfilCommand.CanExecute(null))
+            {
+                await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en OnRefresh: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Limpia recursos cuando la página desaparece
+    /// </summary>
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        Debug.WriteLine("=== PANTALLA PERFIL DESAPARECIENDO ===");
+    }
+
+    /// <summary>
+    /// Manejo de eventos de navegación hacia atrás
+    /// </summary>
+    protected override bool OnBackButtonPressed()
+    {
+        Debug.WriteLine("=== BOTÓN ATRÁS PRESIONADO EN PERFIL ===");
+
+        // Permitir navegación normal hacia atrás
+        return base.OnBackButtonPressed();
+    }
+}
+
+/// <summary>
+/// Converter para convertir int a bool (para visibilidad de colecciones)
+/// </summary>
+public class IntToBoolConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        if (value is int intValue)
+        {
+            return intValue > 0;
         }
 
-        /// <summary>
-        /// Se ejecuta cuando la página está desapareciendo
-        /// </summary>
-        protected override void OnDisappearing()
+        if (value is System.Collections.ICollection collection)
         {
-            base.OnDisappearing();
-            Debug.WriteLine("PantallaPerfil - OnDisappearing");
+            return collection.Count > 0;
         }
 
-        /// <summary>
-        /// Maneja errores de navegación o inicialización
-        /// </summary>
-        private async void OnErrorOcurred(string titulo, string mensaje)
-        {
-            try
-            {
-                await DisplayAlert(titulo, mensaje, "OK");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error mostrando alerta: {ex.Message}");
-            }
-        }
+        return false;
+    }
 
-        /// <summary>
-        /// Método para refrescar manualmente los datos desde la UI
-        /// </summary>
-        private async void OnRefreshRequested()
-        {
-            try
-            {
-                if (_viewModel?.RefrescarPerfilCommand.CanExecute(null) == true)
-                {
-                    await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error en OnRefreshRequested: {ex.Message}");
-                await DisplayAlert("Error", "Error al refrescar los datos", "OK");
-            }
-        }
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        throw new NotImplementedException();
     }
 }

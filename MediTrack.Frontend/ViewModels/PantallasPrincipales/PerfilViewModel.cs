@@ -33,7 +33,6 @@ namespace MediTrack.Frontend.ViewModels
         [ObservableProperty]
         private string nombreCompleto = string.Empty;
 
-        // Propiedades adicionales para mostrar información formateada
         [ObservableProperty]
         private string fechaNacimientoFormateada = string.Empty;
 
@@ -63,17 +62,6 @@ namespace MediTrack.Frontend.ViewModels
 
             // Inicializar usuario vacío
             usuario = new Usuarios();
-            InicializarPropiedadesFormateadas();
-        }
-
-        private void InicializarPropiedadesFormateadas()
-        {
-            NombreCompleto = string.Empty;
-            FechaNacimientoFormateada = string.Empty;
-            FechaRegistroFormateada = string.Empty;
-            UltimoAccesoFormateado = string.Empty;
-            GeneroTexto = string.Empty;
-            EstadoCuenta = string.Empty;
         }
 
         public override async Task InitializeAsync()
@@ -124,42 +112,31 @@ namespace MediTrack.Frontend.ViewModels
                 var response = await _apiService.GetUserAsync(request);
 
                 Debug.WriteLine($"Respuesta recibida - resultado: {response?.resultado}");
-                Debug.WriteLine($"Usuario en respuesta: {response?.Usuario != null}");
 
-                // CORRECCIÓN: Verificar que la respuesta sea válida
-                if (response != null && response.resultado)
+                if (response != null && response.resultado && response.Usuario != null)
                 {
                     Debug.WriteLine("=== RESPUESTA VÁLIDA DEL SERVIDOR ===");
+                    Debug.WriteLine("=== ACTUALIZANDO DATOS DEL USUARIO ===");
 
-                    if (response.Usuario != null)
-                    {
-                        Debug.WriteLine("=== ACTUALIZANDO DATOS DEL USUARIO ===");
+                    // Actualizar el usuario - FORZAR ACTUALIZACIÓN DE UI
+                    Usuario = response.Usuario;
+                    Debug.WriteLine($"Usuario asignado: {Usuario.nombre} {Usuario.apellido1}");
 
-                        // Actualizar el usuario
-                        Usuario = response.Usuario;
-                        Debug.WriteLine($"Usuario asignado: {Usuario.nombre} {Usuario.apellido1}");
+                    // Actualizar propiedades formateadas
+                    ActualizarPropiedadesFormateadas();
 
-                        // Actualizar propiedades formateadas
-                        ActualizarPropiedadesFormateadas();
+                    // FORZAR NOTIFICACIONES DE CAMBIO
+                    OnPropertyChanged(nameof(Usuario));
+                    OnPropertyChanged(nameof(NombreCompleto));
+                    OnPropertyChanged(nameof(FechaNacimientoFormateada));
+                    OnPropertyChanged(nameof(FechaRegistroFormateada));
+                    OnPropertyChanged(nameof(UltimoAccesoFormateado));
+                    OnPropertyChanged(nameof(GeneroTexto));
+                    OnPropertyChanged(nameof(EstadoCuenta));
 
-                        Debug.WriteLine($"NombreCompleto establecido: '{NombreCompleto}'");
-                        Debug.WriteLine($"Email: {Usuario.email}");
-                        Debug.WriteLine($"Fecha nacimiento: {Usuario.fecha_nacimiento}");
-                        Debug.WriteLine($"Género: {Usuario.id_genero}");
-                        Debug.WriteLine($"Notificaciones: {Usuario.notificaciones_push}");
-
-                        // Forzar actualización de la UI
-                        OnPropertyChanged(nameof(Usuario));
-                        OnPropertyChanged(nameof(NombreCompleto));
-
-                        Debug.WriteLine("=== DATOS USUARIO CARGADOS EXITOSAMENTE ===");
-                    }
-                    else
-                    {
-                        Debug.WriteLine("ADVERTENCIA: Usuario es null en la respuesta válida");
-                        ErrorMessage = "No se recibieron datos del usuario";
-                        await ShowAlertAsync("Error", "No se pudieron cargar los datos del usuario");
-                    }
+                    Debug.WriteLine("=== DATOS USUARIO CARGADOS EXITOSAMENTE ===");
+                    Debug.WriteLine($"NombreCompleto final: '{NombreCompleto}'");
+                    Debug.WriteLine($"Email final: '{Usuario.email}'");
                 }
                 else
                 {
@@ -188,13 +165,23 @@ namespace MediTrack.Frontend.ViewModels
 
         private void ActualizarPropiedadesFormateadas()
         {
-            if (Usuario == null) return;
+            if (Usuario == null)
+            {
+                Debug.WriteLine("WARNING: Usuario es null en ActualizarPropiedadesFormateadas");
+                return;
+            }
+
+            Debug.WriteLine("=== INICIANDO ACTUALIZACIÓN DE PROPIEDADES FORMATEADAS ===");
 
             // Nombre completo
-            NombreCompleto = $"{Usuario.nombre} {Usuario.apellido1} {Usuario.apellido2}".Trim();
+            var nombre = Usuario.nombre ?? "";
+            var apellido1 = Usuario.apellido1 ?? "";
+            var apellido2 = Usuario.apellido2 ?? "";
+            NombreCompleto = $"{nombre} {apellido1} {apellido2}".Trim();
+            Debug.WriteLine($"Nombre completo calculado: '{NombreCompleto}'");
 
             // Fecha de nacimiento
-            if (Usuario.fecha_nacimiento != DateTime.MinValue)
+            if (Usuario.fecha_nacimiento != DateTime.MinValue && Usuario.fecha_nacimiento.Year > 1900)
             {
                 FechaNacimientoFormateada = Usuario.fecha_nacimiento.ToString("dd/MM/yyyy");
 
@@ -209,9 +196,10 @@ namespace MediTrack.Frontend.ViewModels
             {
                 FechaNacimientoFormateada = "No especificada";
             }
+            Debug.WriteLine($"Fecha nacimiento formateada: '{FechaNacimientoFormateada}'");
 
             // Fecha de registro
-            if (Usuario.fecha_registro != DateTime.MinValue)
+            if (Usuario.fecha_registro != DateTime.MinValue && Usuario.fecha_registro.Year > 1900)
             {
                 FechaRegistroFormateada = Usuario.fecha_registro.ToString("dd/MM/yyyy");
             }
@@ -219,9 +207,10 @@ namespace MediTrack.Frontend.ViewModels
             {
                 FechaRegistroFormateada = "No disponible";
             }
+            Debug.WriteLine($"Fecha registro formateada: '{FechaRegistroFormateada}'");
 
             // Último acceso
-            if (Usuario.ultimo_acceso != DateTime.MinValue)
+            if (Usuario.ultimo_acceso != DateTime.MinValue && Usuario.ultimo_acceso.Year > 1900)
             {
                 UltimoAccesoFormateado = Usuario.ultimo_acceso.ToString("dd/MM/yyyy HH:mm");
             }
@@ -229,6 +218,7 @@ namespace MediTrack.Frontend.ViewModels
             {
                 UltimoAccesoFormateado = "No disponible";
             }
+            Debug.WriteLine($"Último acceso formateado: '{UltimoAccesoFormateado}'");
 
             // Género
             GeneroTexto = Usuario.id_genero switch
@@ -238,6 +228,7 @@ namespace MediTrack.Frontend.ViewModels
                 "3" => "Otro",
                 _ => "No especificado"
             };
+            Debug.WriteLine($"Género texto: '{GeneroTexto}'");
 
             // Estado de cuenta
             if (Usuario.cuenta_bloqueada)
@@ -250,19 +241,16 @@ namespace MediTrack.Frontend.ViewModels
                     ? $"Activa ({Usuario.intentos_fallidos} intentos fallidos)"
                     : "Activa";
             }
+            Debug.WriteLine($"Estado cuenta: '{EstadoCuenta}'");
 
-            Debug.WriteLine($"Propiedades formateadas actualizadas:");
-            Debug.WriteLine($"- NombreCompleto: {NombreCompleto}");
-            Debug.WriteLine($"- FechaNacimiento: {FechaNacimientoFormateada}");
-            Debug.WriteLine($"- Género: {GeneroTexto}");
+            Debug.WriteLine("=== PROPIEDADES FORMATEADAS ACTUALIZADAS ===");
         }
 
         private async Task CargarCondicionesMedicasAsync()
         {
             try
             {
-                // TODO: Implementar cuando tengas el método en IApiService
-                // var condiciones = await _apiService.ObtenerCondicionesMedicasUsuarioAsync(Usuario.id_usuario);
+                Debug.WriteLine("=== CARGANDO CONDICIONES MÉDICAS ===");
 
                 // Datos de ejemplo para pruebas
                 var condicionesEjemplo = new List<CondicionesMedicas>
@@ -288,9 +276,13 @@ namespace MediTrack.Frontend.ViewModels
                 {
                     condicionesMedicas.Add(condicion);
                 }
+
+                OnPropertyChanged(nameof(CondicionesMedicas));
+                Debug.WriteLine($"Condiciones médicas cargadas: {condicionesMedicas.Count}");
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Error cargando condiciones médicas: {ex.Message}");
                 ErrorMessage = "Error al cargar condiciones médicas";
                 await HandleErrorAsync(ex);
             }
@@ -300,8 +292,7 @@ namespace MediTrack.Frontend.ViewModels
         {
             try
             {
-                // TODO: Implementar cuando tengas el método en IApiService
-                // var alergias = await _apiService.ObtenerAlergiasUsuarioAsync(Usuario.id_usuario);
+                Debug.WriteLine("=== CARGANDO ALERGIAS ===");
 
                 // Datos de ejemplo para pruebas
                 var alergiasEjemplo = new List<Alergias>
@@ -327,9 +318,13 @@ namespace MediTrack.Frontend.ViewModels
                 {
                     alergias.Add(alergia);
                 }
+
+                OnPropertyChanged(nameof(Alergias));
+                Debug.WriteLine($"Alergias cargadas: {alergias.Count}");
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Error cargando alergias: {ex.Message}");
                 ErrorMessage = "Error al cargar alergias";
                 await HandleErrorAsync(ex);
             }
@@ -459,7 +454,6 @@ namespace MediTrack.Frontend.ViewModels
             try
             {
                 Usuario = new Usuarios();
-                InicializarPropiedadesFormateadas();
                 condicionesMedicas.Clear();
                 alergias.Clear();
                 condicionesMedicasSeleccionadas.Clear();
@@ -496,9 +490,11 @@ namespace MediTrack.Frontend.ViewModels
         {
             await ExecuteAsync(async () =>
             {
+                Debug.WriteLine("=== INICIANDO REFRESCO DEL PERFIL ===");
                 await CargarDatosUsuarioAsync();
                 await CargarCondicionesMedicasAsync();
                 await CargarAlergiasAsync();
+                Debug.WriteLine("=== REFRESCO DEL PERFIL COMPLETADO ===");
             });
         }
     }

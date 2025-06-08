@@ -5,6 +5,7 @@ using MediTrack.Frontend.Services.Interfaces;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -27,6 +28,10 @@ public class ApiService : IApiService
         _httpClient.BaseAddress = new Uri(baseUrl);
 
         _ = Task.Run(async () => await ConfigurarTokenAsync());
+
+        _httpClient.DefaultRequestHeaders.Accept.Clear();
+        _httpClient.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
     #region MEDICAMENTOS
@@ -494,7 +499,7 @@ public class ApiService : IApiService
                         resObtenerUsuario.Mensaje = mensajeMayus.GetString();
 
                     // Mapear datos del usuario si existen
-                    if (backendResponse.TryGetProperty("usuario", out var usuario) && usuario.ValueKind == JsonValueKind.Object)
+                    if (backendResponse.TryGetProperty("Usuario", out var usuario) && usuario.ValueKind == JsonValueKind.Object)
                     {
                         var usuarioObj = new Usuarios();
 

@@ -82,7 +82,7 @@ namespace MediTrack.Frontend.ViewModels.Base
             await Task.CompletedTask;
         }
 
-        protected virtual async Task ShowAlertAsync(string title, string message)
+        public virtual async Task ShowAlertAsync(string title, string message)
         {
             await Application.Current.MainPage.DisplayAlert(title, message, "OK");
         }
