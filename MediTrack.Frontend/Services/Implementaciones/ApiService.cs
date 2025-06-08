@@ -73,7 +73,6 @@ public class ApiService : IApiService
         }
     }
 
-
     public async Task<ResBuscarMedicamento> BuscarMedicamentoManualAsync(ReqBuscarMedicamento request)
     {
         var endpoint = "api/medicamentos/buscar"; // Endpoint específico para la búsqueda manual
@@ -103,13 +102,13 @@ public class ApiService : IApiService
             {
                 // Manejo de error si la llamada no fue exitosa
                 Debug.WriteLine($"Error de API en Búsqueda Manual: {response.StatusCode}");
-                return new ResBuscarMedicamento { resultado = false, errores = new List<Error> { new Error { Message = $"Error del servidor: {response.StatusCode}" } } };
+                return new ResBuscarMedicamento { resultado = false, errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } } };
             }
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error de conexión en BuscarMedicamentoManualAsync: {ex.Message}");
-            return new ResBuscarMedicamento { resultado = false, errores = new List<Error> { new Error { Message = "No se pudo conectar con el servidor." } } };
+            return new ResBuscarMedicamento { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
         }
     }
 

@@ -79,8 +79,6 @@
 	  <Compile Include="Models\Model\CondicionesMedicas.cs" />
 	  
 	  <Compile Include="Models\Model\Direcciones.cs" />
-	  
-	  <Compile Include="Models\Model\Usuario.cs" />
 	  <Compile Include="Models\Model\EfectosSecundarios.cs" />
 	  
 	  <Compile Include="Models\Model\Errores.cs" />
