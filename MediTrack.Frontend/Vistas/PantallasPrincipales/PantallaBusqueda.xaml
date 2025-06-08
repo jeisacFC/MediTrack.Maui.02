@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:MediTrack.Frontend.ViewModels.PantallasPrincipales"
+             xmlns:vistas="clr-namespace:MediTrack.Frontend.Vistas"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaBusqueda"
              Title="Búsqueda de medicamentos"
              BackgroundColor="{StaticResource ColorFondoClaro}"
@@ -76,5 +77,9 @@
             </Grid>
 
         </VerticalStackLayout>
+
+
+        <!-- Botón flotante -->
+        <vistas:BotonFlotanteEscaner />
     </Grid>
 </ContentPage>
