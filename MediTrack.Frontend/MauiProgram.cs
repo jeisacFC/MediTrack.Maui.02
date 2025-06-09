@@ -52,37 +52,47 @@ public static class MauiProgram
                 ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
             };
         })
-        .AddHttpMessageHandler<AuthHandler>(); // AGREGAR EL HANDLER DE AUTENTICACIÓN
+        .AddHttpMessageHandler<AuthHandler>(); 
 
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
 
-        // TODOS LOS VIEWMODELS 
+        // TODOS LOS VIEWMODELS PRINCIPALES
         builder.Services.AddTransient<ScanViewModel>();
         builder.Services.AddTransient<BusquedaViewModel>();
         builder.Services.AddTransient<InicioViewModel>();
+        builder.Services.AddTransient<AgendaViewModel>();
+        builder.Services.AddTransient<PerfilViewModel>();
 
+        // TODOS LOS VIEWMODELS INICIALES
+        builder.Services.AddTransient<CargaViewModel>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
-        builder.Services.AddTransient<PerfilViewModel>(); 
         builder.Services.AddTransient<OlvidoContrasenaViewModel>();
         builder.Services.AddTransient<CodigoVerificacionViewModel>();
         builder.Services.AddTransient<NuevaContrasenaViewModel>();
 
-        // PANTALLAS 
 
+        // PANTALLAS PRINCIPALES
         builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<PantallaBusqueda>();
         builder.Services.AddTransient<PantallaInicio>();
+        builder.Services.AddTransient<PantallaAgenda>();        
+        builder.Services.AddTransient<PantallaPerfil>();
 
+
+
+        // PANTALLAS INICIALES
+        builder.Services.AddTransient<PantallaCarga>();
         builder.Services.AddTransient<PantallaInicioSesion>();
         builder.Services.AddTransient<PantallaRegistro>();
-        builder.Services.AddTransient<PantallaPerfil>();
         builder.Services.AddTransient<PantallaOlvidoContrasena>();
 
         //MODALES
         builder.Services.AddTransient<ModalCodigoVerificacion>();
         builder.Services.AddTransient<ModalNuevaContrasena>();
+        builder.Services.AddTransient<ModalAgregarEvento>();
+
 
         var app = builder.Build();
 

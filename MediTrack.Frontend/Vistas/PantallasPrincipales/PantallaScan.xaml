@@ -26,7 +26,7 @@
                     <Grid ColumnDefinitions="Auto,*,Auto" VerticalOptions="Center">
                         <Button Grid.Column="0"
                                 Text=" Cancelar"
-                                Clicked="Cancelar_Clicked_Header"
+                                Command="{Binding CancelarEscaneoCommand}"
                                 TextColor="White"
                                 BackgroundColor="Transparent"
                                 HorizontalOptions="Start"
@@ -34,7 +34,7 @@
                                 FontAttributes="Bold"
                                 Padding="0">
                             <Button.ImageSource>
-                                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe5c4;" Color="White"
+                                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe5cb;" Color="White"
                                                  Size="22"/>
                             </Button.ImageSource>
                         </Button>

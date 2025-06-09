@@ -2,12 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:calendar="clr-namespace:Syncfusion.Maui.Calendar;assembly=Syncfusion.Maui.Calendar"
+             xmlns:vistas="clr-namespace:MediTrack.Frontend.Vistas"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaAgenda"
              x:Name="CalendarioPage"
              BackgroundColor="#F2F2F7"
              Title="Agenda">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
 
         <!-- Contenedor azul estilo iOS -->
         <Frame Grid.Row="0" 
@@ -89,7 +90,7 @@
                         </calendar:CalendarMonthView>
                     </calendar:SfCalendar.MonthView>
 
-                    <!-- ✅ INTENTAR CONFIGURAR ESTILOS GLOBALES EN EL CALENDARIO -->
+                    <!--  INTENTAR CONFIGURAR ESTILOS GLOBALES EN EL CALENDARIO -->
                     <calendar:SfCalendar.Resources>
                         <ResourceDictionary>
                             <!-- Estilo para el círculo de selección -->
@@ -308,5 +309,12 @@
             </VerticalStackLayout>
         </ScrollView>
 
+
+
+        <!-- Botón flotante -->
+        <vistas:BotonFlotanteEscaner Grid.Row="2"  />
+
     </Grid>
+    
+    
 </ContentPage>

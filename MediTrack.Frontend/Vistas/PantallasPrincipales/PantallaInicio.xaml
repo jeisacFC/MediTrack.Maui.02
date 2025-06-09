@@ -3,616 +3,621 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
              xmlns:vm="clr-namespace:MediTrack.Frontend.ViewModels.PantallasPrincipales"
+             xmlns:vistas="clr-namespace:MediTrack.Frontend.Vistas"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaInicio"
              x:Name="Pagina"
              BackgroundColor="White"
              Title="Inicio">
-
+    <Grid>
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="25">
 
-            <!-- Loading Indicator -->
-            <ActivityIndicator IsVisible="{Binding IsLoading}"
-                             IsRunning="{Binding IsLoading}"
-                             Color="#007AFF"
-                             HeightRequest="40" />
+                <!-- Loading Indicator -->
+                <ActivityIndicator IsVisible="{Binding IsLoading}"
+                          IsRunning="{Binding IsLoading}"
+                          Color="#007AFF"
+                          HeightRequest="40" />
 
-            <!-- Medicamentos para hoy -->
-            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                <!-- Header -->
-                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
-                    <Label Grid.Column="0"
-                           Text="{Binding FechaHoy, StringFormat='Medicamentos - {0}'}"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           TextColor="Black"
-                           VerticalTextAlignment="Center" />
+                <!-- Medicamentos para hoy -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                    <!-- Header -->
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                        <Label Grid.Column="0"
+                        Text="{Binding FechaHoy, StringFormat='Medicamentos - {0}'}"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        VerticalTextAlignment="Center" />
 
-                    <Button Grid.Column="1"
-                            Text="Ver todo"
-                            BackgroundColor="#007AFF"
-                            TextColor="White"
-                            CornerRadius="10"
-                            FontSize="12"
-                            Padding="10,6"
-                            WidthRequest="70"
-                            HeightRequest="28"
-                            Command="{Binding IrAAgendaCommand}"
-                            IsVisible="{Binding HayMedicamentos}" />
-                </Grid>
+                        <Button Grid.Column="1"
+                         Text="Ver todo"
+                         BackgroundColor="#007AFF"
+                         TextColor="White"
+                         CornerRadius="10"
+                         FontSize="12"
+                         Padding="10,6"
+                         WidthRequest="70"
+                         HeightRequest="28"
+                         Command="{Binding IrAAgendaCommand}"
+                         IsVisible="{Binding HayMedicamentos}" />
+                    </Grid>
 
-                <!-- Lista de medicamentos -->
-                <CollectionView ItemsSource="{Binding MedicamentosHoy}"
-                               IsVisible="{Binding HayMedicamentos}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Frame BackgroundColor="White"
-                                   CornerRadius="10"
+                    <!-- Lista de medicamentos -->
+                    <CollectionView ItemsSource="{Binding MedicamentosHoy}"
+                            IsVisible="{Binding HayMedicamentos}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="White"
+                                CornerRadius="10"
+                                Padding="0"
+                                Margin="0,3"
+                                HasShadow="True"
+                                HeightRequest="75">
+                                    <Grid ColumnDefinitions="4,*,Auto" 
                                    Padding="0"
-                                   Margin="0,3"
-                                   HasShadow="True"
                                    HeightRequest="75">
-                                <Grid ColumnDefinitions="4,*,Auto" 
-                                      Padding="0"
-                                      HeightRequest="75">
 
-                                    <!-- Barra de color lateral -->
-                                    <BoxView Grid.Column="0"
-                                             BackgroundColor="{Binding Color}" />
+                                        <!-- Barra de color lateral -->
+                                        <BoxView Grid.Column="0"
+                                          BackgroundColor="{Binding Color}" />
 
-                                    <!-- Contenido del medicamento -->
-                                    <VerticalStackLayout Grid.Column="1" 
-                                                       Padding="12"
-                                                       Spacing="3"
-                                                       VerticalOptions="Center">
-                                        <Label Text="{Binding Titulo}"
-                                               FontSize="15"
-                                               FontAttributes="Bold"
-                                               TextColor="Black"
-                                               LineBreakMode="TailTruncation" />
+                                        <!-- Contenido del medicamento -->
+                                        <VerticalStackLayout Grid.Column="1" 
+                                                    Padding="12"
+                                                    Spacing="3"
+                                                    VerticalOptions="Center">
+                                            <Label Text="{Binding Titulo}"
+                                            FontSize="15"
+                                            FontAttributes="Bold"
+                                            TextColor="Black"
+                                            LineBreakMode="TailTruncation" />
 
-                                        <Label Text="{Binding Descripcion}"
-                                               FontSize="13"
-                                               TextColor="Gray"
-                                               LineBreakMode="TailTruncation"
-                                               IsVisible="{Binding Descripcion, Converter={StaticResource StringNotEmptyConverter}}" />
+                                            <Label Text="{Binding Descripcion}"
+                                            FontSize="13"
+                                            TextColor="Gray"
+                                            LineBreakMode="TailTruncation"
+                                            IsVisible="{Binding Descripcion, Converter={StaticResource StringNotEmptyConverter}}" />
 
-                                        <Label Text="{Binding HoraFormateada, StringFormat='🕐 {0}'}"
-                                               FontSize="12"
-                                               TextColor="#007AFF" />
-                                    </VerticalStackLayout>
+                                            <Label Text="{Binding HoraFormateada, StringFormat='🕐 {0}'}"
+                                            FontSize="12"
+                                            TextColor="#007AFF" />
+                                        </VerticalStackLayout>
 
-                                    <!-- Estado del medicamento -->
-                                    <Button Grid.Column="2"
-                                            Text="{Binding Completado, Converter={StaticResource BoolToCheckConverter}}"
-                                            BackgroundColor="{Binding Completado, Converter={StaticResource BoolToColorConverter}}"
-                                            TextColor="White"
-                                            CornerRadius="12"
-                                            FontSize="11"
-                                            Padding="8,4"
-                                            Margin="10"
-                                            WidthRequest="65"
-                                            HeightRequest="28"
-                                            VerticalOptions="Center"
-                                            Command="{Binding BindingContext.MarcarTomadoCommand, Source={x:Reference Pagina}}"
-                                            CommandParameter="{Binding .}" />
-                                </Grid>
+                                        <!-- Estado del medicamento -->
+                                        <Button Grid.Column="2"
+                                         Text="{Binding Completado, Converter={StaticResource BoolToCheckConverter}}"
+                                         BackgroundColor="{Binding Completado, Converter={StaticResource BoolToColorConverter}}"
+                                         TextColor="White"
+                                         CornerRadius="12"
+                                         FontSize="11"
+                                         Padding="8,4"
+                                         Margin="10"
+                                         WidthRequest="65"
+                                         HeightRequest="28"
+                                         VerticalOptions="Center"
+                                         Command="{Binding BindingContext.MarcarTomadoCommand, Source={x:Reference Pagina}}"
+                                         CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Mensaje cuando no hay medicamentos -->
+                    <Frame BackgroundColor="#F8F9FA" 
+                    CornerRadius="15" 
+                    Padding="20"
+                    HasShadow="False"
+                    IsVisible="{Binding HayMedicamentos, Converter={StaticResource InverseBoolConverter}}">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                            Text="&#xe1a3;"
+                            FontSize="30"
+                            TextColor="#cccccc"
+                            HorizontalTextAlignment="Center" />
+                            <Label Text="No hay medicamentos para hoy"
+                            TextColor="Gray"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </VerticalStackLayout>
+
+                <!-- Escaneos recientes -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                        <Label Grid.Column="0"
+                        Text="Escaneos Recientes"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        VerticalTextAlignment="Center" />
+
+                        <Button Grid.Column="1"
+                         Text="Ver todos"
+                         BackgroundColor="#4CAF50"
+                         TextColor="White"
+                         CornerRadius="10"
+                         FontSize="11"
+                         Padding="8,5"
+                         WidthRequest="70"
+                         HeightRequest="26"
+                         Command="{Binding VerTodosEscaneosCommand}"
+                         IsVisible="{Binding HayEscaneos}" />
+                    </Grid>
+
+                    <!-- Lista de escaneos -->
+                    <ScrollView Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never"
+                        HeightRequest="120"
+                        IsVisible="{Binding HayEscaneos}">
+                        <StackLayout Orientation="Horizontal" Spacing="10" Padding="0,5">
+                            <Frame BackgroundColor="#E8F5E8"
+                            CornerRadius="15"
+                            Padding="12"
+                            WidthRequest="200"
+                            HasShadow="True">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Divalproato Sódico 250mg"
+                                    FontAttributes="Bold"
+                                    FontSize="14"
+                                    TextColor="Black"
+                                    LineBreakMode="TailTruncation" />
+                                    <Label Text="5 de Abril, 7:23 p. m."
+                                    FontSize="12"
+                                    TextColor="Gray" />
+                                    <Label Text="Laboratorio ABC"
+                                    FontSize="11"
+                                    TextColor="#666"
+                                    LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
                             </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
 
-                <!-- Mensaje cuando no hay medicamentos -->
-                <Frame BackgroundColor="#F8F9FA" 
-                       CornerRadius="15" 
-                       Padding="20"
-                       HasShadow="False"
-                       IsVisible="{Binding HayMedicamentos, Converter={StaticResource InverseBoolConverter}}">
-                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Label FontFamily="MaterialIcons"
-                               Text="&#xe1a3;"
-                               FontSize="30"
-                               TextColor="#cccccc"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="No hay medicamentos para hoy"
-                               TextColor="Gray"
-                               FontSize="14"
-                               HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
+                            <Frame BackgroundColor="#E8F5E8"
+                            CornerRadius="15"
+                            Padding="12"
+                            WidthRequest="200"
+                            HasShadow="True">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Amoxicilina 500mg"
+                                    FontAttributes="Bold"
+                                    FontSize="14"
+                                    TextColor="Black"
+                                    LineBreakMode="TailTruncation" />
+                                    <Label Text="4 de Abril, 10:43 a. m."
+                                    FontSize="12"
+                                    TextColor="Gray" />
+                                    <Label Text="Pharma XYZ"
+                                    FontSize="11"
+                                    TextColor="#666"
+                                    LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </ScrollView>
 
-            <!-- Escaneos recientes -->
-            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
-                    <Label Grid.Column="0"
-                           Text="Escaneos Recientes"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           TextColor="Black"
-                           VerticalTextAlignment="Center" />
+                    <!-- Mensaje cuando no hay escaneos -->
+                    <Frame BackgroundColor="#F8F9FA" 
+                    CornerRadius="15" 
+                    Padding="20"
+                    HasShadow="False"
+                    IsVisible="{Binding HayEscaneos, Converter={StaticResource InverseBoolConverter}}">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                            Text="&#xe8b6;"
+                            FontSize="30"
+                            TextColor="#cccccc"
+                            HorizontalTextAlignment="Center" />
+                            <Label Text="No hay escaneos recientes"
+                            TextColor="Gray"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </VerticalStackLayout>
 
-                    <Button Grid.Column="1"
-                            Text="Ver todos"
-                            BackgroundColor="#4CAF50"
-                            TextColor="White"
-                            CornerRadius="10"
-                            FontSize="11"
-                            Padding="8,5"
-                            WidthRequest="70"
-                            HeightRequest="26"
-                            Command="{Binding VerTodosEscaneosCommand}"
-                            IsVisible="{Binding HayEscaneos}" />
-                </Grid>
+                <!-- Hábitos saludables -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                        <Label Grid.Column="0"
+                                Text="Hábitos saludables"
+                                FontSize="18"
+                                FontAttributes="Bold"
+                                TextColor="Black"
+                                VerticalTextAlignment="Center" />
 
-                <!-- Lista de escaneos -->
-                <ScrollView Orientation="Horizontal"
-                           HorizontalScrollBarVisibility="Never"
-                           HeightRequest="120"
-                           IsVisible="{Binding HayEscaneos}">
-                    <StackLayout Orientation="Horizontal" Spacing="10" Padding="0,5">
-                        <Frame BackgroundColor="#E8F5E8"
-                               CornerRadius="15"
-                               Padding="12"
-                               WidthRequest="200"
-                               HasShadow="True">
-                            <VerticalStackLayout Spacing="5">
-                                <Label Text="Divalproato Sódico 250mg"
-                                       FontAttributes="Bold"
-                                       FontSize="14"
-                                       TextColor="Black"
-                                       LineBreakMode="TailTruncation" />
-                                <Label Text="5 de Abril, 7:23 p. m."
-                                       FontSize="12"
-                                       TextColor="Gray" />
-                                <Label Text="Laboratorio ABC"
-                                       FontSize="11"
-                                       TextColor="#666"
-                                       LineBreakMode="TailTruncation" />
-                            </VerticalStackLayout>
-                        </Frame>
+                        <!--<Button Grid.Column="1"
+                                Text="Ver todos"
+                                BackgroundColor="#FF9500"
+                                TextColor="White"
+                                CornerRadius="10"
+                                FontSize="11"
+                                Padding="8,5"
+                                WidthRequest="70"
+                                HeightRequest="26"
+                                Command="{Binding VerTodosHabitosCommand}"
+                                IsVisible="{Binding HayHabitos}" />-->
+                    </Grid>
 
-                        <Frame BackgroundColor="#E8F5E8"
-                               CornerRadius="15"
-                               Padding="12"
-                               WidthRequest="200"
-                               HasShadow="True">
-                            <VerticalStackLayout Spacing="5">
-                                <Label Text="Amoxicilina 500mg"
-                                       FontAttributes="Bold"
-                                       FontSize="14"
-                                       TextColor="Black"
-                                       LineBreakMode="TailTruncation" />
-                                <Label Text="4 de Abril, 10:43 a. m."
-                                       FontSize="12"
-                                       TextColor="Gray" />
-                                <Label Text="Pharma XYZ"
-                                       FontSize="11"
-                                       TextColor="#666"
-                                       LineBreakMode="TailTruncation" />
-                            </VerticalStackLayout>
-                        </Frame>
-                    </StackLayout>
-                </ScrollView>
+                    <!-- Spinner de carga -->
+                    <ActivityIndicator IsRunning="{Binding IsLoading}"
+                            IsVisible="{Binding IsLoading}"
+                            HorizontalOptions="Center" />
 
-                <!-- Mensaje cuando no hay escaneos -->
-                <Frame BackgroundColor="#F8F9FA" 
-                       CornerRadius="15" 
-                       Padding="20"
-                       HasShadow="False"
-                       IsVisible="{Binding HayEscaneos, Converter={StaticResource InverseBoolConverter}}">
-                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Label FontFamily="MaterialIcons"
-                               Text="&#xe8b6;"
-                               FontSize="30"
-                               TextColor="#cccccc"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="No hay escaneos recientes"
-                               TextColor="Gray"
-                               FontSize="14"
-                               HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
+                    <!-- Lista de hábitos -->
+                    <ScrollView Orientation="Horizontal"
+                                HorizontalScrollBarVisibility="Never"
+                                HeightRequest="140"
+                                IsVisible="{Binding HayHabitos}">
+                        <StackLayout Orientation="Horizontal" Spacing="15" Padding="0,5" BindableLayout.ItemsSource="{Binding HabitosSaludables}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="White"
+                                        CornerRadius="15"
+                                        Padding="15"
+                                        WidthRequest="280"
+                                        HasShadow="True">
+                                        <VerticalStackLayout Spacing="10">
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label FontFamily="MaterialIcons"
+                                                    Text="&#xE90F;"
+                                                    FontSize="20"
+                                                    VerticalOptions="Center" />
+                                                <Label Text="{Binding Titulo}"
+                                                        FontAttributes="Bold"
+                                                        FontSize="14"
+                                                        LineBreakMode="TailTruncation"
+                                                        HorizontalOptions="FillAndExpand" />
+                                            </HorizontalStackLayout>
+                                            <Label Text="{Binding Descripcion}"
+                                                    FontSize="12"
+                                                    LineBreakMode="WordWrap" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ScrollView>
 
-            <!-- Hábitos saludables -->
-            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
-                    <Label Grid.Column="0"
-                           Text="Hábitos saludables"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           TextColor="Black"
-                           VerticalTextAlignment="Center" />
+                    <!-- Mensaje cuando no hay hábitos -->
+                    <Frame BackgroundColor="#F8F9FA" 
+                            CornerRadius="15" 
+                            Padding="20"
+                            HasShadow="False"
+                            IsVisible="{Binding HayHabitos, Converter={StaticResource InverseBoolConverter}}">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                                    Text="&#xe87c;"
+                                    FontSize="30"
+                                    TextColor="#cccccc"
+                                    HorizontalTextAlignment="Center" />
+                            <Label Text="No hay hábitos disponibles"
+                                    TextColor="Gray"
+                                    FontSize="14"
+                                    HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </VerticalStackLayout>
 
-                    <!--<Button Grid.Column="1"
-                            Text="Ver todos"
-                            BackgroundColor="#FF9500"
-                            TextColor="White"
-                            CornerRadius="10"
-                            FontSize="11"
-                            Padding="8,5"
-                            WidthRequest="70"
-                            HeightRequest="26"
-                            Command="{Binding VerTodosHabitosCommand}"
-                            IsVisible="{Binding HayHabitos}" />-->
-                </Grid>
+                <!-- Recomendaciones IA -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                        <Label Grid.Column="0"
+                            Text="Recomendaciones"
+                            FontSize="18"
+                            FontAttributes="Bold" />
+                        <!-- Si quieres “Ver todos” -->
+                    </Grid>
 
-                <!-- Spinner de carga -->
-                <ActivityIndicator IsRunning="{Binding IsLoading}"
-                     IsVisible="{Binding IsLoading}"
-                     HorizontalOptions="Center" />
+                    <!-- Spinner -->
+                    <ActivityIndicator IsRunning="{Binding IsLoading}"
+                            IsVisible="{Binding IsLoading}"
+                            HorizontalOptions="Center" />
 
-                <!-- Lista de hábitos -->
-                <ScrollView Orientation="Horizontal"
-                           HorizontalScrollBarVisibility="Never"
-                           HeightRequest="140"
-                           IsVisible="{Binding HayHabitos}">
-                    <StackLayout Orientation="Horizontal" Spacing="15" Padding="0,5" BindableLayout.ItemsSource="{Binding HabitosSaludables}">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Frame BackgroundColor="White"
-                                    CornerRadius="15"
-                                    Padding="15"
-                                    WidthRequest="280"
-                                    HasShadow="True">
-                                    <VerticalStackLayout Spacing="10">
-                                        <HorizontalStackLayout Spacing="8">
-                                            <Label FontFamily="MaterialIcons"
-                                                Text="&#xE90F;"
-                                                FontSize="20"
-                                                VerticalOptions="Center" />
-                                            <Label Text="{Binding Titulo}"
-                                                 FontAttributes="Bold"
-                                                 FontSize="14"
-                                                 LineBreakMode="TailTruncation"
-                                                 HorizontalOptions="FillAndExpand" />
-                                        </HorizontalStackLayout>
-                                        <Label Text="{Binding Descripcion}"
-                                             FontSize="12"
-                                             LineBreakMode="WordWrap" />
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
-                </ScrollView>
-
-                <!-- Mensaje cuando no hay hábitos -->
-                <Frame BackgroundColor="#F8F9FA" 
-                       CornerRadius="15" 
-                       Padding="20"
-                       HasShadow="False"
-                       IsVisible="{Binding HayHabitos, Converter={StaticResource InverseBoolConverter}}">
-                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Label FontFamily="MaterialIcons"
-                               Text="&#xe87c;"
-                               FontSize="30"
-                               TextColor="#cccccc"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="No hay hábitos disponibles"
-                               TextColor="Gray"
-                               FontSize="14"
-                               HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
-
-            <!-- Recomendaciones IA -->
-            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                <Grid ColumnDefinitions="*,Auto" Margin="0,5">
-                    <Label Grid.Column="0"
-                        Text="Recomendaciones"
-                        FontSize="18"
-                        FontAttributes="Bold" />
-                    <!-- Si quieres “Ver todos” -->
-                </Grid>
-
-                <!-- Spinner -->
-                <ActivityIndicator IsRunning="{Binding IsLoading}"
-                     IsVisible="{Binding IsLoading}"
-                     HorizontalOptions="Center" />
-
-                <!-- Lista de recomendaciones -->
-                <ScrollView Orientation="Horizontal"
-                    HorizontalScrollBarVisibility="Never"
-                    HeightRequest="140"
-                    IsVisible="{Binding HayRecomendaciones}">
-                    <StackLayout Orientation="Horizontal"
-                         Spacing="15"
-                         Padding="0,5"
-                         BindableLayout.ItemsSource="{Binding Recomendaciones}">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Frame BackgroundColor="White"
-                                     CornerRadius="15"
-                                     Padding="15"
-                                     WidthRequest="280"
-                                     HasShadow="True">
-                                    <VerticalStackLayout Spacing="10">
-                                        <HorizontalStackLayout Spacing="8">
-                                            <Label FontFamily="MaterialIcons"
-                                                Text="&#xE8B8;"    
-                                                FontSize="20"
-                                                VerticalOptions="Center" />
-                                            <Label Text="{Binding Titulo}"
-                                                FontAttributes="Bold"
-                                                FontSize="14"
-                                                LineBreakMode="TailTruncation"
-                                                HorizontalOptions="FillAndExpand" />
-                                        </HorizontalStackLayout>
-                                        <Label Text="{Binding Descripcion}"
-                                                FontSize="12"
-                                                LineBreakMode="WordWrap" />
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
-                </ScrollView>
-
-                <!-- Placeholder -->
-                <Frame BackgroundColor="#F8F9FA"
-                     CornerRadius="15"
-                     Padding="20"
-                     IsVisible="{Binding HayRecomendaciones, Converter={StaticResource InverseBoolConverter}}">
-                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Label FontFamily="MaterialIcons"
-                                Text="&#xe8b6;"     
-                                FontSize="30"
-                                TextColor="#cccccc"
-                                HorizontalTextAlignment="Center" />
-                            <Label Text="No hay recomendaciones disponibles"
-                                FontSize="14"
-                                TextColor="Gray"
-                                HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
-
-            <!-- Interacciones entre medicamentos -->
-            <VerticalStackLayout Spacing="10"
-                     IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                <Grid ColumnDefinitions="*,Auto" Margin="0,5">
-                    <Label Grid.Column="0"
-                        Text="Interacciones"
-                        FontSize="18"
-                        FontAttributes="Bold" />
-                    <!-- botón “Ver detalles” opcional -->
-                </Grid>
-
-                <!-- Spinner -->
-                <ActivityIndicator IsRunning="{Binding IsLoading}"
-                     IsVisible="{Binding IsLoading}"
-                     HorizontalOptions="Center" />
-
-                <!-- Lista horizontal de interacciones -->
-                <ScrollView Orientation="Horizontal"
-                    HorizontalScrollBarVisibility="Never"
-                    HeightRequest="140"
-                    IsVisible="{Binding HayInteracciones}">
-                    <StackLayout Orientation="Horizontal"
-                        Spacing="15"
-                        Padding="0,5"
-                        BindableLayout.ItemsSource="{Binding Interacciones}">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Frame BackgroundColor="White"
-                                    CornerRadius="15"
-                                    Padding="15"
-                                    WidthRequest="280"
-                                    HasShadow="True">
-                                    <VerticalStackLayout Spacing="10">
-                                        <HorizontalStackLayout Spacing="8">
-                                            <Label FontFamily="MaterialIcons"
-                                                Text="&#xE914;"
-                                                FontSize="20"
-                                                VerticalOptions="Center" />
+                    <!-- Lista de recomendaciones -->
+                    <ScrollView Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never"
+                        HeightRequest="140"
+                        IsVisible="{Binding HayRecomendaciones}">
+                        <StackLayout Orientation="Horizontal"
+                                Spacing="15"
+                                Padding="0,5"
+                                BindableLayout.ItemsSource="{Binding Recomendaciones}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="White"
+                                            CornerRadius="15"
+                                            Padding="15"
+                                            WidthRequest="280"
+                                            HasShadow="True">
+                                        <VerticalStackLayout Spacing="10">
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label FontFamily="MaterialIcons"
+                                                    Text="&#xE8B8;"    
+                                                    FontSize="20"
+                                                    VerticalOptions="Center" />
                                                 <Label Text="{Binding Titulo}"
                                                     FontAttributes="Bold"
                                                     FontSize="14"
                                                     LineBreakMode="TailTruncation"
                                                     HorizontalOptions="FillAndExpand" />
-                                        </HorizontalStackLayout>
-                                        <Label Text="{Binding Descripcion}"
-                                            FontSize="12"
-                                            LineBreakMode="WordWrap" />
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
-                </ScrollView>
+                                            </HorizontalStackLayout>
+                                            <Label Text="{Binding Descripcion}"
+                                                    FontSize="12"
+                                                    LineBreakMode="WordWrap" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ScrollView>
 
-                <!-- Placeholder -->
-                <Frame BackgroundColor="#F8F9FA"
+                    <!-- Placeholder -->
+                    <Frame BackgroundColor="#F8F9FA"
+                            CornerRadius="15"
+                            Padding="20"
+                            IsVisible="{Binding HayRecomendaciones, Converter={StaticResource InverseBoolConverter}}">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                                    Text="&#xe8b6;"     
+                                    FontSize="30"
+                                    TextColor="#cccccc"
+                                    HorizontalTextAlignment="Center" />
+                                <Label Text="No hay recomendaciones disponibles"
+                                    FontSize="14"
+                                    TextColor="Gray"
+                                    HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </VerticalStackLayout>
+
+                <!-- Interacciones entre medicamentos -->
+                <VerticalStackLayout Spacing="10"
+                            IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                        <Label Grid.Column="0"
+                            Text="Interacciones"
+                            FontSize="18"
+                            FontAttributes="Bold" />
+                        <!-- botón “Ver detalles” opcional -->
+                    </Grid>
+
+                    <!-- Spinner -->
+                    <ActivityIndicator IsRunning="{Binding IsLoading}"
+                            IsVisible="{Binding IsLoading}"
+                            HorizontalOptions="Center" />
+
+                    <!-- Lista horizontal de interacciones -->
+                    <ScrollView Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never"
+                        HeightRequest="140"
+                        IsVisible="{Binding HayInteracciones}">
+                        <StackLayout Orientation="Horizontal"
+                            Spacing="15"
+                            Padding="0,5"
+                            BindableLayout.ItemsSource="{Binding Interacciones}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="White"
+                                        CornerRadius="15"
+                                        Padding="15"
+                                        WidthRequest="280"
+                                        HasShadow="True">
+                                        <VerticalStackLayout Spacing="10">
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label FontFamily="MaterialIcons"
+                                                    Text="&#xE914;"
+                                                    FontSize="20"
+                                                    VerticalOptions="Center" />
+                                                    <Label Text="{Binding Titulo}"
+                                                        FontAttributes="Bold"
+                                                        FontSize="14"
+                                                        LineBreakMode="TailTruncation"
+                                                        HorizontalOptions="FillAndExpand" />
+                                            </HorizontalStackLayout>
+                                            <Label Text="{Binding Descripcion}"
+                                                FontSize="12"
+                                                LineBreakMode="WordWrap" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ScrollView>
+
+                    <!-- Placeholder -->
+                    <Frame BackgroundColor="#F8F9FA"
+                            CornerRadius="15"
+                            Padding="20"
+                            HasShadow="False"
+                            IsVisible="{Binding HayInteracciones, Converter={StaticResource InverseBoolConverter}}">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                                Text="&#xe5c8;"
+                                FontSize="30"
+                                TextColor="#cccccc"
+                                HorizontalTextAlignment="Center" />
+                                <Label Text="No se detectaron interacciones"
+                                    FontSize="14"
+                                    TextColor="Gray"
+                                    HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </VerticalStackLayout>
+
+                <!-- Alertas de Salud -->
+                <VerticalStackLayout Spacing="10"
+                            IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                        <Label Grid.Column="0"
+                            Text="Alertas de Salud"
+                            FontSize="18"
+                            FontAttributes="Bold" />
+                    </Grid>
+
+                    <!-- Spinner -->
+                    <ActivityIndicator IsRunning="{Binding IsLoading}"
+                            IsVisible="{Binding IsLoading}"
+                            HorizontalOptions="Center" />
+
+                    <!-- Lista de alertas -->
+                    <ScrollView Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never"
+                        HeightRequest="160"
+                        IsVisible="{Binding HayAlertas}">
+                        <StackLayout Orientation="Horizontal"
+                            Spacing="15"
+                            Padding="0,5"
+                            BindableLayout.ItemsSource="{Binding Alertas}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="White"
+                                        CornerRadius="15"
+                                        Padding="15"
+                                        WidthRequest="300"
+                                        HasShadow="True">
+                                        <VerticalStackLayout Spacing="8">
+                                            <!-- Riesgo -->
+                                            <Label Text="{Binding Riesgo}"
+                                                FontAttributes="Bold"
+                                                FontSize="14"
+                                                LineBreakMode="TailTruncation" />
+                                            <!-- Causa -->
+                                            <Label FontSize="12" LineBreakMode="WordWrap">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <!--<Span Text="Causa: " />-->
+                                                        <Span Text="{Binding Causa}" FontAttributes="Italic"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <!-- Recomendación -->
+                                            <!--<Label FontSize="12" LineBreakMode="WordWrap">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="Recomendación: " />
+                                                        <Span Text="{Binding Recomendacion}" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>-->
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ScrollView>
+
+                    <!-- Placeholder cuando no hay alertas -->
+                    <Frame BackgroundColor="#F8F9FA"
                         CornerRadius="15"
                         Padding="20"
                         HasShadow="False"
-                        IsVisible="{Binding HayInteracciones, Converter={StaticResource InverseBoolConverter}}">
-                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Label FontFamily="MaterialIcons"
-                            Text="&#xe5c8;"
-                            FontSize="30"
-                            TextColor="#cccccc"
-                            HorizontalTextAlignment="Center" />
-                            <Label Text="No se detectaron interacciones"
-                                FontSize="14"
-                                TextColor="Gray"
+                        IsVisible="{Binding HayAlertas, Converter={StaticResource InverseBoolConverter}}">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                                Text="&#xe001;" 
+                                FontSize="30"
+                                TextColor="#cccccc"
                                 HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
+                                <Label Text="No hay alertas de salud"
+                                    FontSize="14"
+                                    TextColor="Gray"
+                                    HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </VerticalStackLayout>
 
-            <!-- Alertas de Salud -->
-            <VerticalStackLayout Spacing="10"
-                     IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                <Grid ColumnDefinitions="*,Auto" Margin="0,5">
-                    <Label Grid.Column="0"
-                        Text="Alertas de Salud"
+                <!-- Síntomas -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                        <Label Grid.Column="0"
+                        Text="Síntomas recientes"
                         FontSize="18"
-                        FontAttributes="Bold" />
-                </Grid>
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        VerticalTextAlignment="Center" />
 
-                <!-- Spinner -->
-                <ActivityIndicator IsRunning="{Binding IsLoading}"
-                     IsVisible="{Binding IsLoading}"
-                     HorizontalOptions="Center" />
+                        <Button Grid.Column="1"
+                         Text="Gestionar"
+                         BackgroundColor="#9C27B0"
+                         TextColor="White"
+                         CornerRadius="10"
+                         FontSize="11"
+                         Padding="8,5"
+                         WidthRequest="75"
+                         HeightRequest="26"
+                         Command="{Binding GestionarSintomasCommand}" />
+                    </Grid>
 
-                <!-- Lista de alertas -->
-                <ScrollView Orientation="Horizontal"
-                    HorizontalScrollBarVisibility="Never"
-                    HeightRequest="160"
-                    IsVisible="{Binding HayAlertas}">
-                    <StackLayout Orientation="Horizontal"
-                        Spacing="15"
-                        Padding="0,5"
-                        BindableLayout.ItemsSource="{Binding Alertas}">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Frame BackgroundColor="White"
-                                    CornerRadius="15"
-                                    Padding="15"
-                                    WidthRequest="300"
-                                    HasShadow="True">
-                                    <VerticalStackLayout Spacing="8">
-                                        <!-- Riesgo -->
-                                        <Label Text="{Binding Riesgo}"
-                                            FontAttributes="Bold"
-                                            FontSize="14"
-                                            LineBreakMode="TailTruncation" />
-                                        <!-- Causa -->
-                                        <Label FontSize="12" LineBreakMode="WordWrap">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <!--<Span Text="Causa: " />-->
-                                                    <Span Text="{Binding Causa}" FontAttributes="Italic"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <!-- Recomendación -->
-                                        <!--<Label FontSize="12" LineBreakMode="WordWrap">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Recomendación: " />
-                                                    <Span Text="{Binding Recomendacion}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>-->
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
+                    <!-- Lista de síntomas en chips -->
+                    <StackLayout Orientation="Horizontal" Spacing="8" IsVisible="{Binding HaySintomas}">
+                        <Frame BackgroundColor="#E8E4FF"
+                        CornerRadius="20"
+                        Padding="12,8"
+                        HasShadow="False"
+                        HeightRequest="36">
+                            <Label Text="Dolor de cabeza"
+                            TextColor="#6B46C1"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            VerticalOptions="Center" />
+                        </Frame>
+
+                        <Frame BackgroundColor="#E8E4FF"
+                        CornerRadius="20"
+                        Padding="12,8"
+                        HasShadow="False"
+                        HeightRequest="36">
+                            <Label Text="Fiebre"
+                            TextColor="#6B46C1"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            VerticalOptions="Center" />
+                        </Frame>
+
+                        <Frame BackgroundColor="#E8E4FF"
+                        CornerRadius="20"
+                        Padding="12,8"
+                        HasShadow="False"
+                        HeightRequest="36">
+                            <Label Text="Náuseas"
+                            TextColor="#6B46C1"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            VerticalOptions="Center" />
+                        </Frame>
                     </StackLayout>
-                </ScrollView>
 
-                <!-- Placeholder cuando no hay alertas -->
-                <Frame BackgroundColor="#F8F9FA"
-                    CornerRadius="15"
+                    <!-- Mensaje cuando no hay síntomas -->
+                    <Frame BackgroundColor="#F8F9FA" 
+                    CornerRadius="15" 
                     Padding="20"
                     HasShadow="False"
-                    IsVisible="{Binding HayAlertas, Converter={StaticResource InverseBoolConverter}}">
-                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Label FontFamily="MaterialIcons"
-                            Text="&#xe001;" 
+                    IsVisible="{Binding HaySintomas, Converter={StaticResource InverseBoolConverter}}">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                            Text="&#xe887;"
                             FontSize="30"
                             TextColor="#cccccc"
                             HorizontalTextAlignment="Center" />
-                            <Label Text="No hay alertas de salud"
-                                FontSize="14"
-                                TextColor="Gray"
-                                HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Frame>
+                            <Label Text="No hay síntomas reportados"
+                            TextColor="Gray"
+                            FontSize="14"
+                            HorizontalTextAlignment="Center" />
+                            <Label Text="Toca en 'Gestionar' para agregar síntomas"
+                            TextColor="Gray"
+                            FontSize="12"
+                            HorizontalTextAlignment="Center"
+                            Opacity="0.7" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </VerticalStackLayout>
+
             </VerticalStackLayout>
+        </ScrollView>
 
+          <!-- Botón flotante -->
+        <vistas:BotonFlotanteEscaner />
 
-            <!-- Síntomas -->
-            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
-                    <Label Grid.Column="0"
-                           Text="Síntomas recientes"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           TextColor="Black"
-                           VerticalTextAlignment="Center" />
-
-                    <Button Grid.Column="1"
-                            Text="Gestionar"
-                            BackgroundColor="#9C27B0"
-                            TextColor="White"
-                            CornerRadius="10"
-                            FontSize="11"
-                            Padding="8,5"
-                            WidthRequest="75"
-                            HeightRequest="26"
-                            Command="{Binding GestionarSintomasCommand}" />
-                </Grid>
-
-                <!-- Lista de síntomas en chips -->
-                <StackLayout Orientation="Horizontal" Spacing="8" IsVisible="{Binding HaySintomas}">
-                    <Frame BackgroundColor="#E8E4FF"
-                           CornerRadius="20"
-                           Padding="12,8"
-                           HasShadow="False"
-                           HeightRequest="36">
-                        <Label Text="Dolor de cabeza"
-                               TextColor="#6B46C1"
-                               FontSize="12"
-                               FontAttributes="Bold"
-                               VerticalOptions="Center" />
-                    </Frame>
-
-                    <Frame BackgroundColor="#E8E4FF"
-                           CornerRadius="20"
-                           Padding="12,8"
-                           HasShadow="False"
-                           HeightRequest="36">
-                        <Label Text="Fiebre"
-                               TextColor="#6B46C1"
-                               FontSize="12"
-                               FontAttributes="Bold"
-                               VerticalOptions="Center" />
-                    </Frame>
-
-                    <Frame BackgroundColor="#E8E4FF"
-                           CornerRadius="20"
-                           Padding="12,8"
-                           HasShadow="False"
-                           HeightRequest="36">
-                        <Label Text="Náuseas"
-                               TextColor="#6B46C1"
-                               FontSize="12"
-                               FontAttributes="Bold"
-                               VerticalOptions="Center" />
-                    </Frame>
-                </StackLayout>
-
-                <!-- Mensaje cuando no hay síntomas -->
-                <Frame BackgroundColor="#F8F9FA" 
-                       CornerRadius="15" 
-                       Padding="20"
-                       HasShadow="False"
-                       IsVisible="{Binding HaySintomas, Converter={StaticResource InverseBoolConverter}}">
-                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Label FontFamily="MaterialIcons"
-                               Text="&#xe887;"
-                               FontSize="30"
-                               TextColor="#cccccc"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="No hay síntomas reportados"
-                               TextColor="Gray"
-                               FontSize="14"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="Toca en 'Gestionar' para agregar síntomas"
-                               TextColor="Gray"
-                               FontSize="12"
-                               HorizontalTextAlignment="Center"
-                               Opacity="0.7" />
-                    </VerticalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
-
-        </VerticalStackLayout>
-    </ScrollView>
+    </Grid>
 </base:BaseContentPage>

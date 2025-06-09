@@ -52,7 +52,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 _eventosService.EventoAgregado += OnEventoAgregado;
                 _eventosService.EventoEliminado += OnEventoEliminado;
 
-                // ✅ CONFIGURAR CULTURA ESPAÑOLA
+                //  CONFIGURAR CULTURA ESPAÑOLA
                 CultureInfo.CurrentCulture = _culturaEspañola;
                 CultureInfo.CurrentUICulture = _culturaEspañola;
 
@@ -117,7 +117,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             try
             {
-                // ✅ FORMATEAR FECHAS EN ESPAÑOL
+                //  FORMATEAR FECHAS EN ESPAÑOL
                 MesActual = FechaSeleccionada.ToString("MMMM yyyy", _culturaEspañola);
                 FechaFormateada = FechaSeleccionada.ToString("dddd, dd 'de' MMMM", _culturaEspañola);
 

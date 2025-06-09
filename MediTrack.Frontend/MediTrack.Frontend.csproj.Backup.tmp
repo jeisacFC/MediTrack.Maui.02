@@ -111,6 +111,8 @@
 	  
 	  <Compile Include="Models\Model\ProgramacionRecordatorio.cs" />
 	  
+	  <Compile Include="Models\Model\RecomendacionesIA.cs" />
+	  
 	  <Compile Include="Models\Model\RecordatoriosMedicacion.cs" />
 	  
 	  <Compile Include="Models\Model\Sesiones.cs" />
@@ -357,7 +359,6 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Syncfusion.Maui.Calendar" Version="24.2.8" />
 		<PackageReference Include="Syncfusion.Maui.Core" Version="24.2.8" />
 		<PackageReference Include="Syncfusion.Maui.Scheduler" Version="24.2.8" />

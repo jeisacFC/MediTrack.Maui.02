@@ -1,5 +1,6 @@
 ﻿using MediTrack.Frontend.ViewModels.PantallasInicio;
 using System.Threading;
+using MediTrack.Frontend.Vistas.Base;
 
 namespace MediTrack.Frontend.Vistas.PantallasInicio
 {
