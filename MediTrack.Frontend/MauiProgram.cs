@@ -52,7 +52,7 @@ public static class MauiProgram
                 ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
             };
         })
-        .AddHttpMessageHandler<AuthHandler>(); // AGREGAR EL HANDLER DE AUTENTICACIÓN
+        .AddHttpMessageHandler<AuthHandler>(); 
 
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
