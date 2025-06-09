@@ -24,6 +24,25 @@ public partial class PantallaScan : ContentPage
     }
 
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // Muestra el popup de instrucciones de forma asíncrona.
+        // El código esperará aquí hasta que el popup se cierre.
+        var instruccionesPopup = new InstruccionesEscaneoPopup();
+        await this.ShowPopupAsync(instruccionesPopup);
+
+        // Una vez que el popup se cierra (porque el usuario presionó "Entendido"),
+        // le decimos al ViewModel que active la cámara.
+        if (_viewModel != null && !_viewModel.IsDetecting)
+        {
+            _viewModel.ReactivarEscaneo();
+        }
+    }
+
+
+
     // MANEJAR EVENTOS DEL VIEWMODEL
     private async void OnMostrarResultado(object sender, ResEscanearMedicamento medicamento)
     {
@@ -44,20 +63,7 @@ public partial class PantallaScan : ContentPage
         _viewModel?.ReactivarEscaneo();
     }
 
-
-    // LIMPIAR EVENTOS AL SALIR
-    protected override void OnDisappearing()
-    {
-        if (_viewModel != null)
-        {
-            _viewModel.DetenerEscaneo();
-            _viewModel.MostrarResultado -= OnMostrarResultado;
-            _viewModel.MostrarError -= OnMostrarError;
-        }
-        base.OnDisappearing();
-    }
-
-
+   
     // MANEJADOR PARA EL BOTÓN CANCELAR EN EL HEADER
     private async void Cancelar_Clicked_Header(object sender, EventArgs e)
     {
@@ -83,7 +89,6 @@ public partial class PantallaScan : ContentPage
             System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
         }
     }
-
 
     // MANEJADOR MEJORADO PARA DETECCIÓN DE CÓDIGOS
     private void OnBarcodesDetected(object sender, BarcodeDetectionEventArgs e)
@@ -129,11 +134,21 @@ public partial class PantallaScan : ContentPage
         });
     }
 
-
     // MÉTODO PARA REACTIVAR MANUALMENTE EL ESCANEO (si necesitas un botón)
     private void ReactivarEscaneo_Clicked(object sender, EventArgs e)
     {
         _viewModel?.ReactivarEscaneo();
     }
 
+    // LIMPIAR EVENTOS AL SALIR
+    protected override void OnDisappearing()
+    {
+        if (_viewModel != null)
+        {
+            _viewModel.DetenerEscaneo();
+            _viewModel.MostrarResultado -= OnMostrarResultado;
+            _viewModel.MostrarError -= OnMostrarError;
+        }
+        base.OnDisappearing();
+    }
 }
