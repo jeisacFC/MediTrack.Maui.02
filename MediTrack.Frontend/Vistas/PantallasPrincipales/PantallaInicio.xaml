@@ -444,6 +444,88 @@
                 </Frame>
             </VerticalStackLayout>
 
+            <!-- Alertas de Salud -->
+            <VerticalStackLayout Spacing="10"
+                     IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                    <Label Grid.Column="0"
+                        Text="Alertas de Salud"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+                </Grid>
+
+                <!-- Spinner -->
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                     IsVisible="{Binding IsLoading}"
+                     HorizontalOptions="Center" />
+
+                <!-- Lista de alertas -->
+                <ScrollView Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never"
+                    HeightRequest="160"
+                    IsVisible="{Binding HayAlertas}">
+                    <StackLayout Orientation="Horizontal"
+                        Spacing="15"
+                        Padding="0,5"
+                        BindableLayout.ItemsSource="{Binding Alertas}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="White"
+                                    CornerRadius="15"
+                                    Padding="15"
+                                    WidthRequest="300"
+                                    HasShadow="True">
+                                    <VerticalStackLayout Spacing="8">
+                                        <!-- Riesgo -->
+                                        <Label Text="{Binding Riesgo}"
+                                            FontAttributes="Bold"
+                                            FontSize="14"
+                                            LineBreakMode="TailTruncation" />
+                                        <!-- Causa -->
+                                        <Label FontSize="12" LineBreakMode="WordWrap">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <!--<Span Text="Causa: " />-->
+                                                    <Span Text="{Binding Causa}" FontAttributes="Italic"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <!-- Recomendación -->
+                                        <!--<Label FontSize="12" LineBreakMode="WordWrap">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Recomendación: " />
+                                                    <Span Text="{Binding Recomendacion}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>-->
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Placeholder cuando no hay alertas -->
+                <Frame BackgroundColor="#F8F9FA"
+                    CornerRadius="15"
+                    Padding="20"
+                    HasShadow="False"
+                    IsVisible="{Binding HayAlertas, Converter={StaticResource InverseBoolConverter}}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label FontFamily="MaterialIcons"
+                            Text="&#xe001;" 
+                            FontSize="30"
+                            TextColor="#cccccc"
+                            HorizontalTextAlignment="Center" />
+                            <Label Text="No hay alertas de salud"
+                                FontSize="14"
+                                TextColor="Gray"
+                                HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+
 
             <!-- Síntomas -->
             <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">

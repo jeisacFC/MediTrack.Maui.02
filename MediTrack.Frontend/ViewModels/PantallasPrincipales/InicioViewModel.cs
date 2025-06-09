@@ -7,6 +7,7 @@ using MediTrack.Frontend.Models.Model;
 using MediTrack.Frontend.Services.Interfaces;
 using MediTrack.Frontend.Models.Request;
 using System.Diagnostics;
+using MediTrack.Frontend.Models.Response;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
@@ -26,6 +27,9 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
         [ObservableProperty]
         private ObservableCollection<Interaccion> interacciones = new();
+
+        [ObservableProperty]
+        private ObservableCollection<AlertaSalud> alertas = new();
 
         [ObservableProperty]
         private ObservableCollection<SintomaUsuario> sintomasUsuario = new();
@@ -53,6 +57,9 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         private bool hayInteracciones = false;
 
         [ObservableProperty]
+        private bool hayAlertas = false;
+
+        [ObservableProperty]
         private bool haySintomas = false;
 
 
@@ -64,6 +71,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         public IAsyncRelayCommand CargarHabitosCommand { get; }
         public IAsyncRelayCommand CargarRecomendacionesCommand { get; }
         public IAsyncRelayCommand CargarInteraccionesCommand { get; }
+        public IAsyncRelayCommand CargarAlertasCommand { get; }
 
         public InicioViewModel(IApiService apiService)
 
@@ -74,6 +82,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 CargarHabitosCommand = new AsyncRelayCommand(CargarHabitosSaludables);
                 CargarRecomendacionesCommand = new AsyncRelayCommand(CargarRecomendaciones);
                 CargarInteraccionesCommand = new AsyncRelayCommand(CargarInteracciones);
+                CargarAlertasCommand = new AsyncRelayCommand(CargarAlertasSalud);
 
                 // Usar servicios
                 _eventosService = EventosService.Instance;
@@ -108,6 +117,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     CargarHabitosSaludables(),
                     CargarRecomendaciones(),
                     CargarInteracciones(),
+                    CargarAlertasSalud(),
                     CargarSintomasUsuario()
                 };
 
@@ -359,6 +369,45 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             {
                 Debug.WriteLine($"[VM] Error al cargar interacciones: {ex}");
                 HayInteracciones = false;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task CargarAlertasSalud()
+        {
+            IsLoading = true;
+            try
+            {
+                Alertas.Clear();
+
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                    throw new InvalidOperationException("Usuario no autenticado.");
+
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Solicitando alertas de salud para {idUsuario}");
+                var res = await _apiService.ObtenerAlertasSaludAsync(req);
+                Debug.WriteLine($"[VM] resultado={res?.resultado} count={res?.Alertas?.Count}");
+
+                if (res?.Alertas != null)
+                {
+                    foreach (var a in res.Alertas)
+                    {
+                        Debug.WriteLine($"[VM] Agregando alerta: Riesgo={a.Riesgo}");
+                        Alertas.Add(a);
+                    }
+                }
+
+                HayAlertas = Alertas.Any();
+                Debug.WriteLine($"[VM] HayAlertas = {HayAlertas}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[VM] Error al cargar alertas: {ex}");
+                HayAlertas = false;
             }
             finally
             {

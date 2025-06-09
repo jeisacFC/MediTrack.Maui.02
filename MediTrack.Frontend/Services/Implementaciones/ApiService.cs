@@ -243,6 +243,48 @@ public class ApiService : IApiService
         }
     }
 
+    public async Task<ResAlertaSalud?> ObtenerAlertasSaludAsync(ReqObtenerUsuario request)
+    {
+        const string endpoint = "api/ia/alertas";
+        try
+        {
+            var json = JsonSerializer.Serialize(request);
+            Debug.WriteLine($"[ApiService] Req Alertas JSON: {json}");
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"[ApiService] POST {_httpClient.BaseAddress}{endpoint}");
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            var payload = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"[ApiService] HTTP {(int)response.StatusCode} – Payload: {payload}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                using var stream = new MemoryStream(Encoding.UTF8.GetBytes(payload));
+                var res = await JsonSerializer.DeserializeAsync<ResAlertaSalud>(
+                    stream,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+                Debug.WriteLine($"[ApiService] Deserializadas {res?.Alertas?.Count ?? 0} alertas");
+                return res;
+            }
+            else
+            {
+                Debug.WriteLine($"[ApiService] Error servidor alertas: {(int)response.StatusCode}");
+                return new ResAlertaSalud
+                {
+                    resultado = false,
+                    Alertas = new List<AlertaSalud>(),
+                    Mensaje = $"Error {(int)response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[ApiService] Excepción alertas: {ex}");
+            throw;
+        }
+    }
 
     #endregion
 
