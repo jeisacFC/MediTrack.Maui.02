@@ -18,7 +18,20 @@ public partial class PantallaBusqueda : ContentPage
         // SUSCRIBIRSE A LOS EVENTOS DEL VIEWMODEL (como en PantallaScan)
         viewModel.BusquedaExitosa += OnBusquedaExitosa;
         viewModel.BusquedaFallida += OnBusquedaFallida;
+        viewModel.MostrarDetalleMedicamento += OnMostrarDetalle;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        // Llama al comando para cargar la lista de medicamentos guardados
+        if (_viewModel.CargarMisMedicamentosCommand.CanExecute(null))
+        {
+            await _viewModel.CargarMisMedicamentosCommand.ExecuteAsync(null);
+        }
+    }
+
+
 
     // LIMPIAR EVENTOS AL SALIR (como en PantallaScan)
     protected override void OnDisappearing()
@@ -27,6 +40,7 @@ public partial class PantallaBusqueda : ContentPage
         {
             _viewModel.BusquedaExitosa -= OnBusquedaExitosa;
             _viewModel.BusquedaFallida -= OnBusquedaFallida;
+            _viewModel.MostrarDetalleMedicamento -= OnMostrarDetalle;
         }
         base.OnDisappearing();
     }
@@ -41,12 +55,12 @@ public partial class PantallaBusqueda : ContentPage
             if (_viewModel?.GuardarMedicamentoCommand != null)
             {
                 await _viewModel.GuardarMedicamentoCommand.ExecuteAsync(medParaGuardar);
+                await _viewModel.CargarMisMedicamentosCommand.ExecuteAsync(null);
             }
         }
+
         infoPopup.MedicamentoAgregado += ManejadorMedicamentoAgregado;
-
         await this.ShowPopupAsync(infoPopup);
-
         infoPopup.MedicamentoAgregado -= ManejadorMedicamentoAgregado;
 
     }
@@ -54,5 +68,13 @@ public partial class PantallaBusqueda : ContentPage
     private async void OnBusquedaFallida(object sender, string mensajeError)
     {
         await DisplayAlert("Error de Búsqueda", mensajeError, "OK");
+    }
+
+    private async void OnMostrarDetalle(object sender, ResDetalleMedicamentoUsuario detalle)
+    {
+        // Creamos el nuevo popup pasándole los datos del detalle
+        // y el comando de eliminar que vive en el ViewModel.
+        var popup = new DetalleMedicamentoGuardadoPopup(detalle, _viewModel.EliminarMedicamentoCommand);
+        await this.ShowPopupAsync(popup);
     }
 }

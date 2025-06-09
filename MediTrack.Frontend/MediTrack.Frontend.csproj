@@ -374,10 +374,10 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <MauiXaml Update="Popups\InfoBusquedaManualPopup.xaml">
+	  <MauiXaml Update="Popups\DetalleMedicamentoGuardadoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Popups\InfoEscaneoPopup.xaml">
+	  <MauiXaml Update="Popups\InfoBusquedaManualPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\InformacionMedicamentoPopup.xaml">
