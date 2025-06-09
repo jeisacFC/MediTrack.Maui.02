@@ -246,43 +246,76 @@ namespace MediTrack.Frontend.ViewModels
             Debug.WriteLine("=== PROPIEDADES FORMATEADAS ACTUALIZADAS ===");
         }
 
+
         private async Task CargarCondicionesMedicasAsync()
         {
             try
             {
-                Debug.WriteLine("=== CARGANDO CONDICIONES MÉDICAS ===");
+                Debug.WriteLine("=== CARGANDO CONDICIONES MÉDICAS DEL USUARIO ===");
 
-                // Datos de ejemplo para pruebas
-                var condicionesEjemplo = new List<CondicionesMedicas>
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
                 {
-                    new CondicionesMedicas
-                    {
-                        id_condicion = 1,
-                        nombre_condicion = "Hipertensión",
-                        descripcion = "Presión arterial alta",
-                        FechaDiagnostico = DateTime.Now.AddYears(-2)
-                    },
-                    new CondicionesMedicas
-                    {
-                        id_condicion = 2,
-                        nombre_condicion = "Diabetes Tipo 2",
-                        descripcion = "Diabetes mellitus tipo 2",
-                        FechaDiagnostico = DateTime.Now.AddYears(-1)
-                    }
-                };
-
-                condicionesMedicas.Clear();
-                foreach (var condicion in condicionesEjemplo)
-                {
-                    condicionesMedicas.Add(condicion);
+                    Debug.WriteLine("ERROR: No se pudo obtener user_id del storage para condiciones médicas");
+                    ErrorMessage = "No se pudo obtener la información del usuario";
+                    return;
                 }
 
-                OnPropertyChanged(nameof(CondicionesMedicas));
-                Debug.WriteLine($"Condiciones médicas cargadas: {condicionesMedicas.Count}");
+                Debug.WriteLine($"Obteniendo condiciones médicas para userId: {userId}");
+
+                var request = new ReqObtenerCondicionesUsuario
+                {
+                    IdUsuario = userId
+                };
+
+                var response = await _apiService.ObtenerCondicionesMedicasAsync(request);
+
+                Debug.WriteLine($"Respuesta condiciones médicas - resultado: {response?.resultado}");
+
+                if (response != null && response.resultado)
+                {
+                    Debug.WriteLine("=== CONDICIONES MÉDICAS OBTENIDAS EXITOSAMENTE ===");
+
+                    condicionesMedicas.Clear();
+
+                    if (response.Condiciones != null && response.Condiciones.Any())
+                    {
+                        foreach (var condicion in response.Condiciones)
+                        {
+                            condicionesMedicas.Add(condicion);
+                            Debug.WriteLine($"Condición añadida: {condicion.nombre_condicion}");
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("El usuario no tiene condiciones médicas registradas");
+                    }
+
+                    OnPropertyChanged(nameof(CondicionesMedicas));
+                    Debug.WriteLine($"Total condiciones médicas cargadas: {condicionesMedicas.Count}");
+                }
+                else
+                {
+                    Debug.WriteLine("ERROR: Respuesta inválida del servidor para condiciones médicas");
+                    var mensajeError = response?.Mensaje ?? "Error desconocido al obtener condiciones médicas";
+
+                    if (response?.errores != null && response.errores.Any())
+                    {
+                        var erroresDetalle = string.Join(", ", response.errores.Select(e => e.mensaje));
+                        mensajeError += $". Detalles: {erroresDetalle}";
+                    }
+
+                    ErrorMessage = mensajeError;
+                    Debug.WriteLine($"Error condiciones médicas: {mensajeError}");
+
+                    // No mostramos alerta aquí para no interrumpir la carga de datos
+                    // Solo logueamos el error
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error cargando condiciones médicas: {ex.Message}");
+                Debug.WriteLine($"EXCEPCIÓN en CargarCondicionesMedicasAsync: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                 ErrorMessage = "Error al cargar condiciones médicas";
                 await HandleErrorAsync(ex);
             }
@@ -292,45 +325,76 @@ namespace MediTrack.Frontend.ViewModels
         {
             try
             {
-                Debug.WriteLine("=== CARGANDO ALERGIAS ===");
+                Debug.WriteLine("=== CARGANDO ALERGIAS DEL USUARIO ===");
 
-                // Datos de ejemplo para pruebas
-                var alergiasEjemplo = new List<Alergias>
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
                 {
-                    new Alergias
-                    {
-                        id_alergia = 1,
-                        nombre_alergia = "Penicilina",
-                        descripcion = "Alergia a antibióticos",
-                        FechaDiagnostico = DateTime.Now.AddYears(-3)
-                    },
-                    new Alergias
-                    {
-                        id_alergia = 2,
-                        nombre_alergia = "Mariscos",
-                        descripcion = "Alergia alimentaria",
-                        FechaDiagnostico = DateTime.Now.AddYears(-5)
-                    }
-                };
-
-                alergias.Clear();
-                foreach (var alergia in alergiasEjemplo)
-                {
-                    alergias.Add(alergia);
+                    Debug.WriteLine("ERROR: No se pudo obtener user_id del storage para alergias");
+                    ErrorMessage = "No se pudo obtener la información del usuario";
+                    return;
                 }
 
-                OnPropertyChanged(nameof(Alergias));
-                Debug.WriteLine($"Alergias cargadas: {alergias.Count}");
+                Debug.WriteLine($"Obteniendo alergias para userId: {userId}");
+
+                var request = new ReqObtenerAlergiasUsuario
+                {
+                    IdUsuario = userId
+                };
+
+                var response = await _apiService.ObtenerAlergiasUsuarioAsync(request);
+
+                Debug.WriteLine($"Respuesta alergias - resultado: {response?.resultado}");
+
+                if (response != null && response.resultado)
+                {
+                    Debug.WriteLine("=== ALERGIAS OBTENIDAS EXITOSAMENTE ===");
+
+                    alergias.Clear();
+
+                    if (response.Alergias != null && response.Alergias.Any())
+                    {
+                        foreach (var alergia in response.Alergias)
+                        {
+                            alergias.Add(alergia);
+                            Debug.WriteLine($"Alergia añadida: {alergia.nombre_alergia}");
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("El usuario no tiene alergias registradas");
+                    }
+
+                    OnPropertyChanged(nameof(Alergias));
+                    Debug.WriteLine($"Total alergias cargadas: {alergias.Count}");
+                }
+                else
+                {
+                    Debug.WriteLine("ERROR: Respuesta inválida del servidor para alergias");
+                    var mensajeError = response?.Mensaje ?? "Error desconocido al obtener alergias";
+
+                    if (response?.errores != null && response.errores.Any())
+                    {
+                        var erroresDetalle = string.Join(", ", response.errores.Select(e => e.mensaje));
+                        mensajeError += $". Detalles: {erroresDetalle}";
+                    }
+
+                    ErrorMessage = mensajeError;
+                    Debug.WriteLine($"Error alergias: {mensajeError}");
+
+                    // No mostramos alerta aquí para no interrumpir la carga de datos
+                    // Solo logueamos el error
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error cargando alergias: {ex.Message}");
+                Debug.WriteLine($"EXCEPCIÓN en CargarAlergiasAsync: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                 ErrorMessage = "Error al cargar alergias";
                 await HandleErrorAsync(ex);
             }
         }
 
-        // Métodos para manejar selección múltiple
         public void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
         {
             condicionesMedicasSeleccionadas.Clear();

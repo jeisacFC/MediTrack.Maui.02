@@ -19,5 +19,7 @@ namespace MediTrack.Frontend.Services.Interfaces
         Task<ResLogout> LogoutAsync(ReqLogout request);
         Task<ResRegister> RegisterAsync(ReqRegister request);
         Task<ResObtenerUsuario> GetUserAsync(ReqObtenerUsuario request);
+        Task<ResObtenerAlergiasUsuario> ObtenerAlergiasUsuarioAsync(ReqObtenerAlergiasUsuario request);
+        Task<ResObtenerCondicionesUsuario> ObtenerCondicionesMedicasAsync(ReqObtenerCondicionesUsuario request);
     }
 }

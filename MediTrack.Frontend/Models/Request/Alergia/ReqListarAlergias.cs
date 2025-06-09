@@ -8,8 +8,6 @@ namespace MediTrack.Frontend.Models.Request
 {
     public class ReqListarAlergias : ReqBase
     {
-        public int Pagina { get; set; } = 1;
-        public int RegistrosPorPagina { get; set; } = 50;
-        public string FiltroNombre { get; set; }
+
     }
 }

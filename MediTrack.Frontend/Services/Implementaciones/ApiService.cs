@@ -119,7 +119,7 @@ public class ApiService : IApiService
 
     #endregion
 
-    #region AUTENTICACIÓN
+    #region AUTENTICACIÓN USUARIOS
 
     public async Task<ResLogin> LoginAsync(ReqLogin request)
     {
@@ -348,6 +348,78 @@ public class ApiService : IApiService
         }
     }
 
+    #endregion
+
+    #region CondicionesMedicas y Alergias
+    public async Task<ResObtenerCondicionesUsuario> ObtenerCondicionesMedicasAsync(ReqObtenerCondicionesUsuario request)
+    {
+        var endpoint = "api/condiciones-medicas/obtener-usuario";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResObtenerCondicionesUsuario>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                return new ResObtenerCondicionesUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en ObtenerCondicionesMedicasAsync: {ex.Message}");
+            return new ResObtenerCondicionesUsuario { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
+        }
+    }
+
+    public async Task<ResObtenerAlergiasUsuario> ObtenerAlergiasUsuarioAsync(ReqObtenerAlergiasUsuario request)
+    {
+        var endpoint = "api/alergias/obtener-usuario";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResObtenerAlergiasUsuario>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                return new ResObtenerAlergiasUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en ObtenerAlergiasUsuarioAsync: {ex.Message}");
+            return new ResObtenerAlergiasUsuario { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
+        }
+    }
     #endregion
 
     #region TOKEN
