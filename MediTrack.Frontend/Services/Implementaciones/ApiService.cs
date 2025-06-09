@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -114,6 +115,125 @@ public class ApiService : IApiService
         {
             Debug.WriteLine($"Errores de conexión en BuscarMedicamentoManualAsync: {ex.Message}");
             return new ResBuscarMedicamento { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
+        }
+    }
+
+    public async Task<ResGuardarMedicamento> GuardarMedicamentoAsync(ReqGuardarMedicamento request)
+    {
+        var endpoint = "api/medicamentos/guardar";
+
+        try
+        {
+            // Serializamos el objeto de solicitud a JSON
+            var jsonRequest = JsonSerializer.Serialize(request);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            // Realizamos la llamada POST
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de Guardar Medicamento: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Deserializamos la respuesta del backend
+                return JsonSerializer.Deserialize<ResGuardarMedicamento>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                // Si hay un error de servidor (ej. 400, 500), lo manejamos
+                return new ResGuardarMedicamento
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en GuardarMedicamentoAsync: {ex.Message}");
+            return new ResGuardarMedicamento
+            {
+                resultado = false,
+                Mensaje = "No se pudo conectar con el servidor."
+            };
+        }
+    }
+
+
+    public async Task<ResListarMedicamentosUsuario> ListarMedicamentosUsuarioAsync(ReqObtenerUsuario request)
+    {
+        var endpoint = "api/medicamentos/listar/usuario";
+        try
+        {
+            // Usamos PostAsJsonAsync para simplificar la serialización
+            var response = await _httpClient.PostAsJsonAsync(endpoint, request);
+
+            var json = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de {endpoint}: {json}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResListarMedicamentosUsuario>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            return new ResListarMedicamentosUsuario { resultado = false, Mensaje = $"Error del servidor: {response.StatusCode}" };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en ListarMedicamentosUsuarioAsync: {ex.Message}");
+            return new ResListarMedicamentosUsuario { resultado = false, Mensaje = "No se pudo conectar con el servidor." };
+        }
+    }
+
+    public async Task<ResDetalleMedicamentoUsuario> ObtenerDetalleMedicamentoUsuarioAsync(ReqMedicamento request)
+    {
+        var endpoint = "api/medicamentos/detalle";
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(endpoint, request);
+
+            var json = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de {endpoint}: {json}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResDetalleMedicamentoUsuario>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            return new ResDetalleMedicamentoUsuario { resultado = false, Mensaje = $"Error del servidor: {response.StatusCode}" };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en ObtenerDetalleMedicamentoUsuarioAsync: {ex.Message}");
+            return new ResDetalleMedicamentoUsuario { resultado = false, Mensaje = "No se pudo conectar con el servidor." };
+        }
+    }
+
+    public async Task<ResEliminarMedicamentoUsuario> EliminarMedicamentoUsuarioAsync(ReqMedicamento request)
+    {
+        var endpoint = "api/medicamentos/eliminar";
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(endpoint, request);
+
+            var json = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de {endpoint}: {json}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResEliminarMedicamentoUsuario>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            return new ResEliminarMedicamentoUsuario { resultado = false, Mensaje = $"Error del servidor: {response.StatusCode}" };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en EliminarMedicamentoUsuarioAsync: {ex.Message}");
+            return new ResEliminarMedicamentoUsuario { resultado = false, Mensaje = "No se pudo conectar con el servidor." };
         }
     }
 

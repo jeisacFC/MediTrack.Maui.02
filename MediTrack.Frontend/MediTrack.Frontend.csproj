@@ -365,8 +365,25 @@
 		
 	</ItemGroup>
 	
+
+	
 	<ItemGroup>
-	  <MauiXaml Update="Popups\ActualizarPerfilPopup.xaml">
+		<Compile Update="Popups\InformacionMedicamentoPopup.xaml.cs">
+	    	<DependentUpon>InformacionMedicamentoPopup.xaml</DependentUpon>
+	  	</Compile>
+		<MauiXaml Update="Popups\ActualizarPerfilPopup.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>					
+	  <MauiXaml Update="Popups\DetalleMedicamentoGuardadoPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\InfoBusquedaManualPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\InformacionMedicamentoPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\InstruccionesEscaneoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\GestionAlergiasPopup.xaml">
