@@ -73,7 +73,6 @@ public class ApiService : IApiService
         }
     }
 
-
     public async Task<ResBuscarMedicamento> BuscarMedicamentoManualAsync(ReqBuscarMedicamento request)
     {
         var endpoint = "api/medicamentos/buscar"; // Endpoint específico para la búsqueda manual

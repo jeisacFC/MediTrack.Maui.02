@@ -2,12 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:MediTrack.Frontend.ViewModels.PantallasPrincipales"
+             xmlns:vistas="clr-namespace:MediTrack.Frontend.Vistas"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaBusqueda"
              Title="Búsqueda de medicamentos"
              BackgroundColor="{StaticResource ColorFondoClaro}"
              NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *, Auto">
 
         <Border Grid.Row="0"
                 StrokeThickness="0"
@@ -28,7 +29,7 @@
 
             <Frame Style="{StaticResource FrameFormulario}">
                 <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xf58a;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
+                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
                     <Entry Placeholder="Nombre del medicamento"
                            Text="{Binding TerminoBusqueda.NombreMedicamento}"
                            HorizontalOptions="Fill"
@@ -38,7 +39,7 @@
 
             <Frame Style="{StaticResource FrameFormulario}">
                 <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xe94f;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
+                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
                     <Entry Placeholder="Dosis del medicamento"
                            Text="{Binding TerminoBusqueda.Dosis}"
                            HorizontalOptions="Fill"
@@ -76,5 +77,9 @@
             </Grid>
 
         </VerticalStackLayout>
+
+
+        <!-- Botón flotante -->
+        <vistas:BotonFlotanteEscaner Grid.Row="2"  />
     </Grid>
 </ContentPage>

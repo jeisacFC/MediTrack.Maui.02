@@ -214,7 +214,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     EventoCreado = true; // Marcar como creado
 
                     // Mostrar confirmación
-                    await ShowAlertAsync("✅ Éxito", $"Evento '{NombreEvento}' creado para las {HoraEvento:hh\\:mm}");
+                    await ShowAlertAsync(" Éxito", $"Evento '{NombreEvento}' creado para las {HoraEvento:hh\\:mm}");
 
                     // Cerrar modal
                     await CerrarModal();
