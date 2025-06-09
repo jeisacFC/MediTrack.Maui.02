@@ -5,6 +5,9 @@ using System.Globalization;
 using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Models.Model;
 using MediTrack.Frontend.Services.Interfaces;
+using MediTrack.Frontend.Models.Request;
+using System.Diagnostics;
+using MediTrack.Frontend.Models.Response;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
@@ -18,9 +21,19 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
         [ObservableProperty]
         private ObservableCollection<HabitoSaludable> habitosSaludables = new();
+        
+        [ObservableProperty]
+        private ObservableCollection<RecomendacionesIA> recomendaciones = new();
+
+        [ObservableProperty]
+        private ObservableCollection<Interaccion> interacciones = new();
+
+        [ObservableProperty]
+        private ObservableCollection<AlertaSalud> alertas = new();
 
         [ObservableProperty]
         private ObservableCollection<SintomaUsuario> sintomasUsuario = new();
+
 
         [ObservableProperty]
         private string fechaHoy = "";
@@ -36,18 +49,41 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
         [ObservableProperty]
         private bool hayHabitos = false;
+        
+        [ObservableProperty]
+        private bool hayRecomendaciones = false;
+
+        [ObservableProperty]
+        private bool hayInteracciones = false;
+
+        [ObservableProperty]
+        private bool hayAlertas = false;
 
         [ObservableProperty]
         private bool haySintomas = false;
+
 
         private readonly EventosService _eventosService;
         private readonly CultureInfo _culturaEspañola = new("es-ES");
         private readonly int _idUsuarioActual = 1; // TODO: Obtener del servicio de autenticación
 
-        public InicioViewModel()
+        private readonly IApiService _apiService;
+        public IAsyncRelayCommand CargarHabitosCommand { get; }
+        public IAsyncRelayCommand CargarRecomendacionesCommand { get; }
+        public IAsyncRelayCommand CargarInteraccionesCommand { get; }
+        public IAsyncRelayCommand CargarAlertasCommand { get; }
+
+        public InicioViewModel(IApiService apiService)
+
         {
             try
             {
+                _apiService = apiService;
+                CargarHabitosCommand = new AsyncRelayCommand(CargarHabitosSaludables);
+                CargarRecomendacionesCommand = new AsyncRelayCommand(CargarRecomendaciones);
+                CargarInteraccionesCommand = new AsyncRelayCommand(CargarInteracciones);
+                CargarAlertasCommand = new AsyncRelayCommand(CargarAlertasSalud);
+
                 // Usar servicios
                 _eventosService = EventosService.Instance;
 
@@ -79,6 +115,9 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     CargarMedicamentosHoy(),
                     CargarEscaneosRecientes(),
                     CargarHabitosSaludables(),
+                    CargarRecomendaciones(),
+                    CargarInteracciones(),
+                    CargarAlertasSalud(),
                     CargarSintomasUsuario()
                 };
 
@@ -201,53 +240,178 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
         private async Task CargarHabitosSaludables()
         {
+            IsLoading = true;
             try
             {
-                // Limpiar lista
                 HabitosSaludables.Clear();
+                // Recuperar userId de SecureStorage
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                Debug.WriteLine($"[VM] user_id en SecureStorage: {userIdStr}");
 
-                // TODO: Conectar con endpoint de IA para hábitos
-                // var response = await _apiService.ObtenerHabitosAsync(_idUsuarioActual);
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                    throw new InvalidOperationException("Usuario no autenticado.");
 
-                // Por ahora, datos de ejemplo
-                var habitosEjemplo = new List<HabitoSaludable>
+                // Llamar al servicio
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Enviando ReqObtenerUsuario.IdUsuario = {req.IdUsuario}");
+
+                var res = await _apiService.ObtenerHabitosAsync(req);
+                Debug.WriteLine($"[VM] Respuesta nula? {res == null}   resultado={res?.resultado}");
+
+                if (res?.Habitos != null)
                 {
-                    new HabitoSaludable
+                    foreach (var texto in res.Habitos)
                     {
-                        Titulo = "Beber al menos 8 vasos de agua al día",
-                        Descripcion = "Mantenerte hidratado ayuda a tu organismo a funcionar mejor.",
-                        Icono = "💧",
-                        Prioridad = 1
-                    },
-                    new HabitoSaludable
-                    {
-                        Titulo = "Caminar 30 minutos diarios",
-                        Descripcion = "El ejercicio ligero mejora tu salud cardiovascular.",
-                        Icono = "🚶",
-                        Prioridad = 2
-                    },
-                    new HabitoSaludable
-                    {
-                        Titulo = "Dormir 7-8 horas cada noche",
-                        Descripcion = "Un buen descanso es fundamental para tu recuperación.",
-                        Icono = "😴",
-                        Prioridad = 3
+                        Debug.WriteLine($"[VM] Añadiendo hábito: {texto}");
+                        HabitosSaludables.Add(new HabitoSaludable
+                        {
+                            Titulo = "",
+                            Descripcion = texto,
+                        });
                     }
-                };
-
-                foreach (var habito in habitosEjemplo)
+                }
+                else
                 {
-                    HabitosSaludables.Add(habito);
+                    Debug.WriteLine("[VM] No se encontraron hábitos saludables.");
                 }
 
                 HayHabitos = HabitosSaludables.Any();
-
-                System.Diagnostics.Debug.WriteLine($"Cargados {HabitosSaludables.Count} hábitos saludables");
+                Debug.WriteLine($"[VM] HayHabitos = {HayHabitos}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error cargando hábitos saludables: {ex.Message}");
+                Debug.WriteLine($"Error al cargar hábitos: {ex.Message}");
                 HayHabitos = false;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task CargarRecomendaciones()
+        {
+            IsLoading = true;
+            try
+            {
+                Recomendaciones.Clear();
+
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                Debug.WriteLine($"[VM] user_id: {userIdStr}");
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                    throw new InvalidOperationException("Usuario no autenticado.");
+
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Solicitando recomendaciones para {idUsuario}");
+                var res = await _apiService.ObtenerRecomendacionesAsync(req);
+                Debug.WriteLine($"[VM] resultado={res?.resultado} count={res?.Recomendaciones?.Count}");
+
+                if (res?.Recomendaciones != null)
+                {
+                    foreach (var texto in res.Recomendaciones)
+                    {
+                        Debug.WriteLine($"[VM] Agregando recomendación: {texto}");
+                        Recomendaciones.Add(new RecomendacionesIA
+                        {
+                            Titulo = "",            
+                            Descripcion = texto
+                        });
+                    }
+                }
+
+                HayRecomendaciones = Recomendaciones.Any();
+                Debug.WriteLine($"[VM] HayRecomendaciones = {HayRecomendaciones}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[VM] Error al cargar recomendaciones: {ex}");
+                HayRecomendaciones = false;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task CargarInteracciones()
+        {
+            IsLoading = true;
+            try
+            {
+                Interacciones.Clear();
+
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                    throw new InvalidOperationException("Usuario no autenticado.");
+
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Solicitando interacciones para {idUsuario}");
+                var res = await _apiService.ObtenerInteraccionesAsync(req);
+                Debug.WriteLine($"[VM] resultado={res?.resultado} count={res?.Interacciones?.Count}");
+
+                if (res?.Interacciones != null)
+                {
+                    foreach (var texto in res.Interacciones)
+                    {
+                        Debug.WriteLine($"[VM] Agregando interacción: {texto}");
+                        Interacciones.Add(new Interaccion
+                        {
+                            Titulo = "",        // o parsea parte si tu JSON viene más estructurado
+                            Descripcion = texto
+                        });
+                    }
+                }
+
+                HayInteracciones = Interacciones.Any();
+                Debug.WriteLine($"[VM] HayInteracciones = {HayInteracciones}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[VM] Error al cargar interacciones: {ex}");
+                HayInteracciones = false;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task CargarAlertasSalud()
+        {
+            IsLoading = true;
+            try
+            {
+                Alertas.Clear();
+
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                    throw new InvalidOperationException("Usuario no autenticado.");
+
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Solicitando alertas de salud para {idUsuario}");
+                var res = await _apiService.ObtenerAlertasSaludAsync(req);
+                Debug.WriteLine($"[VM] resultado={res?.resultado} count={res?.Alertas?.Count}");
+
+                if (res?.Alertas != null)
+                {
+                    foreach (var a in res.Alertas)
+                    {
+                        Debug.WriteLine($"[VM] Agregando alerta: Riesgo={a.Riesgo}");
+                        Alertas.Add(a);
+                    }
+                }
+
+                HayAlertas = Alertas.Any();
+                Debug.WriteLine($"[VM] HayAlertas = {HayAlertas}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[VM] Error al cargar alertas: {ex}");
+                HayAlertas = false;
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
@@ -440,8 +604,18 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
     {
         public string Titulo { get; set; } = "";
         public string Descripcion { get; set; } = "";
-        public string Icono { get; set; } = "";
-        public int Prioridad { get; set; }
+    }
+
+    public class RecomendacionesIA
+    {
+        public string Titulo { get; set; } = "";
+        public string Descripcion { get; set; } = "";
+    }
+
+    public class Interaccion
+    {
+        public string Titulo { get; set; } = "";
+        public string Descripcion { get; set; } = "";
     }
 
     public class SintomaUsuario

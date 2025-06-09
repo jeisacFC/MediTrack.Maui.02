@@ -14,6 +14,12 @@ namespace MediTrack.Frontend.Services.Interfaces
         Task<ResEscanearMedicamento> EscanearMedicamentoAsync(ReqEscanearMedicamento request);
         Task<ResBuscarMedicamento> BuscarMedicamentoManualAsync(ReqBuscarMedicamento request);
 
+        // IA
+        Task<ResHabitosSaludables> ObtenerHabitosAsync(ReqObtenerUsuario request);
+        Task<ResRecomendacionesIA> ObtenerRecomendacionesAsync(ReqObtenerUsuario request);
+        Task<ResInteraccionesMedicamentos?> ObtenerInteraccionesAsync(ReqObtenerUsuario request);
+        Task<ResAlertaSalud?> ObtenerAlertasSaludAsync(ReqObtenerUsuario request);
+
         // Autenticación
         Task<ResLogin> LoginAsync(ReqLogin request);
         Task<ResLogout> LogoutAsync(ReqLogout request);

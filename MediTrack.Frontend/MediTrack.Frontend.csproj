@@ -111,8 +111,6 @@
 	  
 	  <Compile Include="Models\Model\ProgramacionRecordatorio.cs" />
 	  
-	  <Compile Include="Models\Model\RecomendacionesIA.cs" />
-	  
 	  <Compile Include="Models\Model\RecordatoriosMedicacion.cs" />
 	  
 	  <Compile Include="Models\Model\Sesiones.cs" />
