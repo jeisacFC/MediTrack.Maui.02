@@ -16,9 +16,6 @@ public partial class BusquedaViewModel : ObservableObject
     private readonly IApiService _apiService;
 
     // --- Propiedades para enlazar en la UI --- //
-   
-
-
     [ObservableProperty] private ReqBuscarMedicamento _terminoBusqueda = new();
     [ObservableProperty] private ResBuscarMedicamento _resultadoBusqueda;
     [ObservableProperty] private bool _mostrarResultados;
@@ -26,32 +23,23 @@ public partial class BusquedaViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<UsuarioMedicamentos> _misMedicamentos = new();
 
-
     // Controla el indicador de actividad (cargando...)
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotBusy))] private bool _isBusy;
-
-
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(IsNotBusy))] private bool _isBusy;
 
     public bool IsNotBusy => !IsBusy;
 
     // --- Eventos para comunicar a la Vista ---
     public event EventHandler<ResBuscarMedicamento> BusquedaExitosa;
     public event EventHandler<string> BusquedaFallida;
-
-    public event EventHandler<ResDetalleMedicamentoUsuario> MostrarDetalleMedicamento; // <-- Evento para mostrar el nuevo popup
-
+    public event EventHandler<ResDetalleMedicamentoUsuario> MostrarDetalleMedicamento;
 
     // --- Comandos ---
     public IAsyncRelayCommand BuscarCommand { get; }
     public IRelayCommand LimpiarCommand { get; }
     public IAsyncRelayCommand<ResBuscarMedicamento> GuardarMedicamentoCommand { get; }
-
-
     public IAsyncRelayCommand CargarMisMedicamentosCommand { get; }
     public IAsyncRelayCommand<UsuarioMedicamentos> VerDetalleCommand { get; }
     public IAsyncRelayCommand<UsuarioMedicamentos> EliminarMedicamentoCommand { get; }
-
-
 
     public BusquedaViewModel(IApiService apiService)
     {
@@ -61,11 +49,10 @@ public partial class BusquedaViewModel : ObservableObject
         BuscarCommand = new AsyncRelayCommand(EjecutarBusquedaAsync, () => !IsBusy);
         LimpiarCommand = new RelayCommand(EjecutarLimpiar, () => !IsBusy);
         GuardarMedicamentoCommand = new AsyncRelayCommand<ResBuscarMedicamento>(EjecutarGuardarMedicamentoAsync);
-        
+
         CargarMisMedicamentosCommand = new AsyncRelayCommand(EjecutarCargarMisMedicamentosAsync);
         VerDetalleCommand = new AsyncRelayCommand<UsuarioMedicamentos>(EjecutarVerDetalleAsync);
         EliminarMedicamentoCommand = new AsyncRelayCommand<UsuarioMedicamentos>(EjecutarEliminarMedicamentoAsync);
-            
     }
 
     private async Task EjecutarBusquedaAsync()
@@ -89,7 +76,7 @@ public partial class BusquedaViewModel : ObservableObject
             if (resultado != null && resultado.resultado && resultado.Medicamento != null)
             {
                 ResultadoBusqueda = resultado;
-                MostrarResultados = true; // Podrías usar esto para mostrar una sección de resultados en la misma página
+                MostrarResultados = true;
                 Debug.WriteLine($"ViewModel: Medicamento encontrado: {ResultadoBusqueda.Medicamento.NombreComercial}");
 
                 // Dispara el evento para que la Vista muestre el modal/popup
@@ -138,7 +125,6 @@ public partial class BusquedaViewModel : ObservableObject
                 return;
             }
 
-            // Mapeamos los datos del resultado de la búsqueda al objeto que espera la API de guardado
             var request = new ReqGuardarMedicamento
             {
                 IdUsuario = userId,
@@ -149,16 +135,17 @@ public partial class BusquedaViewModel : ObservableObject
                 Usos = resultadoAGuardar.Usos,
                 Advertencias = resultadoAGuardar.Advertencias,
                 EfectosSecundarios = resultadoAGuardar.EfectosSecundarios,
-                IdMetodoEscaneo = 2 // 2 para Búsqueda Manual, por ejemplo
+                IdMetodoEscaneo = 2 // 2 para Búsqueda Manual
             };
 
-            // Llamamos al ApiService para guardar
             var resultadoGuardado = await _apiService.GuardarMedicamentoAsync(request);
 
-            // Mostramos el mensaje que viene del backend
             if (resultadoGuardado != null)
             {
                 await Shell.Current.DisplayAlert("Resultado", resultadoGuardado.Mensaje, "OK");
+
+                // CRUCIAL: Recargar la lista después de guardar exitosamente
+                await EjecutarCargarMisMedicamentosAsync();
             }
             else
             {
@@ -174,17 +161,21 @@ public partial class BusquedaViewModel : ObservableObject
         {
             IsBusy = false;
         }
-
     }
 
     private async Task EjecutarCargarMisMedicamentosAsync()
     {
         if (IsBusy) return;
+
         IsBusy = true;
         try
         {
             var userIdStr = await SecureStorage.GetAsync("user_id");
-            if (!int.TryParse(userIdStr, out int idUsuario)) return;
+            if (!int.TryParse(userIdStr, out int idUsuario))
+            {
+                Debug.WriteLine("No se pudo obtener el ID del usuario");
+                return;
+            }
 
             var request = new ReqObtenerUsuario { IdUsuario = idUsuario };
             var response = await _apiService.ListarMedicamentosUsuarioAsync(request);
@@ -197,12 +188,18 @@ public partial class BusquedaViewModel : ObservableObject
                 {
                     MisMedicamentos.Add(med);
                 }
+                Debug.WriteLine($"Se cargaron {MisMedicamentos.Count} medicamentos");
+            }
+            else
+            {
+                Debug.WriteLine("La respuesta del API no fue exitosa o fue nula");
+                MisMedicamentos.Clear(); // Limpiar si no hay datos válidos
             }
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error al cargar mis medicamentos: {ex.Message}");
-            // Opcional: podrías disparar un evento de error aquí
+            // En caso de error, mantenemos la lista actual pero podríamos mostrar un mensaje
         }
         finally
         {
@@ -213,22 +210,29 @@ public partial class BusquedaViewModel : ObservableObject
     private async Task EjecutarVerDetalleAsync(UsuarioMedicamentos medicamentoSeleccionado)
     {
         if (IsBusy || medicamentoSeleccionado == null) return;
+
         IsBusy = true;
         try
         {
             var userIdStr = await SecureStorage.GetAsync("user_id");
-            if (!int.TryParse(userIdStr, out int idUsuario)) return;
+            if (!int.TryParse(userIdStr, out int idUsuario))
+            {
+                Debug.WriteLine("No se pudo obtener el ID del usuario para ver detalle");
+                return;
+            }
 
             var request = new ReqMedicamento { IdUsuario = idUsuario, IdMedicamento = medicamentoSeleccionado.id_medicamento };
             var response = await _apiService.ObtenerDetalleMedicamentoUsuarioAsync(request);
 
             if (response != null && response.resultado)
             {
+                Debug.WriteLine($"Detalle obtenido exitosamente para medicamento ID: {medicamentoSeleccionado.id_medicamento}");
                 // Disparamos el evento para que la página (el code-behind) muestre el popup
                 MostrarDetalleMedicamento?.Invoke(this, response);
             }
             else
             {
+                Debug.WriteLine($"Error al obtener detalle: {response?.Mensaje ?? "Respuesta nula"}");
                 await Shell.Current.DisplayAlert("Error", "No se pudieron obtener los detalles del medicamento.", "OK");
             }
         }
@@ -245,9 +249,13 @@ public partial class BusquedaViewModel : ObservableObject
 
     private async Task EjecutarEliminarMedicamentoAsync(UsuarioMedicamentos medicamentoParaEliminar)
     {
-        if (medicamentoParaEliminar == null) return;
+        if (medicamentoParaEliminar == null)
+        {
+            Debug.WriteLine("Intento de eliminar medicamento nulo");
+            return;
+        }
 
-        // Siempre es buena práctica pedir confirmación para acciones destructivas.
+        // Confirmación antes de eliminar
         bool confirmar = await Shell.Current.DisplayAlert(
             "Confirmar Eliminación",
             $"¿Estás seguro de que quieres eliminar {medicamentoParaEliminar.nombre_comercial} de tu lista?",
@@ -260,26 +268,40 @@ public partial class BusquedaViewModel : ObservableObject
         try
         {
             var userIdStr = await SecureStorage.GetAsync("user_id");
-            if (!int.TryParse(userIdStr, out int idUsuario)) return;
+            if (!int.TryParse(userIdStr, out int idUsuario))
+            {
+                Debug.WriteLine("No se pudo obtener el ID del usuario para eliminar");
+                return;
+            }
 
             var request = new ReqMedicamento { IdUsuario = idUsuario, IdMedicamento = medicamentoParaEliminar.id_medicamento };
+            Debug.WriteLine($"Eliminando medicamento ID: {medicamentoParaEliminar.id_medicamento}");
+
             var response = await _apiService.EliminarMedicamentoUsuarioAsync(request);
 
             if (response != null && response.resultado)
             {
+                Debug.WriteLine("Medicamento eliminado exitosamente del backend");
+
                 // Si la eliminación en el backend fue exitosa, lo quitamos de la colección local
-                // para que la UI se actualice al instante.
-                MisMedicamentos.Remove(medicamentoParaEliminar);
+                var medicamentoEnLista = MisMedicamentos.FirstOrDefault(m => m.id_medicamento == medicamentoParaEliminar.id_medicamento);
+                if (medicamentoEnLista != null)
+                {
+                    MisMedicamentos.Remove(medicamentoEnLista);
+                    Debug.WriteLine($"Medicamento removido de la lista local. Quedan {MisMedicamentos.Count} elementos");
+                }
+
                 await Shell.Current.DisplayAlert("Éxito", "Medicamento eliminado de tu lista.", "OK");
             }
             else
             {
+                Debug.WriteLine($"Error del backend al eliminar: {response?.Mensaje ?? "Respuesta nula"}");
                 await Shell.Current.DisplayAlert("Error", response?.Mensaje ?? "No se pudo eliminar el medicamento.", "OK");
             }
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error al eliminar medicamento: {ex.Message}");
+            Debug.WriteLine($"Excepción al eliminar medicamento: {ex.Message}");
             await Shell.Current.DisplayAlert("Error de Conexión", "No se pudo comunicar con el servidor.", "OK");
         }
         finally
@@ -287,5 +309,4 @@ public partial class BusquedaViewModel : ObservableObject
             IsBusy = false;
         }
     }
-
 }
