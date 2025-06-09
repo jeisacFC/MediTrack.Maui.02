@@ -1,0 +1,210 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MediTrack.Frontend.Popups.InformacionMedicamentoEscaneo"
+               Color="Black"
+               CanBeDismissedByTappingOutsideOfPopup="True"
+               HorizontalOptions="Center"
+               VerticalOptions="Center">
+
+    <Border BackgroundColor="White" 
+            StrokeThickness="0"
+            WidthRequest="350"
+            HeightRequest="600">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="20"/>
+        </Border.StrokeShape>
+
+        <ScrollView>
+            <StackLayout Spacing="0">
+
+                <!-- Header del medicamento -->
+                <Border BackgroundColor="#667eea" 
+                        StrokeThickness="0"
+                        Padding="20,25,20,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20,20,0,0"/>
+                    </Border.StrokeShape>
+
+                    <StackLayout Spacing="8">
+                        <!-- Icono y título -->
+                        <StackLayout Orientation="Horizontal" 
+                                   HorizontalOptions="Center"
+                                   Spacing="10">
+                            <Label Text="" 
+                                   FontSize="28"
+                                   VerticalTextAlignment="Center"/>
+                            <Label Text="Medicamento Encontrado" 
+                                   TextColor="White"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"/>
+                        </StackLayout>
+
+                        <!-- Nombre comercial -->
+                        <Label x:Name="NombreComercialLabel"
+                               Text="{Binding NombreComercial}"
+                               TextColor="White"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap"/>
+                    </StackLayout>
+                </Border>
+
+                <!-- Contenido principal -->
+                <StackLayout Padding="20,20,20,10" Spacing="16">
+
+                    <!-- Principio Activo -->
+                    <StackLayout Spacing="5">
+                        <Label Text="Principio Activo" 
+                               FontSize="14" 
+                               FontAttributes="Bold"
+                               TextColor="#333"/>
+                        <Border BackgroundColor="#f8f9fa" 
+                                StrokeThickness="0" 
+                                Padding="12,8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <Label x:Name="PrincipioActivoLabel"
+                                   Text="{Binding PrincipioActivo}"
+                                   FontSize="15"
+                                   TextColor="#495057"
+                                   LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
+
+                    <!-- Dosis -->
+                    <StackLayout Spacing="5">
+                        <Label Text="Dosis" 
+                               FontSize="14" 
+                               FontAttributes="Bold"
+                               TextColor="#333"/>
+                        <Border BackgroundColor="#e3f2fd" 
+                                StrokeThickness="0" 
+                                Padding="12,8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <Label x:Name="DosisLabel"
+                                   Text="{Binding Dosis}"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="#1976d2"
+                                   LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
+
+                    <!-- Fabricante -->
+                    <StackLayout Spacing="5">
+                        <Label Text="Fabricante" 
+                               FontSize="14" 
+                               FontAttributes="Bold"
+                               TextColor="#333"/>
+                        <Border BackgroundColor="#f1f8e9" 
+                                StrokeThickness="0" 
+                                Padding="12,8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <Label x:Name="FabricanteLabel"
+                                   Text="{Binding Fabricante}"
+                                   FontSize="15"
+                                   TextColor="#388e3c"
+                                   LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
+
+                    <!-- Usos -->
+                    <StackLayout x:Name="UsosSection" Spacing="5">
+                        <Label Text="Usos Principales" 
+                               FontSize="14" 
+                               FontAttributes="Bold"
+                               TextColor="#333"/>
+                        <Border BackgroundColor="#fff3e0" 
+                                StrokeThickness="0" 
+                                Padding="12,10">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <StackLayout x:Name="UsosContainer" Spacing="6">
+                                <!-- Los usos se agregarán dinámicamente -->
+                            </StackLayout>
+                        </Border>
+                    </StackLayout>
+
+                    <!-- Advertencias -->
+                    <StackLayout x:Name="AdvertenciasSection" Spacing="5">
+                        <Label Text="Advertencias Importantes" 
+                               FontSize="14" 
+                               FontAttributes="Bold"
+                               TextColor="#d32f2f"/>
+                        <Border BackgroundColor="#ffebee" 
+                                StrokeThickness="1"
+                                Stroke="#ffcdd2"
+                                Padding="12,10">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <StackLayout x:Name="AdvertenciasContainer" Spacing="6">
+                                <!-- Las advertencias se agregarán dinámicamente -->
+                            </StackLayout>
+                        </Border>
+                    </StackLayout>
+
+                    <!-- Nota importante -->
+                    <Border BackgroundColor="#e8f5e8" 
+                            Stroke="#4caf50"
+                            StrokeThickness="1"
+                            Padding="12,10"
+                            Margin="0,10,0,0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <StackLayout Orientation="Horizontal" Spacing="8">
+                            <Label Text="ℹ" 
+                                   FontSize="16"
+                                   VerticalTextAlignment="Start"/>
+                            <Label Text="Siempre consulte con su médico o farmacéutico antes de tomar cualquier medicamento."
+                                   FontSize="12"
+                                   TextColor="#2e7d32"
+                                   LineBreakMode="WordWrap"/>
+                        </StackLayout>
+                    </Border>
+                </StackLayout>
+
+                <!-- Footer con botones -->
+                <Border BackgroundColor="#f8f9fa" 
+                        StrokeThickness="0"
+                        Padding="20,15,20,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="0,0,20,20"/>
+                    </Border.StrokeShape>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <!-- Botón Agregar -->
+                        <Button Grid.Column="0"
+                                Text="Agregar"
+                                BackgroundColor="#4caf50"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="10"
+                                HeightRequest="45"
+                                Clicked="OnAgregarClicked"/>
+
+                        <!-- Botón Cerrar -->
+                        <Button Grid.Column="1"
+                                Text="Cerrar"
+                                BackgroundColor="#f44336"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="10"
+                                HeightRequest="45"
+                                Clicked="OnCerrarClicked"/>
+                    </Grid>
+                </Border>
+            </StackLayout>
+        </ScrollView>
+    </Border>
+</toolkit:Popup>

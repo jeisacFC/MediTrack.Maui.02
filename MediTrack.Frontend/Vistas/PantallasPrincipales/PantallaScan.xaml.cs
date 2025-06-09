@@ -6,6 +6,7 @@ using ZXing.Net.Maui;
 using MediTrack.Frontend.Models.Response; 
 using MediTrack.Frontend.Vistas.Base;
 
+
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
 public partial class PantallaScan : ContentPage
@@ -28,13 +29,9 @@ public partial class PantallaScan : ContentPage
     {
         base.OnAppearing();
 
-        // Muestra el popup de instrucciones de forma asíncrona.
-        // El código esperará aquí hasta que el popup se cierre.
         var instruccionesPopup = new InstruccionesEscaneoPopup();
         await this.ShowPopupAsync(instruccionesPopup);
 
-        // Una vez que el popup se cierra (porque el usuario presionó "Entendido"),
-        // le decimos al ViewModel que active la cámara.
         if (_viewModel != null && !_viewModel.IsDetecting)
         {
             _viewModel.ReactivarEscaneo();
@@ -46,13 +43,11 @@ public partial class PantallaScan : ContentPage
     // MANEJAR EVENTOS DEL VIEWMODEL
     private async void OnMostrarResultado(object sender, ResEscanearMedicamento medicamento)
     {
-        await DisplayAlert(
-           medicamento.NombreComercial ?? "Medicamento Escaneado",
-           $"Principio: {medicamento.PrincipioActivo ?? "N/A"}",
-           "OK");
+        var infoPopup = new InformacionMedicamentoEscaneo(medicamento);
+        await this.ShowPopupAsync(infoPopup);
 
-        // REACTIVAR ESCANEO DESPUÉS DEL ALERT
         _viewModel?.ReactivarEscaneo();
+
     }
 
     private async void OnMostrarError(object sender, string mensaje)
