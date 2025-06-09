@@ -1,15 +1,16 @@
 using MediTrack.Frontend.ViewModels.PantallasPrincipales;
+using MediTrack.Frontend.Vistas.Base;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
-public partial class PantallaInicio : ContentPage
+public partial class PantallaInicio : BaseContentPage
 {
     private InicioViewModel _viewModel;
 
-    public PantallaInicio()
+    public PantallaInicio(InicioViewModel viewModel)
     {
         InitializeComponent();
-        _viewModel = new InicioViewModel();
+        _viewModel = viewModel;
         BindingContext = _viewModel;
     }
 

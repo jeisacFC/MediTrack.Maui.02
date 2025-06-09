@@ -111,8 +111,6 @@
 	  
 	  <Compile Include="Models\Model\ProgramacionRecordatorio.cs" />
 	  
-	  <Compile Include="Models\Model\RecomendacionesIA.cs" />
-	  
 	  <Compile Include="Models\Model\RecordatoriosMedicacion.cs" />
 	  
 	  <Compile Include="Models\Model\Sesiones.cs" />
@@ -374,13 +372,10 @@
 	  <MauiXaml Update="Popups\InstruccionesEscaneoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Popups\ModalCodigoVerificacion.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Popups\ModalGestionarSintomas.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Popups\ModalNuevaContrasena.xaml">
+	  <MauiXaml Update="Popups\ModalRecuperarContrasena.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\Styles.xaml">

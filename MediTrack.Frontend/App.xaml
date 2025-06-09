@@ -24,6 +24,7 @@
             <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
             <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
             <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+            <converters:BoolToIconConverter x:Key="BoolToIconConverter" />
 
         </ResourceDictionary>
     </Application.Resources>
