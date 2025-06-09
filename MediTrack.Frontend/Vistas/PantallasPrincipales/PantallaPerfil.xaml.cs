@@ -8,21 +8,14 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
     public partial class PantallaPerfil : BaseContentPage
     {
         private PerfilViewModel _viewModel;
+        private bool _editandoCondiciones = false;
+        private bool _editandoAlergias = false;
+        private bool _editandoInfoPersonal = false;
 
         public PantallaPerfil(PerfilViewModel viewModel)
         {
             InitializeComponent();
             _viewModel = viewModel;
-            BindingContext = _viewModel;
-        }
-        public PantallaPerfil()
-        {
-            // Resuelve el ViewModel desde el contenedor
-#pragma warning disable CS8602 
-            var viewModel = Application.Current.Handler.MauiContext.Services.GetService<PerfilViewModel>();
-#pragma warning restore CS8602 
-
-            _viewModel = viewModel ?? throw new Exception("No se pudo resolver PerfilViewModel");
             BindingContext = _viewModel;
         }
 
@@ -32,56 +25,104 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 
             try
             {
+                Debug.WriteLine("=== PantallaPerfil OnAppearing ===");
                 await _viewModel.InitializeAsync();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error en OnAppearing de PantallaPerfil: {ex.Message}");
-                await DisplayAlert("Error", "Error al cargar los datos del perfil", "OK");
+                Debug.WriteLine($"Error en OnAppearing: {ex.Message}");
+                await DisplayAlert("Error", "Error al cargar el perfil", "OK");
             }
         }
 
-        /// <summary>
-        /// Maneja el evento de cambio en el switch de notificaciones
-        /// </summary>
-        private async void OnToggleNotificaciones(object sender, ToggledEventArgs e)
+        // Manejo del scroll para hacer desaparecer el avatar
+        private void OnScrollViewScrolled(object sender, ScrolledEventArgs e)
         {
-            try
-            {
-                if (_viewModel != null)
-                {
-                    // Ejecutar el comando para alternar notificaciones
-                    if (_viewModel.AlternarNotificacionesCommand.CanExecute(null))
-                    {
-                        await _viewModel.AlternarNotificacionesCommand.ExecuteAsync(null);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error en OnToggleNotificaciones: {ex.Message}");
-                await DisplayAlert("Error", "Error al cambiar la configuración de notificaciones", "OK");
+            // Calculamos la opacidad basada en el scroll
+            double scrollY = e.ScrollY;
+            double maxScroll = 100; // Distancia máxima para desaparecer completamente
 
-                // Revertir el switch si hay error
-                if (sender is Microsoft.Maui.Controls.Switch switchControl)
-                {
-                    switchControl.IsToggled = !e.Value;
-                }
+            double opacity = Math.Max(0, 1 - (scrollY / maxScroll));
+            double scale = Math.Max(0.5, 1 - (scrollY / (maxScroll * 2)));
+
+            // Aplicamos la transformación al avatar
+            AvatarContainer.Opacity = opacity;
+            AvatarContainer.Scale = scale;
+
+            // También podemos mover el avatar hacia arriba
+            AvatarContainer.TranslationY = -scrollY * 0.5;
+        }
+
+        // Manejo de edición de información personal
+        private void OnEditInfoPersonalClicked(object sender, EventArgs e)
+        {
+            _editandoInfoPersonal = !_editandoInfoPersonal;
+
+            // Cambiar ícono del botón
+            if (_editandoInfoPersonal)
+            {
+                BtnEditarInfoPersonal.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
+                BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#28a745");
+            }
+            else
+            {
+                BtnEditarInfoPersonal.Text = "&#xE3C9;"; // edit_24
+                BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#3b71ff");
             }
         }
 
-        /// <summary>
-        /// Maneja la selección de condiciones médicas
-        /// </summary>
+        // Manejo de edición de condiciones médicas
+        private void OnEditCondicionesClicked(object sender, EventArgs e)
+        {
+            _editandoCondiciones = !_editandoCondiciones;
+
+            // Cambiar ícono del botón y mostrar/ocultar botón agregar
+            if (_editandoCondiciones)
+            {
+                BtnEditarCondiciones.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
+                BtnEditarCondiciones.BackgroundColor = Color.FromArgb("#28a745");
+                BtnAgregarCondicion.IsVisible = true;
+            }
+            else
+            {
+                BtnEditarCondiciones.Text = "&#xE3C9;"; // edit_24
+                BtnEditarCondiciones.BackgroundColor = Color.FromArgb("#3b71ff");
+                BtnAgregarCondicion.IsVisible = false;
+            }
+        }
+
+        // Manejo de edición de alergias
+        private void OnEditAlergiasClicked(object sender, EventArgs e)
+        {
+            _editandoAlergias = !_editandoAlergias;
+
+            // Cambiar ícono del botón y mostrar/ocultar botón agregar
+            if (_editandoAlergias)
+            {
+                BtnEditarAlergias.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
+                BtnEditarAlergias.BackgroundColor = Color.FromArgb("#28a745");
+                BtnAgregarAlergia.IsVisible = true;
+            }
+            else
+            {
+                BtnEditarAlergias.Text = "&#xE3C9;"; // edit_24
+                BtnEditarAlergias.BackgroundColor = Color.FromArgb("#dc3545");
+                BtnAgregarAlergia.IsVisible = false;
+            }
+        }
+
+        // Evento para manejar selección de condiciones médicas
         private void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-                _viewModel?.OnCondicionesMedicasSeleccionadas(sender, e);
+                Debug.WriteLine("=== Condiciones médicas seleccionadas ===");
 
-                // Log para debugging
-                Debug.WriteLine($"Condiciones médicas seleccionadas: {e.CurrentSelection.Count}");
+                // Llamar al método del ViewModel
+                _viewModel.OnCondicionesMedicasSeleccionadas(sender, e);
 
+                // Log de las selecciones
+                Debug.WriteLine($"Condiciones seleccionadas: {e.CurrentSelection.Count}");
                 foreach (CondicionesMedicas condicion in e.CurrentSelection)
                 {
                     Debug.WriteLine($"- {condicion.nombre_condicion}");
@@ -93,18 +134,18 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        /// <summary>
-        /// Maneja la selección de alergias
-        /// </summary>
+        // Evento para manejar selección de alergias
         private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-                _viewModel?.OnAlergiasSeleccionadas(sender, e);
+                Debug.WriteLine("=== Alergias seleccionadas ===");
 
-                // Log para debugging
+                // Llamar al método del ViewModel
+                _viewModel.OnAlergiasSeleccionadas(sender, e);
+
+                // Log de las selecciones
                 Debug.WriteLine($"Alergias seleccionadas: {e.CurrentSelection.Count}");
-
                 foreach (Alergias alergia in e.CurrentSelection)
                 {
                     Debug.WriteLine($"- {alergia.nombre_alergia}");
@@ -116,38 +157,14 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        /// <summary>
-        /// Se ejecuta cuando la página está desapareciendo
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            Debug.WriteLine("PantallaPerfil - OnDisappearing");
-        }
-
-        /// <summary>
-        /// Maneja errores de navegación o inicialización
-        /// </summary>
-        private async void OnErrorOcurred(string titulo, string mensaje)
+        // Método para refrescar la página cuando se hace pull-to-refresh (opcional)
+        private async void OnRefreshRequested(object sender, EventArgs e)
         {
             try
             {
-                await DisplayAlert(titulo, mensaje, "OK");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error mostrando alerta: {ex.Message}");
-            }
-        }
+                Debug.WriteLine("=== Refresh solicitado ===");
 
-        /// <summary>
-        /// Método para refrescar manualmente los datos desde la UI
-        /// </summary>
-        private async void OnRefreshRequested()
-        {
-            try
-            {
-                if (_viewModel?.RefrescarPerfilCommand.CanExecute(null) == true)
+                if (_viewModel.RefrescarPerfilCommand.CanExecute(null))
                 {
                     await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
                 }
@@ -155,8 +172,14 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error en OnRefreshRequested: {ex.Message}");
-                await DisplayAlert("Error", "Error al refrescar los datos", "OK");
+                await DisplayAlert("Error", "Error al refrescar el perfil", "OK");
             }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            Debug.WriteLine("=== PantallaPerfil OnDisappearing ===");
         }
     }
 }

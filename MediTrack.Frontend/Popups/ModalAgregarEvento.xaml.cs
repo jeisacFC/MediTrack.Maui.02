@@ -1,11 +1,11 @@
 ﻿using MediTrack.Frontend.ViewModels.PantallasPrincipales;
-using MediTrack.Frontend.Services.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
+using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {
     public partial class ModalAgregarEvento : ContentPage
     {
+        public EventoAgenda? EventoCreado => ViewModel?.EventoCreado;
         public bool EventoGuardado => ViewModel?.EventoGuardado ?? false;
 
         private AgregarEventoViewModel? ViewModel => BindingContext as AgregarEventoViewModel;
@@ -13,13 +13,7 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
         public ModalAgregarEvento(DateTime fechaSeleccionada)
         {
             InitializeComponent();
-
-            // Obtener ApiService desde DI o usar DependencyService
-            var apiService = Handler?.MauiContext?.Services?.GetService<IApiService>()
-                           ?? Microsoft.Maui.Controls.DependencyService.Get<IApiService>();
-
-            // Crear ViewModel con dependencias
-            BindingContext = new AgregarEventoViewModel(fechaSeleccionada, apiService);
+            BindingContext = new AgregarEventoViewModel(fechaSeleccionada);
         }
 
         protected override async void OnAppearing()

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using System.Collections.ObjectModel;
-using MediTrack.Frontend.Models.Response;
+using MediTrack.Frontend.Models.Model;
 
 namespace MediTrack.Frontend.Converters
 {
@@ -8,13 +8,10 @@ namespace MediTrack.Frontend.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ObservableCollection<ResEventoCalendario> eventos)
+            if (value is ObservableCollection<EventoAgenda> eventos)
             {
-                // Como ResEventoCalendario no tiene campo "Completado", 
-                // simular que los eventos pasados están completados
-                return eventos.Count(e => e.FechaHora < DateTime.Now);
+                return eventos.Count(e => e.Completado);
             }
-
             return 0;
         }
 
