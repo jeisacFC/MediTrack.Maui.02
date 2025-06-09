@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MediTrack.Frontend.Popups.ModalGestionarSintomas"
+               x:Name="PopupSintomas">
+
+    <!-- Fondo semitransparente -->
+    <Frame BackgroundColor="#80000000"
+           HorizontalOptions="Fill"
+           VerticalOptions="Fill"
+           HasShadow="False"
+           CornerRadius="0"
+           Padding="0">
+
+        <!-- Contenedor del modal -->
+        <Frame BackgroundColor="White"
+               CornerRadius="20"
+               Padding="0"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               WidthRequest="350"
+               HeightRequest="600"
+               HasShadow="True">
+
+            <Grid RowDefinitions="Auto,*,Auto">
+
+                <!-- Header con botón cerrar -->
+                <Grid Grid.Row="0" 
+                      ColumnDefinitions="*,Auto" 
+                      BackgroundColor="#9C27B0"
+                      Padding="20,15">
+
+                    <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                        <Label FontFamily="MaterialIcons"
+                               Text="&#xe87c;"
+                               FontSize="20"
+                               TextColor="White"
+                               VerticalOptions="Center" />
+                        <Label Text="¿Cómo te sientes?"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <Button Grid.Column="1"
+                            Text="×"
+                            FontSize="20"
+                            TextColor="White"
+                            BackgroundColor="Transparent"
+                            WidthRequest="30"
+                            HeightRequest="30"
+                            CornerRadius="15"
+                            Command="{Binding CerrarModalCommand}" />
+                </Grid>
+
+                <!-- Contenido principal -->
+                <ScrollView Grid.Row="1" Padding="20">
+                    <VerticalStackLayout Spacing="15">
+
+                        <!-- Barra de búsqueda -->
+                        <Frame BackgroundColor="#F5F5F5"
+                               CornerRadius="10"
+                               Padding="12,8"
+                               HasShadow="False">
+                            <HorizontalStackLayout Spacing="8">
+                                <Label FontFamily="MaterialIcons"
+                                       Text="&#xe8b6;"
+                                       FontSize="16"
+                                       TextColor="Gray"
+                                       VerticalOptions="Center" />
+                                <Entry Placeholder="Buscar síntomas..."
+                                       BackgroundColor="Transparent"
+                                       TextColor="Black"
+                                       FontSize="14"
+                                       HorizontalOptions="FillAndExpand"
+                                       Text="{Binding FiltroBusqueda}"
+                                       TextChanged="OnBusquedaTextChanged" />
+                            </HorizontalStackLayout>
+                        </Frame>
+
+                        <!-- Loading indicator -->
+                        <ActivityIndicator IsVisible="{Binding IsLoading}"
+                                           IsRunning="{Binding IsLoading}"
+                                           Color="#9C27B0"
+                                           HorizontalOptions="Center" />
+
+                        <!-- Síntomas seleccionados -->
+                        <VerticalStackLayout Spacing="8" 
+                                             IsVisible="{Binding HaySintomasSeleccionados}">
+                            <Label Text="Seleccionados:"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#9C27B0" />
+
+                            <CollectionView ItemsSource="{Binding SintomasSeleccionados}"
+                                            HeightRequest="80">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Horizontal" 
+                                                       ItemSpacing="6" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BackgroundColor="#E8E4FF"
+                                               CornerRadius="15"
+                                               Padding="8,6"
+                                               HasShadow="False"
+                                               HeightRequest="32">
+                                            <HorizontalStackLayout Spacing="6">
+                                                <Label Text="{Binding Nombre}"
+                                                       TextColor="#6B46C1"
+                                                       FontSize="11"
+                                                       FontAttributes="Bold"
+                                                       VerticalOptions="Center" />
+                                                <Button Text="×"
+                                                        FontSize="12"
+                                                        TextColor="#6B46C1"
+                                                        BackgroundColor="Transparent"
+                                                        WidthRequest="16"
+                                                        HeightRequest="16"
+                                                        Padding="0"
+                                                        Command="{Binding BindingContext.RemoverSintomaSeleccionadoCommand, Source={x:Reference PopupSintomas}}"
+                                                        CommandParameter="{Binding .}" />
+                                            </HorizontalStackLayout>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+
+                        <!-- Lista de síntomas disponibles -->
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Síntomas disponibles:"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="Black"
+                                   IsVisible="{Binding HaySintomasDisponibles}" />
+
+                            <CollectionView ItemsSource="{Binding SintomasFiltrados}"
+                                            IsVisible="{Binding HaySintomasDisponibles}"
+                                            HeightRequest="200">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BackgroundColor="White"
+                                               CornerRadius="8"
+                                               Padding="12,8"
+                                               Margin="0,2"
+                                               HasShadow="True">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <Label Grid.Column="0"
+                                                       Text="{Binding Nombre}"
+                                                       FontSize="13"
+                                                       TextColor="Black"
+                                                       VerticalOptions="Center" />
+
+                                                <CheckBox Grid.Column="1"
+                                                          IsChecked="{Binding EstaSeleccionado}"
+                                                          Color="#9C27B0"
+                                                          CheckedChanged="OnSintomaSeleccionado" />
+                                            </Grid>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+
+                        <!-- Agregar síntoma manual -->
+                        <VerticalStackLayout Spacing="10"
+                                             IsVisible="{Binding PuedeAgregarSintomaManual}">
+                            <Label Text="¿No encuentras tu síntoma?"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   TextColor="Gray"
+                                   HorizontalTextAlignment="Center" />
+
+                            <Frame BackgroundColor="#F0F8FF"
+                                   CornerRadius="8"
+                                   Padding="12"
+                                   HasShadow="False">
+                                <VerticalStackLayout Spacing="8">
+                                    <Entry Placeholder="Escribe tu síntoma aquí..."
+                                           Text="{Binding NuevoSintomaTexto}"
+                                           BackgroundColor="White"
+                                           TextColor="Black"
+                                           FontSize="13" />
+
+                                    <Button Text="Agregar"
+                                            BackgroundColor="#9C27B0"
+                                            TextColor="White"
+                                            CornerRadius="6"
+                                            FontSize="12"
+                                            HeightRequest="32"
+                                            Command="{Binding AgregarSintomaManualCommand}"
+                                            IsEnabled="{Binding NuevoSintomaTexto, Converter={StaticResource StringNotEmptyConverter}}" />
+                                </VerticalStackLayout>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <!-- Mensaje cuando no hay síntomas -->
+                        <VerticalStackLayout Spacing="10"
+                                             IsVisible="{Binding HaySintomasDisponibles, Converter={StaticResource InverseBoolConverter}}"
+                                             HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                                   Text="&#xe8b6;"
+                                   FontSize="30"
+                                   TextColor="#cccccc"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="No se encontraron síntomas"
+                                   TextColor="Gray"
+                                   FontSize="12"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <!-- Botones inferiores -->
+                <Grid Grid.Row="2" 
+                      ColumnDefinitions="*,*" 
+                      ColumnSpacing="10" 
+                      Padding="20,10,20,20">
+
+                    <Button Grid.Column="0"
+                            Text="Cancelar"
+                            BackgroundColor="#E0E0E0"
+                            TextColor="Black"
+                            CornerRadius="8"
+                            FontSize="13"
+                            HeightRequest="36"
+                            Command="{Binding CerrarModalCommand}" />
+
+                    <Button Grid.Column="1"
+                            Text="Guardar"
+                            BackgroundColor="#9C27B0"
+                            TextColor="White"
+                            CornerRadius="8"
+                            FontSize="13"
+                            HeightRequest="36"
+                            Command="{Binding GuardarSintomasCommand}"
+                            IsEnabled="{Binding HaySintomasSeleccionados}" />
+                </Grid>
+            </Grid>
+        </Frame>
+    </Frame>
+</toolkit:Popup>
