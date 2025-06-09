@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -164,6 +165,78 @@ public class ApiService : IApiService
             };
         }
     }
+
+
+    public async Task<ResListarMedicamentosUsuario> ListarMedicamentosUsuarioAsync(ReqObtenerUsuario request)
+    {
+        var endpoint = "api/medicamentos/listar/usuario";
+        try
+        {
+            // Usamos PostAsJsonAsync para simplificar la serialización
+            var response = await _httpClient.PostAsJsonAsync(endpoint, request);
+
+            var json = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de {endpoint}: {json}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResListarMedicamentosUsuario>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            return new ResListarMedicamentosUsuario { resultado = false, Mensaje = $"Error del servidor: {response.StatusCode}" };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en ListarMedicamentosUsuarioAsync: {ex.Message}");
+            return new ResListarMedicamentosUsuario { resultado = false, Mensaje = "No se pudo conectar con el servidor." };
+        }
+    }
+
+    public async Task<ResDetalleMedicamentoUsuario> ObtenerDetalleMedicamentoUsuarioAsync(ReqMedicamento request)
+    {
+        var endpoint = "api/medicamentos/detalle";
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(endpoint, request);
+
+            var json = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de {endpoint}: {json}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResDetalleMedicamentoUsuario>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            return new ResDetalleMedicamentoUsuario { resultado = false, Mensaje = $"Error del servidor: {response.StatusCode}" };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en ObtenerDetalleMedicamentoUsuarioAsync: {ex.Message}");
+            return new ResDetalleMedicamentoUsuario { resultado = false, Mensaje = "No se pudo conectar con el servidor." };
+        }
+    }
+
+    public async Task<ResEliminarMedicamentoUsuario> EliminarMedicamentoUsuarioAsync(ReqMedicamento request)
+    {
+        var endpoint = "api/medicamentos/eliminar";
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(endpoint, request);
+
+            var json = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de {endpoint}: {json}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResEliminarMedicamentoUsuario>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            return new ResEliminarMedicamentoUsuario { resultado = false, Mensaje = $"Error del servidor: {response.StatusCode}" };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en EliminarMedicamentoUsuarioAsync: {ex.Message}");
+            return new ResEliminarMedicamentoUsuario { resultado = false, Mensaje = "No se pudo conectar con el servidor." };
+        }
+    }
+
     #endregion
 
     #region AUTENTICACIÓN USUARIOS
