@@ -21,5 +21,10 @@ namespace MediTrack.Frontend.Services.Interfaces
         Task<ResObtenerUsuario> GetUserAsync(ReqObtenerUsuario request);
         Task<ResObtenerAlergiasUsuario> ObtenerAlergiasUsuarioAsync(ReqObtenerAlergiasUsuario request);
         Task<ResObtenerCondicionesUsuario> ObtenerCondicionesMedicasAsync(ReqObtenerCondicionesUsuario request);
+        Task<ResActualizarUsuario> ActualizarUsuarioAsync(ReqActualizarUsuario request);
+        Task<ResListarCondiciones> ListarCondicionesMedicasAsync(ReqListarCondiciones request);
+        Task<ResListarAlergias> ListarAlergiasAsync(ReqListarAlergias request);
+        Task<ResAsignarCondicionUsuario> AsignarCondicionUsuarioAsync(ReqAsignarCondicionUsuario request);
+        Task<ResAsignarAlergiaUsuario> AsignarAlergiaUsuarioAsync(ReqAsignarAlergiaUsuario request);
     }
 }

@@ -186,7 +186,6 @@ public class ApiService : IApiService
             return new ResLogin { resultado = false, Mensaje = "Error de conexión general" };
         }
     }
-
     public async Task<ResRegister> RegisterAsync(ReqRegister request)
     {
         var endpoint = "api/usuarios/registrar";
@@ -240,7 +239,6 @@ public class ApiService : IApiService
             return CreateErrorRegisterResponse("Error de conexión general");
         }
     }
-
     public async Task<ResObtenerUsuario> GetUserAsync(ReqObtenerUsuario request)
     {
         var endpoint = "api/usuarios/perfil";
@@ -299,7 +297,6 @@ public class ApiService : IApiService
             return CreateErrorUsuarioResponse("Error de conexión general");
         }
     }
-
     public async Task<ResLogout> LogoutAsync(ReqLogout request)
     {
         var endpoint = "api/usuarios/logout";
@@ -347,7 +344,48 @@ public class ApiService : IApiService
             return CreateErrorLogoutResponse("Error de conexión");
         }
     }
-
+    public async Task<ResActualizarUsuario> ActualizarUsuarioAsync(ReqActualizarUsuario request)
+    {
+        var endpoint = "api/usuarios/perfil";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                var backendResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                var resActualizarUsuario = new ResActualizarUsuario();
+                MapProperty(backendResponse, "resultado", v => resActualizarUsuario.resultado = v.GetBoolean());
+                MapProperty(backendResponse, "mensaje", v => resActualizarUsuario.Mensaje = v.GetString());
+                // Mapear usuario actualizado
+                if (backendResponse.TryGetProperty("usuarioActualizado", out var usuarioActualizado) && usuarioActualizado.ValueKind == JsonValueKind.Object)
+                {
+                    resActualizarUsuario.FilasAfectadas = 1;
+                }
+                resActualizarUsuario.errores = MapErrors(backendResponse);
+                return resActualizarUsuario;
+            }
+            else
+            {
+                return await HandleErrorResponse<ResActualizarUsuario>(responseContent, () => new ResActualizarUsuario
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}",
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en ActualizarUsuarioAsync: {ex.Message}");
+            return new ResActualizarUsuario { resultado = false, Mensaje = "No se pudo conectar con el servidor.", errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
+        }
+    }
     #endregion
 
     #region CondicionesMedicas y Alergias
@@ -385,7 +423,6 @@ public class ApiService : IApiService
             return new ResObtenerCondicionesUsuario { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
         }
     }
-
     public async Task<ResObtenerAlergiasUsuario> ObtenerAlergiasUsuarioAsync(ReqObtenerAlergiasUsuario request)
     {
         var endpoint = "api/alergias/obtener-usuario";
@@ -420,10 +457,145 @@ public class ApiService : IApiService
             return new ResObtenerAlergiasUsuario { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
         }
     }
+    public async Task<ResListarAlergias> ListarAlergiasAsync(ReqListarAlergias request)
+    {
+        var endpoint = "api/alergias/listar";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResListarAlergias>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                return new ResListarAlergias
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en ListarAlergiasAsync: {ex.Message}");
+            return new ResListarAlergias { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
+        }
+    }
+    public async Task<ResListarCondiciones> ListarCondicionesMedicasAsync(ReqListarCondiciones request)
+    {
+        var endpoint = "api/condiciones-medicas/listar";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResListarCondiciones>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                return new ResListarCondiciones
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en ListarCondicionesMedicasAsync: {ex.Message}");
+            return new ResListarCondiciones { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
+        }
+    }
+    public async Task<ResAsignarAlergiaUsuario> AsignarAlergiaUsuarioAsync(ReqAsignarAlergiaUsuario request)
+    {
+        var endpoint = "api/alergias/asignar-usuario";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResAsignarAlergiaUsuario>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                return new ResAsignarAlergiaUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en AsignarAlergiaUsuarioAsync: {ex.Message}");
+            return new ResAsignarAlergiaUsuario { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
+        }
+    }
+    public async Task<ResAsignarCondicionUsuario> AsignarCondicionUsuarioAsync(ReqAsignarCondicionUsuario request)
+    {
+        var endpoint = "api/condiciones-medicas/asignar-usuario";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResAsignarCondicionUsuario>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                return new ResAsignarCondicionUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en AsignarCondicionUsuarioAsync: {ex.Message}");
+            return new ResAsignarCondicionUsuario { resultado = false, errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } } };
+        }
+    }
     #endregion
 
     #region TOKEN
-
     private async Task ConfigurarTokenAsync()
     {
         try

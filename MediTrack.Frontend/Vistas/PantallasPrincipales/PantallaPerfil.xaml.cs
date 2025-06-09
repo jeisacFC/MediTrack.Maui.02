@@ -2,6 +2,8 @@ using MediTrack.Frontend.ViewModels;
 using MediTrack.Frontend.Models.Model;
 using System.Diagnostics;
 using MediTrack.Frontend.Vistas.Base;
+using MediTrack.Frontend.Popups;
+using CommunityToolkit.Maui.Views;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {
@@ -53,23 +55,69 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             AvatarContainer.TranslationY = -scrollY * 0.5;
         }
 
-        // Manejo de edición de información personal
-        private void OnEditInfoPersonalClicked(object sender, EventArgs e)
+        private async void OnEditInfoPersonalClicked(object sender, EventArgs e)
         {
-            _editandoInfoPersonal = !_editandoInfoPersonal;
+            try
+            {
+                _editandoInfoPersonal = !_editandoInfoPersonal;
 
-            // Cambiar ícono del botón
-            if (_editandoInfoPersonal)
-            {
-                BtnEditarInfoPersonal.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
-                BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#28a745");
+                if (_editandoInfoPersonal)
+                {
+                    BtnEditarInfoPersonal.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
+                    BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#28a745");
+
+                    // Verificar que tenemos los datos necesarios
+                    if (_viewModel.Usuario == null)
+                    {
+                        await DisplayAlert("Error", "No se pueden cargar los datos del usuario", "OK");
+                        return;
+                    }
+
+                    // Crear el ViewModel específico del popup con los parámetros requeridos
+                    var popupViewModel = new ActualizarPerfilPopupViewModel(
+                        _viewModel._apiService, // Asume que PerfilViewModel tiene acceso al ApiService
+                        _viewModel.Usuario     // El objeto Usuario actual
+                    );
+
+                    var popup = new ActualizarPerfilPopup(popupViewModel);
+
+                    var result = await this.ShowPopupAsync(popup);
+
+                    // Si el resultado es true, significa que se actualizó exitosamente
+                    if (result is bool success && success)
+                    {
+                        Debug.WriteLine("=== POPUP CERRADO - ACTUALIZACIÓN EXITOSA ===");
+                        // Refrescar los datos del perfil
+                        await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("=== POPUP CERRADO - SIN CAMBIOS ===");
+                    }
+
+                    // Resetear el estado del botón
+                    _editandoInfoPersonal = false;
+                    BtnEditarInfoPersonal.Text = "&#xE3C9;"; // edit_24
+                    BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#3b71ff");
+                }
+                else
+                {
+                    BtnEditarInfoPersonal.Text = "&#xE3C9;"; // edit_24
+                    BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#3b71ff");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                BtnEditarInfoPersonal.Text = "&#xE3C9;"; // edit_24
+                Debug.WriteLine($"Error en OnEditInfoPersonalClicked: {ex.Message}");
+                await DisplayAlert("Error", "Error al abrir el modal de datos personales", "OK");
+
+                // Resetear el estado del botón en caso de error
+                _editandoInfoPersonal = false;
+                BtnEditarInfoPersonal.Text = "&#xE3C9;";
                 BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#3b71ff");
             }
         }
+
 
         // Manejo de edición de condiciones médicas
         private void OnEditCondicionesClicked(object sender, EventArgs e)

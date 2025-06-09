@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediTrack.Frontend.Models.Model;
 using MediTrack.Frontend.Models.Request;
+using MediTrack.Frontend.Popups;
 using MediTrack.Frontend.Services;
 using MediTrack.Frontend.Services.Interfaces;
 using MediTrack.Frontend.ViewModels.Base;
@@ -12,7 +14,7 @@ namespace MediTrack.Frontend.ViewModels
 {
     public partial class PerfilViewModel : BaseViewModel
     {
-        private readonly IApiService _apiService;
+        public readonly IApiService _apiService;
         private bool _isLoggingOut = false;
 
         [ObservableProperty]
@@ -246,7 +248,6 @@ namespace MediTrack.Frontend.ViewModels
             Debug.WriteLine("=== PROPIEDADES FORMATEADAS ACTUALIZADAS ===");
         }
 
-
         private async Task CargarCondicionesMedicasAsync()
         {
             try
@@ -416,10 +417,45 @@ namespace MediTrack.Frontend.ViewModels
         [RelayCommand]
         private async Task EditarPerfil()
         {
-            await ExecuteAsync(async () =>
+            try
             {
-                await Shell.Current.GoToAsync("//EditarPerfil");
-            });
+                Debug.WriteLine("=== ABRIENDO POPUP DE EDITAR PERFIL ===");
+
+                if (Usuario == null)
+                {
+                    await ShowAlertAsync("Error", "No hay información del usuario para editar");
+                    return;
+                }
+
+                // Crear el ViewModel del popup
+                var popupViewModel = new ActualizarPerfilPopupViewModel(_apiService, Usuario);
+
+                // Crear y mostrar el popup
+                var popup = new ActualizarPerfilPopup(popupViewModel);
+                var resultado = await Shell.Current.ShowPopupAsync(popup);
+
+                // Si se actualizó correctamente, refrescar los datos
+                if (resultado is bool actualizado && actualizado)
+                {
+                    Debug.WriteLine("=== PERFIL ACTUALIZADO, REFRESCANDO DATOS ===");
+
+                    // Actualizar las propiedades formateadas con los nuevos datos
+                    ActualizarPropiedadesFormateadas();
+
+                    // Forzar notificaciones de cambio para actualizar la UI
+                    OnPropertyChanged(nameof(Usuario));
+                    OnPropertyChanged(nameof(NombreCompleto));
+                    OnPropertyChanged(nameof(FechaNacimientoFormateada));
+                    OnPropertyChanged(nameof(GeneroTexto));
+
+                    Debug.WriteLine("=== DATOS ACTUALIZADOS EN LA UI ===");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error al abrir popup de editar perfil: {ex.Message}");
+                await ShowAlertAsync("Error", "Error al abrir el formulario de edición");
+            }
         }
 
         [RelayCommand]

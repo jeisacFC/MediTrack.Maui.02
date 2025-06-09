@@ -71,6 +71,7 @@ public static class MauiProgram
         builder.Services.AddTransient<OlvidoContrasenaViewModel>();
         builder.Services.AddTransient<CodigoVerificacionViewModel>();
         builder.Services.AddTransient<NuevaContrasenaViewModel>();
+        builder.Services.AddTransient<ActualizarPerfilPopupViewModel>();    
 
 
         // PANTALLAS PRINCIPALES
@@ -79,7 +80,6 @@ public static class MauiProgram
         builder.Services.AddTransient<PantallaInicio>();
         builder.Services.AddTransient<PantallaAgenda>();        
         builder.Services.AddTransient<PantallaPerfil>();
-
 
 
         // PANTALLAS INICIALES
@@ -92,6 +92,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ModalCodigoVerificacion>();
         builder.Services.AddTransient<ModalNuevaContrasena>();
         builder.Services.AddTransient<ModalAgregarEvento>();
+        builder.Services.AddTransient<ActualizarPerfilPopup>();
 
 
         var app = builder.Build();
