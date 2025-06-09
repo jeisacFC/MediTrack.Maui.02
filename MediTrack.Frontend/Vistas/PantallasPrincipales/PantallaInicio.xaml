@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<base:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:base="clr-namespace:MediTrack.Frontend.Vistas"
              xmlns:vm="clr-namespace:MediTrack.Frontend.ViewModels.PantallasPrincipales"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaInicio"
              x:Name="Pagina"
@@ -297,6 +298,153 @@
                 </Frame>
             </VerticalStackLayout>
 
+            <!-- Recomendaciones IA -->
+            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                    <Label Grid.Column="0"
+                        Text="Recomendaciones"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+                    <!-- Si quieres “Ver todos” -->
+                </Grid>
+
+                <!-- Spinner -->
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                     IsVisible="{Binding IsLoading}"
+                     HorizontalOptions="Center" />
+
+                <!-- Lista de recomendaciones -->
+                <ScrollView Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never"
+                    HeightRequest="140"
+                    IsVisible="{Binding HayRecomendaciones}">
+                    <StackLayout Orientation="Horizontal"
+                         Spacing="15"
+                         Padding="0,5"
+                         BindableLayout.ItemsSource="{Binding Recomendaciones}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="White"
+                                     CornerRadius="15"
+                                     Padding="15"
+                                     WidthRequest="280"
+                                     HasShadow="True">
+                                    <VerticalStackLayout Spacing="10">
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Label FontFamily="MaterialIcons"
+                                                Text="&#xE8B8;"    
+                                                FontSize="20"
+                                                VerticalOptions="Center" />
+                                            <Label Text="{Binding Titulo}"
+                                                FontAttributes="Bold"
+                                                FontSize="14"
+                                                LineBreakMode="TailTruncation"
+                                                HorizontalOptions="FillAndExpand" />
+                                        </HorizontalStackLayout>
+                                        <Label Text="{Binding Descripcion}"
+                                                FontSize="12"
+                                                LineBreakMode="WordWrap" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Placeholder -->
+                <Frame BackgroundColor="#F8F9FA"
+                     CornerRadius="15"
+                     Padding="20"
+                     IsVisible="{Binding HayRecomendaciones, Converter={StaticResource InverseBoolConverter}}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label FontFamily="MaterialIcons"
+                                Text="&#xe8b6;"     
+                                FontSize="30"
+                                TextColor="#cccccc"
+                                HorizontalTextAlignment="Center" />
+                            <Label Text="No hay recomendaciones disponibles"
+                                FontSize="14"
+                                TextColor="Gray"
+                                HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+
+            <!-- Interacciones entre medicamentos -->
+            <VerticalStackLayout Spacing="10"
+                     IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                    <Label Grid.Column="0"
+                        Text="Interacciones"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+                    <!-- botón “Ver detalles” opcional -->
+                </Grid>
+
+                <!-- Spinner -->
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                     IsVisible="{Binding IsLoading}"
+                     HorizontalOptions="Center" />
+
+                <!-- Lista horizontal de interacciones -->
+                <ScrollView Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never"
+                    HeightRequest="140"
+                    IsVisible="{Binding HayInteracciones}">
+                    <StackLayout Orientation="Horizontal"
+                        Spacing="15"
+                        Padding="0,5"
+                        BindableLayout.ItemsSource="{Binding Interacciones}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="White"
+                                    CornerRadius="15"
+                                    Padding="15"
+                                    WidthRequest="280"
+                                    HasShadow="True">
+                                    <VerticalStackLayout Spacing="10">
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Label FontFamily="MaterialIcons"
+                                                Text="&#xE914;"
+                                                FontSize="20"
+                                                VerticalOptions="Center" />
+                                                <Label Text="{Binding Titulo}"
+                                                    FontAttributes="Bold"
+                                                    FontSize="14"
+                                                    LineBreakMode="TailTruncation"
+                                                    HorizontalOptions="FillAndExpand" />
+                                        </HorizontalStackLayout>
+                                        <Label Text="{Binding Descripcion}"
+                                            FontSize="12"
+                                            LineBreakMode="WordWrap" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Placeholder -->
+                <Frame BackgroundColor="#F8F9FA"
+                        CornerRadius="15"
+                        Padding="20"
+                        HasShadow="False"
+                        IsVisible="{Binding HayInteracciones, Converter={StaticResource InverseBoolConverter}}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label FontFamily="MaterialIcons"
+                            Text="&#xe5c8;"
+                            FontSize="30"
+                            TextColor="#cccccc"
+                            HorizontalTextAlignment="Center" />
+                            <Label Text="No se detectaron interacciones"
+                                FontSize="14"
+                                TextColor="Gray"
+                                HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+
+
             <!-- Síntomas -->
             <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
                 <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
@@ -385,4 +533,4 @@
 
         </VerticalStackLayout>
     </ScrollView>
-</ContentPage>
+</base:BaseContentPage>

@@ -44,17 +44,8 @@
 
     <!-- Barra inferior de navegación -->
     <TabBar>
-
-        <ShellContent Title="Inicio" Route="inicio">
-            <ShellContent.Icon>
-                <FontImageSource Glyph="&#xe88a;" FontFamily="MaterialIcons" Size="28" Color="#3b71ff" />
-            </ShellContent.Icon>
-            <ShellContent.ContentTemplate>
-                <DataTemplate>
-                    <pantallasPrincipales:PantallaInicio />
-                </DataTemplate>
-            </ShellContent.ContentTemplate>
-        </ShellContent>
+        <ShellContent Title="Inicio" Route="inicio" Icon="{FontImageSource Glyph='&#xe88a;', FontFamily='MaterialIcons', Size=28, Color='#3b71ff'}"
+                  ContentTemplate="{DataTemplate pantallasPrincipales:PantallaInicio}" />
 
         <ShellContent Title="Agenda" Route="agenda">
             <ShellContent.Icon>

@@ -2,7 +2,7 @@ using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
-public partial class PantallaInicio : ContentPage
+public partial class PantallaInicio : BaseContentPage
 {
     private InicioViewModel _viewModel;
 

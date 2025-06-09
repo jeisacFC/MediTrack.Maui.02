@@ -4,10 +4,8 @@ using MediTrack.Frontend.Models.Response;
 using MediTrack.Frontend.Services.Interfaces;
 using System.Diagnostics;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Services.Implementaciones;
 
@@ -117,65 +115,133 @@ public class ApiService : IApiService
     #region IA
     public async Task<ResHabitosSaludables?> ObtenerHabitosAsync(ReqObtenerUsuario request)
     {
-        const string endpoint = "api/habitos";   
+        const string endpoint = "api/ia/habitos";
         try
         {
-            // Serializar petición
             var json = JsonSerializer.Serialize(request);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"[ApiService] Request JSON: {json}");
 
-            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"[ApiService] Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
             var response = await _httpClient.PostAsync(endpoint, content);
 
-            // Leer flujo
-            using var stream = await response.Content.ReadAsStreamAsync();
+            var payload = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"[ApiService] HTTP {(int)response.StatusCode} – Payload: {payload}");
 
             if (response.IsSuccessStatusCode)
             {
-                // Deserializar y devolver
-                return await JsonSerializer.DeserializeAsync<ResHabitosSaludables>(
+                using var stream = new MemoryStream(Encoding.UTF8.GetBytes(payload));
+                var res = await JsonSerializer.DeserializeAsync<ResHabitosSaludables>(
                     stream,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
+
+                Debug.WriteLine($"[ApiService] Deserializados {res?.Habitos?.Count ?? 0} hábitos");
+                return res;
             }
             else
             {
-                Debug.WriteLine($"API devolvió {(int)response.StatusCode}: {response.ReasonPhrase}");
-                // Opcional: leer detalle de error
-                var errorJson = await new StreamReader(stream).ReadToEndAsync();
-                Debug.WriteLine($"Detalle: {errorJson}");
-
-                // Puedes retornar null o un objeto marcando resultado=false
+                Debug.WriteLine($"[ApiService] Error servidor: {(int)response.StatusCode}");
                 return new ResHabitosSaludables
                 {
                     resultado = false,
                     Habitos = new List<string>(),
-                    Mensaje = $"Error del servidor {(int)response.StatusCode}"
+                    Mensaje = $"Error {(int)response.StatusCode}"
                 };
             }
         }
-        catch (HttpRequestException ex)
-        {
-            Debug.WriteLine($"Error HTTP: {ex.Message}");
-            return new ResHabitosSaludables
-            {
-                resultado = false,
-                Habitos = new List<string>(),
-                Mensaje = "No se pudo conectar con el servidor"
-            };
-        }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error inesperado: {ex.Message}");
-            return new ResHabitosSaludables
-            {
-                resultado = false,
-                Habitos = new List<string>(),
-                Mensaje = ex.Message
-            };
+            Debug.WriteLine($"[ApiService] Excepción: {ex}");
+            throw;
         }
     }
 
+    public async Task<ResRecomendacionesIA?> ObtenerRecomendacionesAsync(ReqObtenerUsuario request)
+    {
+        const string endpoint = "api/ia/recomendaciones";
+        try
+        {
+            var json = JsonSerializer.Serialize(request);
+            Debug.WriteLine($"[ApiService] Req Recomendaciones JSON: {json}");
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"[ApiService] Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            var payload = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"[ApiService] HTTP {(int)response.StatusCode} – Payload: {payload}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                using var stream = new MemoryStream(Encoding.UTF8.GetBytes(payload));
+                var res = await JsonSerializer.DeserializeAsync<ResRecomendacionesIA>(
+                    stream,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+                Debug.WriteLine($"[ApiService] Deserializadas {res?.Recomendaciones?.Count ?? 0} recomendaciones");
+                return res;
+            }
+            else
+            {
+                Debug.WriteLine($"[ApiService] Error servidor: {(int)response.StatusCode}");
+                return new ResRecomendacionesIA
+                {
+                    resultado = false,
+                    Recomendaciones = new List<string>(),
+                    Mensaje = $"Error {(int)response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[ApiService] Excepción recomendaciones: {ex}");
+            throw;
+        }
+    }
+
+    public async Task<ResInteraccionesMedicamentos?> ObtenerInteraccionesAsync(ReqObtenerUsuario request)
+    {
+        const string endpoint = "api/ia/interacciones";
+        try
+        {
+            var json = JsonSerializer.Serialize(request);
+            Debug.WriteLine($"[ApiService] Req Interacciones JSON: {json}");
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"[ApiService] POST {_httpClient.BaseAddress}{endpoint}");
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            var payload = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"[ApiService] HTTP {(int)response.StatusCode} – Payload: {payload}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                using var stream = new MemoryStream(Encoding.UTF8.GetBytes(payload));
+                var res = await JsonSerializer.DeserializeAsync<ResInteraccionesMedicamentos>(
+                    stream,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+                Debug.WriteLine($"[ApiService] Deserializadas {res?.Interacciones?.Count ?? 0} interacciones");
+                return res;
+            }
+            else
+            {
+                Debug.WriteLine($"[ApiService] Error servidor: {(int)response.StatusCode}");
+                return new ResInteraccionesMedicamentos
+                {
+                    resultado = false,
+                    Interacciones = new List<string>(),
+                    Mensaje = $"Error {(int)response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[ApiService] Excepción interacciones: {ex}");
+            throw;
+        }
+    }
 
 
     #endregion

@@ -60,6 +60,7 @@ public static class MauiProgram
         // TODOS LOS VIEWMODELS 
         builder.Services.AddTransient<ScanViewModel>();
         builder.Services.AddTransient<BusquedaViewModel>();
+        builder.Services.AddTransient<InicioViewModel>();
 
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
@@ -72,6 +73,7 @@ public static class MauiProgram
 
         builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<PantallaBusqueda>();
+        builder.Services.AddTransient<PantallaInicio>();
 
         builder.Services.AddTransient<PantallaInicioSesion>();
         builder.Services.AddTransient<PantallaRegistro>();
