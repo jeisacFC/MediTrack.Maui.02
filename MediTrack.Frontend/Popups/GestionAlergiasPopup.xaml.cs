@@ -3,11 +3,11 @@ using MediTrack.Frontend.ViewModels;
 
 namespace MediTrack.Frontend.Popups;
 
-public partial class GestionCondicionesMedicasPopup : Popup
+public partial class GestionAlergiasPopup : Popup
 {
-    private CondicionesMedicasViewModel _viewModel;
+    private AlergiasViewModel _viewModel;
 
-    public GestionCondicionesMedicasPopup(CondicionesMedicasViewModel viewModel)
+    public GestionAlergiasPopup(AlergiasViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
@@ -19,15 +19,14 @@ public partial class GestionCondicionesMedicasPopup : Popup
         await CloseAsync();
     }
 
-    private void OnCondicionesSeleccionadas(object sender, SelectionChangedEventArgs e)
+    private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
     {
-        _viewModel?.OnCondicionesSeleccionadas(sender, e);
+        _viewModel?.OnAlergiasSeleccionadas(sender, e);
     }
 
     protected override async void OnHandlerChanged()
     {
         base.OnHandlerChanged();
-
         if (Handler != null && _viewModel != null)
         {
             await _viewModel.InitializeAsync();

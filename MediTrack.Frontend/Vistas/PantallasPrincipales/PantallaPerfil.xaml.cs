@@ -21,7 +21,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             _viewModel = viewModel;
             BindingContext = _viewModel;
         }
-
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -37,7 +36,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 await DisplayAlert("Error", "Error al cargar el perfil", "OK");
             }
         }
-
         private void OnScrollViewScrolled(object sender, ScrolledEventArgs e)
         {
             // Calculamos la opacidad basada en el scroll
@@ -54,7 +52,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             // También podemos mover el avatar hacia arriba
             AvatarContainer.TranslationY = -scrollY * 0.5;
         }
-
         private async void OnEditInfoPersonalClicked(object sender, EventArgs e)
         {
             try
@@ -128,8 +125,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#3b71ff");
             }
         }
-
-        // MÉTODO PRINCIPAL PARA ABRIR EL MODAL DE CONDICIONES MÉDICAS
         private async void OnEditCondicionesMedicasClicked(object sender, EventArgs e)
         {
             try
@@ -174,67 +169,50 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 await DisplayAlert("Error", "Error al abrir el modal de condiciones médicas", "OK");
             }
         }
-
-        private void OnEditCondicionesClicked(object sender, EventArgs e)
-        {
-            _editandoCondiciones = !_editandoCondiciones;
-
-            // Cambiar ícono del botón y mostrar/ocultar botón agregar
-            if (_editandoCondiciones)
-            {
-                BtnEditarCondiciones.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
-                BtnEditarCondiciones.BackgroundColor = Color.FromArgb("#28a745");
-                BtnAgregarCondicion.IsVisible = true;
-            }
-            else
-            {
-                BtnEditarCondiciones.Text = "&#xE3C9;"; // edit_24
-                BtnEditarCondiciones.BackgroundColor = Color.FromArgb("#3b71ff");
-                BtnAgregarCondicion.IsVisible = false;
-            }
-        }
-
-        private void OnEditAlergiasClicked(object sender, EventArgs e)
-        {
-            _editandoAlergias = !_editandoAlergias;
-
-            // Cambiar ícono del botón y mostrar/ocultar botón agregar
-            if (_editandoAlergias)
-            {
-                BtnEditarAlergias.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
-                BtnEditarAlergias.BackgroundColor = Color.FromArgb("#28a745");
-                BtnAgregarAlergia.IsVisible = true;
-            }
-            else
-            {
-                BtnEditarAlergias.Text = "&#xE3C9;"; // edit_24
-                BtnEditarAlergias.BackgroundColor = Color.FromArgb("#dc3545");
-                BtnAgregarAlergia.IsVisible = false;
-            }
-        }
-
-        private void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
+        private async void OnEditAlergiasClicked(object sender, EventArgs e)
         {
             try
             {
-                Debug.WriteLine("=== Condiciones médicas seleccionadas ===");
+                Debug.WriteLine("=== Abriendo modal de alergias ===");
 
-                // Llamar al método del ViewModel
-                _viewModel.OnCondicionesMedicasSeleccionadas(sender, e);
-
-                // Log de las selecciones
-                Debug.WriteLine($"Condiciones seleccionadas: {e.CurrentSelection.Count}");
-                foreach (CondicionesMedicas condicion in e.CurrentSelection)
+                // Verificar que tenemos los datos del usuario necesarios
+                if (_viewModel.Usuario?.id_usuario == null)
                 {
-                    Debug.WriteLine($"- {condicion.nombre_condicion}");
+                    await DisplayAlert("Error", "No se pueden cargar los datos del usuario", "OK");
+                    return;
+                }
+
+                // Obtener el ApiService del ViewModel
+                var apiService = _viewModel.GetApiService();
+                if (apiService == null)
+                {
+                    await DisplayAlert("Error", "Error al acceder al servicio API", "OK");
+                    return;
+                }
+
+                // Crear el ViewModel del modal de alergias
+                var alergiasViewModel = new AlergiasViewModel(apiService, _viewModel.Usuario.id_usuario);
+
+                // Crear y mostrar el popup
+                var popup = new GestionAlergiasPopup(alergiasViewModel);
+                var result = await this.ShowPopupAsync(popup);
+
+                // Si se realizaron cambios, refrescar el perfil
+                if (result is bool success && success)
+                {
+                    Debug.WriteLine("=== Alergias actualizadas - refrescando perfil ===");
+                    if (_viewModel.RefrescarPerfilCommand.CanExecute(null))
+                    {
+                        await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error en OnCondicionesMedicasSeleccionadas: {ex.Message}");
+                Debug.WriteLine($"Error al abrir modal de alergias: {ex.Message}");
+                await DisplayAlert("Error", "Error al abrir el modal de alergias", "OK");
             }
         }
-
         private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -256,7 +234,27 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 Debug.WriteLine($"Error en OnAlergiasSeleccionadas: {ex.Message}");
             }
         }
+        private void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                Debug.WriteLine("=== Condiciones médicas seleccionadas ===");
 
+                // Llamar al método del ViewModel
+                _viewModel.OnCondicionesMedicasSeleccionadas(sender, e);
+
+                // Log de las selecciones
+                Debug.WriteLine($"Condiciones seleccionadas: {e.CurrentSelection.Count}");
+                foreach (CondicionesMedicas condicion in e.CurrentSelection)
+                {
+                    Debug.WriteLine($"- {condicion.nombre_condicion}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error en OnCondicionesMedicasSeleccionadas: {ex.Message}");
+            }
+        }
         private async void OnRefreshRequested(object sender, EventArgs e)
         {
             try
@@ -274,18 +272,11 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 await DisplayAlert("Error", "Error al refrescar el perfil", "OK");
             }
         }
-
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             Debug.WriteLine("=== PantallaPerfil OnDisappearing ===");
         }
-
-        // ELIMINADO: El RelayCommand que causaba conflicto
-        // [RelayCommand]
-        // private async Task EditarCondicionesMedicas() { ... }
-
-        // Helper method to show alerts
         private async Task ShowAlertAsync(string title, string message)
         {
             await DisplayAlert(title, message, "OK");

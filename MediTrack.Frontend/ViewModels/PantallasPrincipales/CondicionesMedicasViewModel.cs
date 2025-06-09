@@ -67,13 +67,19 @@ namespace MediTrack.Frontend.ViewModels
 
                 if (response != null && response.resultado && response.Condiciones != null)
                 {
-                    condicionesDisponibles.Clear();
-                    foreach (var condicion in response.Condiciones)
+                    await MainThread.InvokeOnMainThreadAsync(() =>
                     {
-                        condicionesDisponibles.Add(condicion);
-                    }
+                        CondicionesDisponibles.Clear();
+                        foreach (var condicion in response.Condiciones)
+                        {
+                            CondicionesDisponibles.Add(condicion);
+                        }
 
-                    Debug.WriteLine($"Condiciones disponibles cargadas: {condicionesDisponibles.Count}");
+                        // Notificar cambios en las condiciones filtradas
+                        NotificarCambiosCondicionesDisponibles();
+                    });
+
+                    Debug.WriteLine($"Condiciones disponibles cargadas: {CondicionesDisponibles.Count}");
                 }
                 else
                 {
@@ -90,6 +96,7 @@ namespace MediTrack.Frontend.ViewModels
             }
         }
 
+        // Actualizar el método CargarCondicionesUsuarioAsync
         private async Task CargarCondicionesUsuarioAsync()
         {
             try
@@ -105,22 +112,27 @@ namespace MediTrack.Frontend.ViewModels
 
                 if (response != null && response.resultado)
                 {
-                    condicionesUsuario.Clear();
-                    if (response.Condiciones != null)
+                    await MainThread.InvokeOnMainThreadAsync(() =>
                     {
-                        foreach (var condicion in response.Condiciones)
+                        CondicionesUsuario.Clear();
+                        if (response.Condiciones != null)
                         {
-                            condicionesUsuario.Add(condicion);
+                            foreach (var condicion in response.Condiciones)
+                            {
+                                CondicionesUsuario.Add(condicion);
+                            }
                         }
-                    }
 
-                    Debug.WriteLine($"Condiciones del usuario cargadas: {condicionesUsuario.Count}");
+                        // Notificar cambios en las condiciones filtradas
+                        NotificarCambiosCondicionesDisponibles();
+                    });
+
+                    Debug.WriteLine($"Condiciones del usuario cargadas: {CondicionesUsuario.Count}");
                 }
                 else
                 {
                     var mensaje = response?.Mensaje ?? "Error al cargar condiciones del usuario";
                     Debug.WriteLine($"Error: {mensaje}");
-                    // No mostramos error aquí ya que puede ser normal no tener condiciones
                 }
             }
             catch (Exception ex)
@@ -131,10 +143,71 @@ namespace MediTrack.Frontend.ViewModels
             }
         }
 
+        // Actualizar el comando AsignarCondicionIndividual
+        [RelayCommand]
+        private async Task AsignarCondicionIndividual(CondicionesMedicas condicion)
+        {
+            if (condicion == null) return;
+
+            // Verificar si ya está asignada
+            if (CondicionesUsuario.Any(c => c.id_condicion == condicion.id_condicion))
+            {
+                await ShowAlertAsync("Información", $"La condición '{condicion.nombre_condicion}' ya está asignada");
+                return;
+            }
+
+            await ExecuteAsync(async () =>
+            {
+                try
+                {
+                    Debug.WriteLine($"=== ASIGNANDO CONDICIÓN INDIVIDUAL: {condicion.nombre_condicion} ===");
+
+                    var request = new ReqAsignarCondicionUsuario
+                    {
+                        IdUsuario = _userId,
+                        IdCondicion = condicion.id_condicion
+                    };
+
+                    var response = await _apiService.AsignarCondicionUsuarioAsync(request);
+
+                    if (response != null && response.resultado)
+                    {
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            CondicionesUsuario.Add(condicion);
+                            // Notificar cambios para actualizar la lista filtrada
+                            NotificarCambiosCondicionesDisponibles();
+                        });
+
+                        await ShowAlertAsync("Éxito", $"Condición '{condicion.nombre_condicion}' asignada correctamente");
+
+                        Debug.WriteLine($"=== CONDICIÓN {condicion.nombre_condicion} ASIGNADA EXITOSAMENTE ===");
+                    }
+                    else
+                    {
+                        var mensaje = response?.Mensaje ?? $"Error al asignar la condición '{condicion.nombre_condicion}'";
+                        if (response?.errores != null && response.errores.Any())
+                        {
+                            var erroresDetalle = string.Join(", ", response.errores.Select(e => e.mensaje));
+                            mensaje += $". Detalles: {erroresDetalle}";
+                        }
+
+                        await ShowAlertAsync("Error", mensaje);
+                        Debug.WriteLine($"Error al asignar condición: {mensaje}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Excepción en AsignarCondicionIndividual: {ex.Message}");
+                    await ShowAlertAsync("Error", $"Error al asignar la condición '{condicion.nombre_condicion}'");
+                }
+            });
+        }
+
         [RelayCommand]
         private async Task CrearNuevaCondicion()
         {
-            if (string.IsNullOrWhiteSpace(nombreNuevaCondicion))
+            if (string.IsNullOrWhiteSpace(NombreNuevaCondicion))
             {
                 await ShowAlertAsync("Error", "El nombre de la condición es requerido");
                 return;
@@ -144,29 +217,52 @@ namespace MediTrack.Frontend.ViewModels
             {
                 try
                 {
-                    Debug.WriteLine($"=== CREANDO NUEVA CONDICIÓN: {nombreNuevaCondicion} ===");
+                    Debug.WriteLine($"=== CREANDO Y ASIGNANDO NUEVA CONDICIÓN: {NombreNuevaCondicion} ===");
 
                     var request = new ReqInsertarCondicion
                     {
-                        NombreCondicion = nombreNuevaCondicion.Trim(),
-                        Descripcion = descripcionNuevaCondicion?.Trim()
+                        NombreCondicion = NombreNuevaCondicion.Trim(),
+                        Descripcion = DescripcionNuevaCondicion?.Trim()
                     };
 
                     var response = await _apiService.InsertarCondicionAsync(request);
 
                     if (response != null && response.resultado)
                     {
-                        await ShowAlertAsync("Éxito", "Condición médica creada correctamente");
+                        // Crear la condición con el ID devuelto por el API
+                        var nuevaCondicion = new CondicionesMedicas
+                        {
+                            id_condicion = response.IdCondicion,
+                            nombre_condicion = NombreNuevaCondicion.Trim(),
+                            descripcion = DescripcionNuevaCondicion?.Trim()
+                        };
+
+                        Debug.WriteLine($"Condición creada con ID: {response.IdCondicion}");
+
+                        // Asignar automáticamente al usuario
+                        bool asignacionExitosa = await AsignarCondicionAlUsuario(nuevaCondicion);
+
+                        if (asignacionExitosa)
+                        {
+                            await ShowAlertAsync("Éxito", "Condición médica creada y asignada correctamente");
+                        }
+                        else
+                        {
+                            await ShowAlertAsync("Advertencia", "Condición creada pero no pudo ser asignada automáticamente");
+                        }
 
                         // Limpiar formulario
-                        nombreNuevaCondicion = string.Empty;
-                        descripcionNuevaCondicion = string.Empty;
-                        mostrarFormularioNuevaCondicion = false;
+                        NombreNuevaCondicion = string.Empty;
+                        DescripcionNuevaCondicion = string.Empty;
+                        MostrarFormularioNuevaCondicion = false;
 
-                        // Recargar condiciones disponibles
+                        // Recargar condiciones disponibles para incluir la nueva condición
                         await CargarCondicionesDisponiblesAsync();
 
-                        Debug.WriteLine("=== CONDICIÓN CREADA EXITOSAMENTE ===");
+                        // También recargar las condiciones del usuario para mostrar la nueva asignación
+                        await CargarCondicionesUsuarioAsync();
+
+                        Debug.WriteLine("=== CONDICIÓN CREADA Y ASIGNADA EXITOSAMENTE ===");
                     }
                     else
                     {
@@ -184,15 +280,59 @@ namespace MediTrack.Frontend.ViewModels
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Excepción en CrearNuevaCondicion: {ex.Message}");
+                    Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                     await ShowAlertAsync("Error", "Error al crear la condición médica");
                 }
             });
         }
 
+        private async Task<bool> AsignarCondicionAlUsuario(CondicionesMedicas condicion)
+        {
+            try
+            {
+                // Verificar si ya está asignada
+                if (CondicionesUsuario.Any(c => c.id_condicion == condicion.id_condicion))
+                {
+                    Debug.WriteLine($"Condición {condicion.nombre_condicion} ya está asignada");
+                    return true;
+                }
+
+                var request = new ReqAsignarCondicionUsuario
+                {
+                    IdUsuario = _userId,
+                    IdCondicion = condicion.id_condicion
+                };
+
+                var response = await _apiService.AsignarCondicionUsuarioAsync(request);
+
+                if (response != null && response.resultado)
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        CondicionesUsuario.Add(condicion);
+                    });
+
+                    Debug.WriteLine($"Condición {condicion.nombre_condicion} asignada correctamente");
+                    return true;
+                }
+                else
+                {
+                    var mensaje = response?.Mensaje ?? $"Error al asignar {condicion.nombre_condicion}";
+                    Debug.WriteLine($"Error al asignar condición: {mensaje}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Excepción al asignar condición: {ex.Message}");
+                return false;
+            }
+        }
+        
         [RelayCommand]
         private async Task AsignarCondicionesSeleccionadas()
         {
-            if (!condicionesSeleccionadas.Any())
+            if (!CondicionesSeleccionadas.Any())
             {
                 await ShowAlertAsync("Información", "No hay condiciones seleccionadas para asignar");
                 return;
@@ -203,12 +343,12 @@ namespace MediTrack.Frontend.ViewModels
                 var condicionesAsignadas = 0;
                 var errores = new List<string>();
 
-                foreach (var condicion in condicionesSeleccionadas.ToList())
+                foreach (var condicion in CondicionesSeleccionadas.ToList())
                 {
                     try
                     {
                         // Verificar si ya está asignada
-                        if (condicionesUsuario.Any(c => c.id_condicion == condicion.id_condicion))
+                        if (CondicionesUsuario.Any(c => c.id_condicion == condicion.id_condicion))
                         {
                             Debug.WriteLine($"Condición {condicion.nombre_condicion} ya está asignada");
                             continue;
@@ -224,7 +364,11 @@ namespace MediTrack.Frontend.ViewModels
 
                         if (response != null && response.resultado)
                         {
-                            condicionesUsuario.Add(condicion);
+                            await MainThread.InvokeOnMainThreadAsync(() =>
+                            {
+                                CondicionesUsuario.Add(condicion);
+                            });
+
                             condicionesAsignadas++;
                             Debug.WriteLine($"Condición {condicion.nombre_condicion} asignada correctamente");
                         }
@@ -244,7 +388,7 @@ namespace MediTrack.Frontend.ViewModels
                 }
 
                 // Limpiar selección
-                condicionesSeleccionadas.Clear();
+                CondicionesSeleccionadas.Clear();
 
                 // Mostrar resultado
                 var mensajeResultado = $"Condiciones asignadas: {condicionesAsignadas}";
@@ -288,7 +432,11 @@ namespace MediTrack.Frontend.ViewModels
 
                     if (response != null && response.resultado)
                     {
-                        condicionesUsuario.Remove(condicion);
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            CondicionesUsuario.Remove(condicion);
+                        });
+
                         await ShowAlertAsync("Éxito", "Condición desasignada correctamente");
 
                         Debug.WriteLine("=== CONDICIÓN DESASIGNADA EXITOSAMENTE ===");
@@ -317,22 +465,26 @@ namespace MediTrack.Frontend.ViewModels
         [RelayCommand]
         private void ToggleMostrarFormularioNuevaCondicion()
         {
-            mostrarFormularioNuevaCondicion = !mostrarFormularioNuevaCondicion;
+            MostrarFormularioNuevaCondicion = !MostrarFormularioNuevaCondicion;
 
-            if (!mostrarFormularioNuevaCondicion)
+            if (!MostrarFormularioNuevaCondicion)
             {
                 // Limpiar formulario al ocultar
-                nombreNuevaCondicion = string.Empty;
-                descripcionNuevaCondicion = string.Empty;
+                NombreNuevaCondicion = string.Empty;
+                DescripcionNuevaCondicion = string.Empty;
             }
+
+            Debug.WriteLine($"=== FORMULARIO NUEVA CONDICIÓN: {(MostrarFormularioNuevaCondicion ? "MOSTRAR" : "OCULTAR")} ===");
         }
 
         [RelayCommand]
         private void CancelarNuevaCondicion()
         {
-            nombreNuevaCondicion = string.Empty;
-            descripcionNuevaCondicion = string.Empty;
-            mostrarFormularioNuevaCondicion = false;
+            NombreNuevaCondicion = string.Empty;
+            DescripcionNuevaCondicion = string.Empty;
+            MostrarFormularioNuevaCondicion = false;
+
+            Debug.WriteLine("=== FORMULARIO NUEVA CONDICIÓN CANCELADO ===");
         }
 
         [RelayCommand]
@@ -343,6 +495,10 @@ namespace MediTrack.Frontend.ViewModels
                 Debug.WriteLine("=== REFRESCANDO DATOS DE CONDICIONES ===");
                 await CargarCondicionesDisponiblesAsync();
                 await CargarCondicionesUsuarioAsync();
+
+                // Limpiar selecciones
+                CondicionesSeleccionadas.Clear();
+
                 Debug.WriteLine("=== REFRESCO COMPLETADO ===");
             });
         }
@@ -350,18 +506,45 @@ namespace MediTrack.Frontend.ViewModels
         // Método para manejar selección múltiple desde la vista
         public void OnCondicionesSeleccionadas(object sender, SelectionChangedEventArgs e)
         {
-            condicionesSeleccionadas.Clear();
+            CondicionesSeleccionadas.Clear();
             foreach (CondicionesMedicas condicion in e.CurrentSelection)
             {
-                condicionesSeleccionadas.Add(condicion);
+                CondicionesSeleccionadas.Add(condicion);
             }
 
-            Debug.WriteLine($"Condiciones seleccionadas: {condicionesSeleccionadas.Count}");
+            Debug.WriteLine($"Condiciones seleccionadas: {CondicionesSeleccionadas.Count}");
+
+            // Notificar cambio en la propiedad computada
+            OnPropertyChanged(nameof(TieneCondicionesSeleccionadas));
+        }
+        // Agregar esta propiedad al ViewModel para mostrar solo condiciones no asignadas
+        public ObservableCollection<CondicionesMedicas> CondicionesDisponiblesParaAsignar
+        {
+            get
+            {
+                if (CondicionesDisponibles == null || CondicionesUsuario == null)
+                    return new ObservableCollection<CondicionesMedicas>();
+
+                var condicionesNoAsignadas = CondicionesDisponibles
+                    .Where(disponible => !CondicionesUsuario.Any(usuario => usuario.id_condicion == disponible.id_condicion))
+                    .ToList();
+
+                return new ObservableCollection<CondicionesMedicas>(condicionesNoAsignadas);
+            }
         }
 
+        // Método para notificar cambios en la propiedad filtrada
+        private void NotificarCambiosCondicionesDisponibles()
+        {
+            OnPropertyChanged(nameof(CondicionesDisponiblesParaAsignar));
+            OnPropertyChanged(nameof(TieneCondicionesDisponiblesParaAsignar));
+        }
+
+        // Propiedad para verificar si hay condiciones disponibles para asignar
+        public bool TieneCondicionesDisponiblesParaAsignar => CondicionesDisponiblesParaAsignar?.Any() == true;
         // Propiedades computed para la UI
-        public bool TieneCondicionesUsuario => condicionesUsuario?.Any() == true;
-        public bool TieneCondicionesDisponibles => condicionesDisponibles?.Any() == true;
-        public bool TieneCondicionesSeleccionadas => condicionesSeleccionadas?.Any() == true;
+        public bool TieneCondicionesUsuario => CondicionesUsuario?.Any() == true;
+        public bool TieneCondicionesDisponibles => CondicionesDisponibles?.Any() == true;
+        public bool TieneCondicionesSeleccionadas => CondicionesSeleccionadas?.Any() == true;
     }
 }

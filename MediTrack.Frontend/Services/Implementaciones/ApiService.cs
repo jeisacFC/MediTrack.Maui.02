@@ -658,7 +658,7 @@ public class ApiService : IApiService
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(endpoint, content);
+            var response = await _httpClient.GetAsync(endpoint);
             var responseContent = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
@@ -828,7 +828,7 @@ public class ApiService : IApiService
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(endpoint, content);
+            var response = await _httpClient.GetAsync(endpoint);
             var responseContent = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {

@@ -98,48 +98,48 @@
                          FontSize="20"
                          TextColor="#0B2B6E"
                          Margin="0,10,0,0" />
-                    <Frame BackgroundColor="#f8f9fa" 
-                           CornerRadius="20" 
-                           Padding="20" 
-                           HasShadow="True">
+
+                    <!-- SECCIÓN DE CONDICIONES MÉDICAS - CORREGIDA -->
+                    <Frame BackgroundColor="#f8f9fa" CornerRadius="20" Padding="20" HasShadow="True">
                         <VerticalStackLayout Spacing="15">
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label Text="Condiciones Médicas"
-                                     FontAttributes="Bold"
-                                     FontSize="16"
-                                     TextColor="#0B2B6E"
-                                     VerticalOptions="Center"
-                                     Grid.Column="0" />
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       TextColor="#0B2B6E"
+                                       VerticalOptions="Center"
+                                       Grid.Column="0" />
                                 <Button x:Name="BtnEditarCondiciones"
-        Grid.Column="1"
-        BackgroundColor="#3b71ff"
-        TextColor="White"
-        CornerRadius="18"
-        HeightRequest="36"
-        WidthRequest="36"
-        FontSize="18"
-        Clicked="OnEditCondicionesMedicasClicked">
+                                        Grid.Column="1"
+                                        BackgroundColor="#3b71ff"
+                                        TextColor="White"
+                                        CornerRadius="18"
+                                        HeightRequest="36"
+                                        WidthRequest="36"
+                                        FontSize="18"
+                                        Clicked="OnEditCondicionesMedicasClicked">
                                     <Button.ImageSource>
                                         <FontImageSource Glyph="&#xE3C9;" FontFamily="MaterialIcons" Color="White" Size="18" />
                                     </Button.ImageSource>
                                 </Button>
                             </Grid>
 
+                            <!-- Este botón ya no se usa con el modal, puedes eliminarlo -->
                             <Button x:Name="BtnAgregarCondicion"
-                                  Text="+ Agregar Condición"
-                                  BackgroundColor="#28a745"
-                                  TextColor="White"
-                                  CornerRadius="15"
-                                  HeightRequest="40"
-                                  FontSize="14"
-                                  FontAttributes="Bold"
-                                  IsVisible="False"
-                                  Command="{Binding AgregarCondicionMedicaCommand}" />
+                                    Text="+ Agregar Condición"
+                                    BackgroundColor="#28a745"
+                                    TextColor="White"
+                                    CornerRadius="15"
+                                    HeightRequest="40"
+                                    FontSize="14"
+                                    FontAttributes="Bold"
+                                    IsVisible="False"
+                                    Command="{Binding AgregarCondicionMedicaCommand}" />
 
                             <CollectionView ItemsSource="{Binding CondicionesMedicas}"
-                                  SelectionMode="Multiple"
-                                  SelectionChanged="OnCondicionesMedicasSeleccionadas"
-                                  MinimumHeightRequest="80">
+                                            SelectionMode="Multiple"
+                                            SelectionChanged="OnCondicionesMedicasSeleccionadas"
+                                            MinimumHeightRequest="80">
                                 <CollectionView.ItemsLayout>
                                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
                                 </CollectionView.ItemsLayout>
@@ -147,19 +147,19 @@
                                     <DataTemplate>
                                         <Grid Padding="0">
                                             <Frame BackgroundColor="White"
-                                                 CornerRadius="15"
-                                                 Padding="15,12"
-                                                 HasShadow="True">
+                                                   CornerRadius="15"
+                                                   Padding="15,12"
+                                                   HasShadow="True">
                                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                                     <Frame Grid.Column="0"
-                                                         BackgroundColor="#3b71ff"
-                                                         CornerRadius="12"
-                                                         HeightRequest="24"
-                                                         WidthRequest="24"
-                                                         Padding="0"
-                                                         HasShadow="False"
-                                                         VerticalOptions="Center"
-                                                         Margin="0,0,10,0">
+                                                           BackgroundColor="#3b71ff"
+                                                           CornerRadius="12"
+                                                           HeightRequest="24"
+                                                           WidthRequest="24"
+                                                           Padding="0"
+                                                           HasShadow="False"
+                                                           VerticalOptions="Center"
+                                                           Margin="0,0,10,0">
                                                         <Image HorizontalOptions="Center"
                                                                VerticalOptions="Center">
                                                             <Image.Source>
@@ -167,25 +167,15 @@
                                                             </Image.Source>
                                                         </Image>
                                                     </Frame>
-                                                    <Label Grid.Column="1"
-                                                         Text="{Binding nombre_condicion}"
-                                                         FontSize="14"
-                                                         TextColor="#212529"
-                                                         VerticalOptions="Center" />
-                                                    <Button Grid.Column="2"
-                                                          BackgroundColor="#dc3545"
-                                                          TextColor="White"
-                                                          CornerRadius="12"
-                                                          HeightRequest="24"
-                                                          WidthRequest="24"
-                                                          FontSize="14"
-                                                          IsVisible="{Binding Source={x:Reference BtnAgregarCondicion}, Path=IsVisible}"
-                                                          Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EliminarCondicionCommand}"
-                                                          CommandParameter="{Binding .}">
-                                                        <Button.ImageSource>
-                                                            <FontImageSource Glyph="&#xE5CD;" FontFamily="MaterialIcons" Color="White" Size="14"/>
-                                                        </Button.ImageSource>
-                                                    </Button>
+                                                    <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                                        <Label Text="{Binding nombre_condicion}"
+                                                               FontSize="14"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#212529"/>
+                                                        <Label Text="{Binding descripcion}"
+                                                               FontSize="11"
+                                                               TextColor="#6c757d"/>
+                                                    </StackLayout>
                                                 </Grid>
                                             </Frame>
                                         </Grid>
@@ -198,38 +188,36 @@
                                                 <FontImageSource Glyph="&#xE8F4;" FontFamily="MaterialIcons" Color="#adb5bd" Size="40"/>
                                             </Image.Source>
                                         </Image>
+                                        <!-- CORREGIDO: Texto correcto para condiciones médicas -->
                                         <Label Text="No hay condiciones médicas registradas"
-                                             TextColor="#6c757d"
-                                             FontAttributes="Italic"
-                                             HorizontalOptions="Center"
-                                             FontSize="14"/>
+                                               TextColor="#6c757d"
+                                               FontAttributes="Italic"
+                                               HorizontalOptions="Center"
+                                               FontSize="14"/>
                                     </StackLayout>
                                 </CollectionView.EmptyView>
                             </CollectionView>
                         </VerticalStackLayout>
                     </Frame>
 
-                    <Frame BackgroundColor="#f8f9fa" 
-                           CornerRadius="20" 
-                           Padding="20" 
-                           HasShadow="True">
+                    <!-- SECCIÓN DE ALERGIAS - CORREGIDA -->
+                    <Frame BackgroundColor="#f8f9fa" CornerRadius="20" Padding="20" HasShadow="True">
                         <VerticalStackLayout Spacing="15">
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label Text="Alergias"
-                                     FontAttributes="Bold"
-                                     FontSize="16"
-                                     TextColor="#0B2B6E"
-                                     VerticalOptions="Center"
-                                     Grid.Column="0" />
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       TextColor="#0B2B6E"
+                                       VerticalOptions="Center"
+                                       Grid.Column="0" />
                                 <Button x:Name="BtnEditarAlergias"
                                         Grid.Column="1"
-                                        BackgroundColor="#dc3545"
+                                        BackgroundColor="#3b71ff"
                                         TextColor="White"
                                         CornerRadius="18"
                                         HeightRequest="36"
                                         WidthRequest="36"
                                         FontSize="18"
-                                        Command="{Binding EditarAlergiasCommand}"
                                         Clicked="OnEditAlergiasClicked">
                                     <Button.ImageSource>
                                         <FontImageSource Glyph="&#xE3C9;" FontFamily="MaterialIcons" Color="White" Size="18" />
@@ -237,21 +225,22 @@
                                 </Button>
                             </Grid>
 
+                            <!-- CORREGIDO: Nombre consistente del botón -->
                             <Button x:Name="BtnAgregarAlergia"
-                                  Text="+ Agregar Alergia"
-                                  BackgroundColor="#dc3545"
-                                  TextColor="White"
-                                  CornerRadius="15"
-                                  HeightRequest="40"
-                                  FontSize="14"
-                                  FontAttributes="Bold"
-                                  IsVisible="False"
-                                  Command="{Binding AgregarAlergiaCommand}" />
+                                    Text="+ Agregar Alergia"
+                                    BackgroundColor="#28a745"
+                                    TextColor="White"
+                                    CornerRadius="15"
+                                    HeightRequest="40"
+                                    FontSize="14"
+                                    FontAttributes="Bold"
+                                    IsVisible="False"
+                                    Command="{Binding ToggleMostrarFormularioNuevaAlergiaCommand}" />
 
                             <CollectionView ItemsSource="{Binding Alergias}"
-                                  SelectionMode="Multiple"
-                                  SelectionChanged="OnAlergiasSeleccionadas"
-                                  MinimumHeightRequest="80">
+                                            SelectionMode="Multiple"
+                                            SelectionChanged="OnAlergiasSeleccionadas"
+                                            MinimumHeightRequest="80">
                                 <CollectionView.ItemsLayout>
                                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
                                 </CollectionView.ItemsLayout>
@@ -259,45 +248,35 @@
                                     <DataTemplate>
                                         <Grid Padding="0">
                                             <Frame BackgroundColor="White"
-                                                 CornerRadius="15"
-                                                 Padding="15,12"
-                                                 HasShadow="True">
+                                                   CornerRadius="15"
+                                                   Padding="15,12"
+                                                   HasShadow="True">
                                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                                     <Frame Grid.Column="0"
-                                                         BackgroundColor="#dc3545"
-                                                         CornerRadius="12"
-                                                         HeightRequest="24"
-                                                         WidthRequest="24"
-                                                         Padding="0"
-                                                         HasShadow="False"
-                                                         VerticalOptions="Center"
-                                                         Margin="0,0,10,0">
+                                                           BackgroundColor="#3b71ff"
+                                                           CornerRadius="12"
+                                                           HeightRequest="24"
+                                                           WidthRequest="24"
+                                                           Padding="0"
+                                                           HasShadow="False"
+                                                           VerticalOptions="Center"
+                                                           Margin="0,0,10,0">
                                                         <Image HorizontalOptions="Center"
                                                                VerticalOptions="Center">
                                                             <Image.Source>
-                                                                <FontImageSource Glyph="&#xE000;" FontFamily="MaterialIcons" Color="White" Size="14"/>
+                                                                <FontImageSource Glyph="&#xE8F4;" FontFamily="MaterialIcons" Color="White" Size="14"/>
                                                             </Image.Source>
                                                         </Image>
                                                     </Frame>
-                                                    <Label Grid.Column="1"
-                                                         Text="{Binding nombre_alergia}"
-                                                         FontSize="14"
-                                                         TextColor="#721c24"
-                                                         VerticalOptions="Center" />
-                                                    <Button Grid.Column="2"
-                                                          BackgroundColor="#dc3545"
-                                                          TextColor="White"
-                                                          CornerRadius="12"
-                                                          HeightRequest="24"
-                                                          WidthRequest="24"
-                                                          FontSize="14"
-                                                          IsVisible="{Binding Source={x:Reference BtnAgregarAlergia}, Path=IsVisible}"
-                                                          Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EliminarAlergiaCommand}"
-                                                          CommandParameter="{Binding .}">
-                                                        <Button.ImageSource>
-                                                            <FontImageSource Glyph="&#xE5CD;" FontFamily="MaterialIcons" Color="White" Size="14"/>
-                                                        </Button.ImageSource>
-                                                    </Button>
+                                                    <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                                        <Label Text="{Binding nombre_alergia}"
+                                                               FontSize="14"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#212529"/>
+                                                        <Label Text="{Binding descripcion}"
+                                                               FontSize="11"
+                                                               TextColor="#6c757d"/>
+                                                    </StackLayout>
                                                 </Grid>
                                             </Frame>
                                         </Grid>
@@ -307,24 +286,23 @@
                                     <StackLayout Padding="20" Spacing="10">
                                         <Image HorizontalOptions="Center">
                                             <Image.Source>
-                                                <FontImageSource Glyph="&#xE000;" FontFamily="MaterialIcons" Color="#adb5bd" Size="40"/>
+                                                <FontImageSource Glyph="&#xE8F4;" FontFamily="MaterialIcons" Color="#adb5bd" Size="40"/>
                                             </Image.Source>
                                         </Image>
                                         <Label Text="No hay alergias registradas"
-                                             TextColor="#6c757d"
-                                             FontAttributes="Italic"
-                                             HorizontalOptions="Center"
-                                             FontSize="14"/>
+                                               TextColor="#6c757d"
+                                               FontAttributes="Italic"
+                                               HorizontalOptions="Center"
+                                               FontSize="14"/>
                                     </StackLayout>
                                 </CollectionView.EmptyView>
                             </CollectionView>
                         </VerticalStackLayout>
                     </Frame>
+
+                    <!-- Botón Cerrar Sesión -->
                     <Frame BackgroundColor="#dc3545" CornerRadius="25" Padding="0" HasShadow="True" Margin="0,20,0,0">
                         <Button Text="Cerrar Sesión" BackgroundColor="Transparent" TextColor="White" CornerRadius="25" HeightRequest="50" FontSize="16" FontAttributes="Bold" HorizontalOptions="Fill" Command="{Binding CerrarSesionCommand}">
-                            <Button.ImageSource>
-                                <FontImageSource Glyph="&#xE9BA;" FontFamily="MaterialIcons" Color="White" Size="20" />
-                            </Button.ImageSource>
                         </Button>
                     </Frame>
 

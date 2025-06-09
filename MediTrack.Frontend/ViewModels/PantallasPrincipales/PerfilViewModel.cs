@@ -312,8 +312,6 @@ namespace MediTrack.Frontend.ViewModels
                     ErrorMessage = mensajeError;
                     Debug.WriteLine($"Error condiciones médicas: {mensajeError}");
 
-                    // No mostramos alerta aquí para no interrumpir la carga de datos
-                    // Solo logueamos el error
                 }
             }
             catch (Exception ex)
@@ -386,8 +384,6 @@ namespace MediTrack.Frontend.ViewModels
                     ErrorMessage = mensajeError;
                     Debug.WriteLine($"Error alergias: {mensajeError}");
 
-                    // No mostramos alerta aquí para no interrumpir la carga de datos
-                    // Solo logueamos el error
                 }
             }
             catch (Exception ex)
