@@ -14,6 +14,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [ObservableProperty] private bool _isDetecting = true;
         [ObservableProperty] private bool _isProcessingResult;
         [ObservableProperty] private string _scanResultText;
+        [ObservableProperty] private bool _isBusy;
 
         public BarcodeReaderOptions BarcodeReaderOptions { get; private set; }
         private readonly INavigationService _navigationService;
@@ -178,5 +179,65 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
         }
 
+        [RelayCommand]
+        private async Task GuardarMedicamentoAsync(ResEscanearMedicamento medicamento)
+        {
+            if (medicamento == null)
+            {
+                Debug.WriteLine("Intento de guardar un medicamento nulo.");
+                return;
+            }
+
+            IsBusy = true; // Mostramos un indicador de carga en la UI
+            try
+            {
+                // Obtenemos el ID del usuario que está logueado
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!int.TryParse(userIdStr, out int userId))
+                {
+                    await Shell.Current.DisplayAlert("Error", "No se pudo identificar al usuario. Por favor, inicia sesión de nuevo.", "OK");
+                    return;
+                }
+
+                // Mapeamos los datos del resultado del escaneo al objeto que la API espera (ReqGuardarMedicamento)
+                var request = new ReqGuardarMedicamento
+                {
+                    IdUsuario = userId,
+                    NombreComercial = medicamento.NombreComercial,
+                    PrincipioActivo = medicamento.PrincipioActivo,
+                    Dosis = medicamento.Dosis,
+                    Fabricante = medicamento.Fabricante,
+                    Usos = medicamento.Usos,
+                    Advertencias = medicamento.Advertencias,
+                    EfectosSecundarios = new List<string>(), // Asumimos que el escaneo no devuelve esto
+                    IdMetodoEscaneo = 1 // 1 para Escaneo, por ejemplo
+                };
+
+                // Llamamos a nuestro nuevo método del ApiService
+                var resultadoGuardado = await _apiService.GuardarMedicamentoAsync(request);
+
+                // Verificamos la respuesta del backend y mostramos el mensaje apropiado
+                if (resultadoGuardado != null && resultadoGuardado.resultado)
+                {
+                    // Mostramos el mensaje que viene del backend (ej. "Medicamento guardado" o "Ya existe")
+                    await Shell.Current.DisplayAlert("Información", resultadoGuardado.Mensaje, "OK");
+                }
+                else
+                {
+                    // Mostramos un mensaje de error genérico o el del backend si lo hay
+                    var errorMsg = resultadoGuardado?.Mensaje ?? "No se pudo guardar el medicamento.";
+                    await Shell.Current.DisplayAlert("Error", errorMsg, "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Excepción al guardar medicamento: {ex.Message}");
+                await Shell.Current.DisplayAlert("Error de Conexión", "Ocurrió un problema al guardar.", "OK");
+            }
+            finally
+            {
+                IsBusy = false; // Ocultamos el indicador de carga
+            }
+        }
     }
 }
