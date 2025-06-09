@@ -27,54 +27,120 @@
 
         <VerticalStackLayout Grid.Row="1" Padding="25" Spacing="20">
 
-            <Frame Style="{StaticResource FrameFormulario}">
+            <!--NombreMedicamento-->
+            <Frame CornerRadius="10"
+                    BackgroundColor="#eef4ff"
+                    HasShadow="False"
+                    Padding="20">
                 <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
-                    <Entry Placeholder="Nombre del medicamento"
-                           Text="{Binding TerminoBusqueda.NombreMedicamento}"
+
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource Glyph="&#xe862;"
+                                              FontFamily="MaterialIcons"
+                                              Color="#3B71FF"
+                                              Size="18"/>           
+                        </Image.Source>
+                    </Image>
+                    <Entry x:Name="NombreMedicamento"
+                           Placeholder="Nombre del medicamento"
                            HorizontalOptions="Fill"
-                           Style="{StaticResource EntryBaseStyle}"/>
+                           TextColor="#3B71FF"
+                           FontSize="16"
+                           Text="{Binding TerminoBusqueda.NombreMedicamento}"/>
                 </HorizontalStackLayout>
             </Frame>
 
-            <Frame Style="{StaticResource FrameFormulario}">
+            <!--DosisMedicamento-->
+            <Frame CornerRadius="10"
+                   BackgroundColor="#eef4ff"
+                   HasShadow="False"
+                   Padding="20">
                 <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
-                    <Entry Placeholder="Dosis del medicamento"
-                           Text="{Binding TerminoBusqueda.Dosis}"
-                           HorizontalOptions="Fill"
-                           Style="{StaticResource EntryBaseStyle}"/>
+
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource Glyph="&#xe862;"
+                                            FontFamily="MaterialIcons"
+                                            Color="#3B71FF"
+                                            Size="18"/>
+                        </Image.Source>
+                    </Image>
+                    <Entry x:Name="DosisMedicamento"
+                             Placeholder="Dosis del medicamento"
+                             HorizontalOptions="Fill"
+                             TextColor="#3B71FF"
+                             FontSize="16"
+                 Text="{Binding TerminoBusqueda.Dosis}"/>
                 </HorizontalStackLayout>
             </Frame>
 
-            <Frame Style="{StaticResource FrameFormulario}">
+            <!--PrincipioActivo-->
+            <Frame CornerRadius="10"
+                   BackgroundColor="#eef4ff"
+                   HasShadow="False"
+                   Padding="20">
                 <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
-                    <Entry Placeholder="Principio Activo"
-                           Text="{Binding TerminoBusqueda.PrincipioActivo}" 
+
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource Glyph="&#xe862;"
+                                             FontFamily="MaterialIcons"
+                                             Color="#3B71FF"
+                                             Size="18"/>
+                        </Image.Source>
+                    </Image>
+                    <Entry x:Name="PrincipioActivo"
+                           Placeholder="Principio Activo"
                            HorizontalOptions="Fill"
-                           Style="{StaticResource EntryBaseStyle}"/>
+                           TextColor="#3B71FF"
+                           FontSize="16"
+                           Text="{Binding TerminoBusqueda.PrincipioActivo}"/>
                 </HorizontalStackLayout>
             </Frame>
-
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource ColorPrimario}" Margin="0,10"/>
 
             <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
+
                 <Button Grid.Column="0"
                         Text="Buscar"
+                        FontSize="18"
+                        CornerRadius="8"
+                        HeightRequest="45"
+                        BackgroundColor="#3B71FF"
+                        TextColor="White"
                         Command="{Binding BuscarCommand}"
-                        IsEnabled="{Binding IsNotBusy}"
-                        Style="{StaticResource BotonPrimario}">
+                        IsEnabled="{Binding IsNotBusy}">
+
                     <Button.ImageSource>
-                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Color="White" Size="20"/>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Color="White" Size="18"/>
                     </Button.ImageSource>
                 </Button>
 
+
+
+
                 <Button Grid.Column="1"
                         Text="Limpiar"
+                         FontSize="18"
+                         CornerRadius="8"
+                         HeightRequest="45"
+                         BackgroundColor="#3B71FF"
+                         TextColor="White"
                         Command="{Binding LimpiarCommand}"
-                        Style="{StaticResource BotonSecundario}"/>
+                        Style="{StaticResource BotonSecundario}">
+                    
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe5d5;" Color="White" Size="18"/>
+                    </Button.ImageSource>
+
+                </Button>
+
             </Grid>
+                
+            <!--<ActivityIndicator IsRunning="{Binding IsBusy}" 
+                               IsVisible="{Binding IsBusy}" 
+                               Color="{StaticResource ColorPrimario}" 
+                               Margin="0,10"/>-->
 
         </VerticalStackLayout>
 

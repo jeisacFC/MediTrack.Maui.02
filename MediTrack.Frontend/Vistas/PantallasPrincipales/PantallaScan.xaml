@@ -85,5 +85,17 @@
 
             </Border>
         </Grid>
+
+        <Border IsVisible="{Binding IsBusy}"
+                BackgroundColor="#80000000"
+                StrokeThickness="0">
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Color="White"/>
+        </Border>
+
+
     </Grid>
 </ContentPage>

@@ -25,6 +25,9 @@
             <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
             <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
             <converters:BoolToIconConverter x:Key="BoolToIconConverter" />
+            <converters:BoolToGestionarTextConverter x:Key="BoolToGestionarTextConverter" />
+            <converters:BoolToButtonWidthConverter x:Key="BoolToButtonWidthConverter" />
+            <converters:BoolToColorManualConverter x:Key="BoolToColorManualConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

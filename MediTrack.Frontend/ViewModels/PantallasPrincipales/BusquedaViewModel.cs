@@ -42,12 +42,19 @@ public partial class BusquedaViewModel : ObservableObject
     // --- Comandos ---
     public IAsyncRelayCommand BuscarCommand { get; }
     public IRelayCommand LimpiarCommand { get; }
+    public IAsyncRelayCommand<ResBuscarMedicamento> GuardarMedicamentoCommand { get; }
+
 
     public BusquedaViewModel(IApiService apiService)
     {
         _apiService = apiService;
         BuscarCommand = new AsyncRelayCommand(EjecutarBusquedaAsync, () => !IsBusy);
         LimpiarCommand = new RelayCommand(EjecutarLimpiar, () => !IsBusy);
+
+
+        // --------------------------------- DEFINICION DE METODOS QUE VIENEN DE "PANTALLA  BUSQUEDA" ------------------------------------- //
+        GuardarMedicamentoCommand = new AsyncRelayCommand<ResBuscarMedicamento>(EjecutarGuardarMedicamentoAsync);
+
     }
 
     private async Task EjecutarBusquedaAsync()
@@ -100,5 +107,61 @@ public partial class BusquedaViewModel : ObservableObject
         TerminoBusqueda = new ReqBuscarMedicamento();
         MostrarResultados = false;
         ResultadoBusqueda = null;
+    }
+    private async Task EjecutarGuardarMedicamentoAsync(ResBuscarMedicamento resultadoAGuardar)
+    {
+        if (resultadoAGuardar?.Medicamento == null)
+        {
+            Debug.WriteLine("Intento de guardar un resultado de búsqueda nulo.");
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var userIdStr = await SecureStorage.GetAsync("user_id");
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                await Shell.Current.DisplayAlert("Error de Usuario", "No se pudo identificar al usuario.", "OK");
+                return;
+            }
+
+            // Mapeamos los datos del resultado de la búsqueda al objeto que espera la API de guardado
+            var request = new ReqGuardarMedicamento
+            {
+                IdUsuario = userId,
+                NombreComercial = resultadoAGuardar.Medicamento.NombreComercial,
+                PrincipioActivo = resultadoAGuardar.Medicamento.PrincipioActivo,
+                Dosis = resultadoAGuardar.Medicamento.Dosis,
+                Fabricante = resultadoAGuardar.Medicamento.Fabricante,
+                Usos = resultadoAGuardar.Usos,
+                Advertencias = resultadoAGuardar.Advertencias,
+                EfectosSecundarios = resultadoAGuardar.EfectosSecundarios,
+                IdMetodoEscaneo = 2 // 2 para Búsqueda Manual, por ejemplo
+            };
+
+            // Llamamos al ApiService para guardar
+            var resultadoGuardado = await _apiService.GuardarMedicamentoAsync(request);
+
+            // Mostramos el mensaje que viene del backend
+            if (resultadoGuardado != null)
+            {
+                await Shell.Current.DisplayAlert("Resultado", resultadoGuardado.Mensaje, "OK");
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Error", "Ocurrió un problema al intentar guardar.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Excepción al guardar medicamento manual: {ex.Message}");
+            await Shell.Current.DisplayAlert("Error de Conexión", "No se pudo comunicar con el servidor.", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
     }
 }

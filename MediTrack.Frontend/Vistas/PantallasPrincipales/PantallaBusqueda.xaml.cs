@@ -33,13 +33,22 @@ public partial class PantallaBusqueda : ContentPage
 
     private async void OnBusquedaExitosa(object sender, ResBuscarMedicamento resultado)
     {
-        // Aquí es donde mostramos el modal con la información del medicamento
-        // Por ahora, usaremos una alerta para confirmar que funciona.
-        // En el siguiente paso, crearemos y mostraremos el popup.
-        await DisplayAlert(
-            resultado.Medicamento.NombreComercial,
-            $"Se encontró el medicamento. Principio Activo: {resultado.Medicamento.PrincipioActivo}",
-            "OK");
+        var infoPopup = new InfoBusquedaManualPopup(resultado);
+
+        async void ManejadorMedicamentoAgregado(object s, ResBuscarMedicamento medParaGuardar)
+        {
+            // 3. Llamamos al nuevo comando del ViewModel para que haga la magia
+            if (_viewModel?.GuardarMedicamentoCommand != null)
+            {
+                await _viewModel.GuardarMedicamentoCommand.ExecuteAsync(medParaGuardar);
+            }
+        }
+        infoPopup.MedicamentoAgregado += ManejadorMedicamentoAgregado;
+
+        await this.ShowPopupAsync(infoPopup);
+
+        infoPopup.MedicamentoAgregado -= ManejadorMedicamentoAgregado;
+
     }
 
     private async void OnBusquedaFallida(object sender, string mensajeError)

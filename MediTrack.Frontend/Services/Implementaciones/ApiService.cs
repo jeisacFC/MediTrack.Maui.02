@@ -1,4 +1,5 @@
-﻿using MediTrack.Frontend.Models.Model;
+﻿using MediTrack.Frontend.Models;
+using MediTrack.Frontend.Models.Model;
 using MediTrack.Frontend.Models.Request;
 using MediTrack.Frontend.Models.Response;
 using MediTrack.Frontend.Services.Interfaces;
@@ -116,6 +117,53 @@ public class ApiService : IApiService
         }
     }
 
+    public async Task<ResGuardarMedicamento> GuardarMedicamentoAsync(ReqGuardarMedicamento request)
+    {
+        var endpoint = "api/medicamentos/guardar";
+
+        try
+        {
+            // Serializamos el objeto de solicitud a JSON
+            var jsonRequest = JsonSerializer.Serialize(request);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            // Realizamos la llamada POST
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de Guardar Medicamento: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Deserializamos la respuesta del backend
+                return JsonSerializer.Deserialize<ResGuardarMedicamento>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                // Si hay un error de servidor (ej. 400, 500), lo manejamos
+                return new ResGuardarMedicamento
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en GuardarMedicamentoAsync: {ex.Message}");
+            return new ResGuardarMedicamento
+            {
+                resultado = false,
+                Mensaje = "No se pudo conectar con el servidor."
+            };
+        }
+    }
     #endregion
 
     #region IA
@@ -1199,6 +1247,220 @@ public class ApiService : IApiService
             Mensaje = mensaje,
             errores = new List<Errores> { new Errores { mensaje = mensaje } }
         };
+    }
+
+    #endregion
+
+    #region SÍNTOMAS
+
+    public async Task<List<ResBuscarSintoma>> BuscarSintomasAsync(ReqBuscarSintoma request)
+    {
+        var endpoint = "api/sintomas/buscar";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"Buscando síntomas: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"Request: {jsonRequest}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Response síntomas: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<List<ResBuscarSintoma>>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new List<ResBuscarSintoma>();
+            }
+            else
+            {
+                Debug.WriteLine($"Error buscando síntomas: {response.StatusCode}");
+                return new List<ResBuscarSintoma>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Excepción buscando síntomas: {ex.Message}");
+            return new List<ResBuscarSintoma>();
+        }
+    }
+
+    public async Task<ResInsertarSintomaManual> InsertarSintomaManualAsync(ReqInsertarSintomaManual request)
+    {
+        var endpoint = "api/sintomas/insertarSintomaManual";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"Insertando síntoma manual: {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResInsertarSintomaManual>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new ResInsertarSintomaManual { resultado = false };
+            }
+            else
+            {
+                return new ResInsertarSintomaManual
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error insertando síntoma manual: {ex.Message}");
+            return new ResInsertarSintomaManual
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "Error de conexión" } }
+            };
+        }
+    }
+
+    public async Task<ResAgregarSintomasSeleccionados> AgregarSintomasSeleccionadosAsync(ReqAgregarSintomasSeleccionados request)
+    {
+        var endpoint = "api/sintomas/agregarSintomasSeleccionados";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"Agregando síntomas seleccionados: {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResAgregarSintomasSeleccionados>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new ResAgregarSintomasSeleccionados { resultado = false };
+            }
+            else
+            {
+                return new ResAgregarSintomasSeleccionados
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error agregando síntomas seleccionados: {ex.Message}");
+            return new ResAgregarSintomasSeleccionados
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "Error de conexión" } }
+            };
+        }
+    }
+
+    public async Task<ResObtenerSintomasUsuario> ObtenerSintomasUsuarioAsync(ReqObtenerUsuario request)
+    {
+        var endpoint = "api/sintomas/ListaUsuario";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"Obteniendo síntomas usuario: {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResObtenerSintomasUsuario>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new ResObtenerSintomasUsuario { resultado = false };
+            }
+            else
+            {
+                return new ResObtenerSintomasUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error obteniendo síntomas usuario: {ex.Message}");
+            return new ResObtenerSintomasUsuario
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "Error de conexión" } }
+            };
+        }
+    }
+
+    public async Task<ResEliminarSintoma> EliminarSintomaUsuarioAsync(ReqEliminarSintoma request)
+    {
+        var endpoint = "api/sintomas/eliminar";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            Debug.WriteLine($"Eliminando síntoma usuario: {_httpClient.BaseAddress}{endpoint}");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<ResEliminarSintoma>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new ResEliminarSintoma { resultado = false };
+            }
+            else
+            {
+                return new ResEliminarSintoma
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error eliminando síntoma: {ex.Message}");
+            return new ResEliminarSintoma
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "Error de conexión" } }
+            };
+        }
     }
 
     #endregion

@@ -373,6 +373,16 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\GestionCondicionesMedicasPopup.xaml">
+	  <Compile Update="Popups\InformacionMedicamentoPopup.xaml.cs">
+	    <DependentUpon>InformacionMedicamentoPopup.xaml</DependentUpon>
+	  </Compile>
+	  <MauiXaml Update="Popups\InfoBusquedaManualPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\InfoEscaneoPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\InformacionMedicamentoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\InstruccionesEscaneoPopup.xaml">

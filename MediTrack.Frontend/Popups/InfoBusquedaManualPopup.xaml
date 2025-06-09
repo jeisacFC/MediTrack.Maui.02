@@ -1,0 +1,88 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:models="clr-namespace:MediTrack.Frontend.Models.Response"
+             x:DataType="models:ResBuscarMedicamento"
+             x:Class="MediTrack.Frontend.Popups.InfoBusquedaManualPopup"
+             Color="Black"
+             CanBeDismissedByTappingOutsideOfPopup="True"
+             HorizontalOptions="Center"
+             VerticalOptions="Center">
+
+    <Border BackgroundColor="White" 
+            StrokeThickness="0"
+            WidthRequest="360">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="20"/>
+        </Border.StrokeShape>
+
+        <ScrollView>
+            <StackLayout Spacing="0">
+
+                <Border BackgroundColor="#667eea" Padding="20,25,20,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20,20,0,0"/>
+                    </Border.StrokeShape>
+                    <StackLayout Spacing="8">
+                        <Label Text="Medicamento Encontrado" TextColor="White" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+
+                        <Label Text="{Binding Medicamento.NombreComercial}" TextColor="White" FontSize="22" FontAttributes="Bold" HorizontalTextAlignment="Center" LineBreakMode="WordWrap"/>
+                    </StackLayout>
+                </Border>
+
+                <StackLayout Padding="20,20,20,10" Spacing="16">
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Principio Activo" FontSize="14" FontAttributes="Bold" TextColor="#333"/>
+                        <Border Padding="12,8">
+                            <Label Text="{Binding Medicamento.PrincipioActivo}" FontSize="15" TextColor="#495057" LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Dosis" FontSize="14" FontAttributes="Bold" TextColor="#333"/>
+                        <Border Padding="12,8">
+                            <Label Text="{Binding Medicamento.Dosis}" FontSize="15" TextColor="#1976d2" LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Fabricante" FontSize="14" FontAttributes="Bold" TextColor="#333"/>
+                        <Border Padding="12,8">
+                            <Label Text="{Binding Medicamento.Fabricante}" FontSize="15" TextColor="#388e3c" LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
+
+                    <StackLayout x:Name="UsosSection" Spacing="5" IsVisible="False">
+                        <Label Text="Usos Principales" FontSize="14" FontAttributes="Bold" TextColor="#333"/>
+                        <Border Padding="12,10">
+                            <StackLayout x:Name="UsosContainer" Spacing="6" />
+                        </Border>
+                    </StackLayout>
+
+                    <StackLayout x:Name="AdvertenciasSection" Spacing="5" IsVisible="False">
+                        <Label Text="Advertencias Importantes" FontSize="14" FontAttributes="Bold" TextColor="#d32f2f"/>
+                        <Border Padding="12,10">
+                            <StackLayout x:Name="AdvertenciasContainer" Spacing="6" />
+                        </Border>
+                    </StackLayout>
+
+                    <StackLayout x:Name="EfectosSecundariosSection" Spacing="5" IsVisible="False">
+                        <Label Text="Efectos Secundarios" FontSize="14" FontAttributes="Bold" TextColor="#4527a0"/>
+                        <Border Padding="12,10">
+                            <StackLayout x:Name="EfectosSecundariosContainer" Spacing="6" />
+                        </Border>
+                    </StackLayout>
+
+                </StackLayout>
+
+                <Border Padding="20,15,20,20">
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Text="Agregar a Mi Perfil" BackgroundColor="#4caf50" TextColor="White" Clicked="OnAgregarClicked"/>
+                        <Button Grid.Column="1" Text="Cerrar" BackgroundColor="#f44336" TextColor="White" Clicked="OnCerrarClicked"/>
+                    </Grid>
+                </Border>
+            </StackLayout>
+        </ScrollView>
+    </Border>
+</toolkit:Popup>
