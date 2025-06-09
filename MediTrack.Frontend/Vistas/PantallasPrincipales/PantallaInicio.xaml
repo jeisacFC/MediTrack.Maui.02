@@ -272,7 +272,7 @@
                     </Frame>
                 </VerticalStackLayout>
 
-                <!-- 4. HÁBITOS SALUDABLES (DISEÑO ESTANDARIZADO) -->
+                <!-- 4. HÁBITOS SALUDABLES -->
                 <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
                     <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
                         <Label Grid.Column="0"
@@ -281,44 +281,60 @@
                                 FontAttributes="Bold"
                                 TextColor="Black"
                                 VerticalTextAlignment="Center" />
-                    </Grid> 
+                    </Grid>
 
-                    <ScrollView Orientation="Horizontal"
-                                HorizontalScrollBarVisibility="Never"
-                                HeightRequest="140"
-                                IsVisible="{Binding HayHabitos}">
-                        <StackLayout Orientation="Horizontal" Spacing="15" Padding="0,5" BindableLayout.ItemsSource="{Binding HabitosSaludables}">
+                    <ScrollView
+                        Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never"
+                        IsVisible="{Binding HayHabitos}">
+
+                        <FlexLayout
+                            Direction="Row"
+                            Wrap="NoWrap"
+                            AlignItems="Stretch"
+                            JustifyContent="Start"
+                            Padding="0,5"
+                            BindableLayout.ItemsSource="{Binding HabitosSaludables}">
+
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame BackgroundColor="White"
+                                    <Frame
+                                        BackgroundColor="White"
                                         CornerRadius="15"
                                         Padding="15"
+                                        HasShadow="True"
                                         WidthRequest="280"
-                                        HasShadow="True">
-                                        <VerticalStackLayout Spacing="10">
-                                            <HorizontalStackLayout Spacing="8">
-                                                <Label FontFamily="MaterialIcons"
-                                                    Text="&#xE90F;"
-                                                    FontSize="20"
-                                                    TextColor="#FF9500"
-                                                    VerticalOptions="Center" />
-                                                <Label Text="{Binding Titulo}"
-                                                        FontAttributes="Bold"
-                                                        FontSize="14"
-                                                        TextColor="Black"
-                                                        LineBreakMode="TailTruncation"
-                                                        HorizontalOptions="FillAndExpand" />
-                                            </HorizontalStackLayout>
-                                            <Label Text="{Binding Descripcion}"
-                                                    FontSize="12"
-                                                    TextColor="Gray"
-                                                    LineBreakMode="WordWrap" />
-                                        </VerticalStackLayout>
+                                        VerticalOptions="Fill"
+                                        Margin="0,0,8,0">
+
+                                        <!-- Ícono y descripción a la par -->
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                            <Label
+                                                Grid.Column="0"
+                                                FontFamily="MaterialIcons"
+                                                Text="&#xEB4C;"
+                                                FontSize="20"
+                                                TextColor="Green"
+                                                VerticalOptions="Start" />
+
+                                            <Label
+                                                Grid.Column="1"
+                                                Text="{Binding Descripcion}"
+                                                FontSize="12"
+                                                TextColor="Gray"
+                                                LineBreakMode="WordWrap"
+                                                MaxLines="0"
+                                                Padding="5,0,0,0"
+                                                HorizontalOptions="FillAndExpand"
+                                                VerticalOptions="Start" />
+                                        </Grid>
                                     </Frame>
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
-                        </StackLayout>
+
+                        </FlexLayout>
                     </ScrollView>
+
 
                     <Frame BackgroundColor="#F8F9FA" 
                             CornerRadius="15" 
@@ -327,7 +343,7 @@
                             IsVisible="{Binding HayHabitos, Converter={StaticResource InverseBoolConverter}}">
                         <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
                             <Label FontFamily="MaterialIcons"
-                                    Text="&#xe87c;"
+                                    Text="&#xE87C;"
                                     FontSize="30"
                                     TextColor="#cccccc"
                                     HorizontalTextAlignment="Center" />
@@ -347,60 +363,58 @@
                             FontSize="18"
                             FontAttributes="Bold"
                             TextColor="Black" />
-                    </Grid> 
+                    </Grid>
 
                     <ScrollView
-    Orientation="Horizontal"
-    HorizontalScrollBarVisibility="Never"
-    IsVisible="{Binding HayRecomendaciones}">
+                        Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never"
+                        IsVisible="{Binding HayRecomendaciones}">
 
                         <!-- FlexLayout recibe el ItemsSource y el ItemTemplate -->
                         <FlexLayout
-      Direction="Row"
-      Wrap="NoWrap"
-      AlignItems="Stretch"           
-                            JustifyContent="Start"
-   
-      Padding="0,5"
-      BindableLayout.ItemsSource="{Binding Recomendaciones}">
+                            Direction="Row"
+                            Wrap="NoWrap"
+                            AlignItems="Stretch"           
+                            JustifyContent="Start"  
+                            Padding="0,5"
+                            BindableLayout.ItemsSource="{Binding Recomendaciones}">
 
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
                                     <Frame
-            BackgroundColor="White"
-            CornerRadius="15"
-            Padding="15"
-            HasShadow="True"
-            WidthRequest="280"
-            VerticalOptions="Fill">
+                                        BackgroundColor="White"
+                                        CornerRadius="15"
+                                        Padding="15"
+                                        HasShadow="True"
+                                        WidthRequest="280"
+                                        VerticalOptions="Fill"
+                                        Margin="0,0,8,0" >
                                         <!-- se expande para igualar al mayor -->
 
                                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
                                             <Label
-                Grid.Column="0"
-                FontFamily="MaterialIcons"
-                Text="&#xE8B8;"
-                TextColor="#2196F3"
-                FontSize="20"
-                VerticalOptions="Start" />
+                                                Grid.Column="0"
+                                                FontFamily="MaterialIcons"
+                                                Text="&#xE90F;"
+                                                TextColor="#FF9500"
+                                                FontSize="20"
+                                                VerticalOptions="Start" />
 
                                             <Label
-                Grid.Column="1"
-                Text="{Binding Descripcion}"
-                FontSize="12"
-                LineBreakMode="WordWrap"
-                MaxLines="0"
-                Padding="5,0,0,0"
-                HorizontalOptions="FillAndExpand"
-                VerticalOptions="Start" />
+                                                Grid.Column="1"
+                                                Text="{Binding Descripcion}"
+                                                FontSize="12"
+                                                LineBreakMode="WordWrap"
+                                                MaxLines="0"
+                                                Padding="5,0,0,0"
+                                                HorizontalOptions="FillAndExpand"
+                                                VerticalOptions="Start" />
                                         </Grid>
                                     </Frame>
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
-
                         </FlexLayout>
                     </ScrollView>
-
 
                     <Frame BackgroundColor="#F8F9FA"
                             CornerRadius="15"
@@ -420,7 +434,7 @@
                     </Frame>
                 </VerticalStackLayout>
 
-                <!-- 6. INTERACCIONES (DISEÑO ESTANDARIZADO) -->
+                <!-- 6. INTERACCIONES-->
                 <VerticalStackLayout Spacing="10"
                             IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
                     <Grid ColumnDefinitions="*,Auto" Margin="0,5">
@@ -431,45 +445,57 @@
                             TextColor="Black" />
                     </Grid>
 
-                    <ScrollView Orientation="Horizontal"
+                    <ScrollView
+                        Orientation="Horizontal"
                         HorizontalScrollBarVisibility="Never"
-                        HeightRequest="140"
                         IsVisible="{Binding HayInteracciones}">
-                        <StackLayout Orientation="Horizontal"
-                            Spacing="15"
+
+                        <FlexLayout
+                            Direction="Row"
+                            Wrap="NoWrap"
+                            AlignItems="Stretch"
+                            JustifyContent="Start"
                             Padding="0,5"
                             BindableLayout.ItemsSource="{Binding Interacciones}">
+
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame BackgroundColor="White"
+                                    <Frame
+                                        BackgroundColor="White"
                                         CornerRadius="15"
                                         Padding="15"
+                                        HasShadow="True"
                                         WidthRequest="280"
-                                        HasShadow="True">
-                                        <VerticalStackLayout Spacing="10">
-                                            <HorizontalStackLayout Spacing="8">
-                                                <Label FontFamily="MaterialIcons"
-                                                    Text="&#xE914;"
-                                                    FontSize="20"
-                                                    TextColor="#FF5722"
-                                                    VerticalOptions="Center" />
-                                                <Label Text="{Binding Titulo}"
-                                                        FontAttributes="Bold"
-                                                        FontSize="14"
-                                                        TextColor="Black"
-                                                        LineBreakMode="TailTruncation"
-                                                        HorizontalOptions="FillAndExpand" />
-                                            </HorizontalStackLayout>
-                                            <Label Text="{Binding Descripcion}"
+                                        VerticalOptions="Fill"
+                                        Margin="0,0,8,0">
+
+                                        <!-- Icono + Descripción -->
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                            <Label
+                                                Grid.Column="0"
+                                                FontFamily="MaterialIcons"
+                                                Text="&#xE915;"
+                                                FontSize="20"
+                                                TextColor="Blue"                                              
+                                                VerticalOptions="Start" />
+
+                                            <Label
+                                                Grid.Column="1"
+                                                Text="{Binding Descripcion}"
                                                 FontSize="12"
                                                 TextColor="Gray"
-                                                LineBreakMode="WordWrap" />
-                                        </VerticalStackLayout>
+                                                LineBreakMode="WordWrap"
+                                                MaxLines="0"
+                                                Padding="5,0,0,0"
+                                                HorizontalOptions="FillAndExpand"
+                                                VerticalOptions="Start" />
+                                        </Grid>
                                     </Frame>
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
-                        </StackLayout>
+                        </FlexLayout>
                     </ScrollView>
+
 
                     <Frame BackgroundColor="#F8F9FA"
                             CornerRadius="15"
@@ -501,48 +527,67 @@
                             TextColor="Black" />
                     </Grid>
 
-                    <ScrollView Orientation="Horizontal"
-                        HorizontalScrollBarVisibility="Never"
-                        HeightRequest="160"
-                        IsVisible="{Binding HayAlertas}">
-                        <StackLayout Orientation="Horizontal"
-                            Spacing="15"
-                            Padding="0,5"
-                            BindableLayout.ItemsSource="{Binding Alertas}">
+                    <ScrollView
+    Orientation="Horizontal"
+    HorizontalScrollBarVisibility="Never"
+    IsVisible="{Binding HayAlertas}">
+
+                        <FlexLayout
+        Direction="Row"
+        Wrap="NoWrap"
+        AlignItems="Stretch"
+        JustifyContent="Start"
+        Padding="0,5"
+        BindableLayout.ItemsSource="{Binding Alertas}">
+
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame BackgroundColor="White"
-                                        CornerRadius="15"
-                                        Padding="15"
-                                        WidthRequest="300"
-                                        HasShadow="True">
+                                    <Frame
+                    BackgroundColor="White"
+                    CornerRadius="15"
+                    Padding="15"
+                    HasShadow="True"
+                    WidthRequest="300"
+                    VerticalOptions="Fill"
+                    Margin="0,0,8,0">
+
                                         <VerticalStackLayout Spacing="8">
+                                            <!-- Título con ícono -->
                                             <HorizontalStackLayout Spacing="8">
-                                                <Label FontFamily="MaterialIcons"
-                                                    Text="&#xe001;"
-                                                    FontSize="20"
-                                                    TextColor="#F44336"
-                                                    VerticalOptions="Center" />
-                                                <Label Text="{Binding Riesgo}"
-                                                    FontAttributes="Bold"
-                                                    FontSize="14"
-                                                    TextColor="Black"
-                                                    LineBreakMode="TailTruncation"
-                                                    HorizontalOptions="FillAndExpand" />
+                                                <Label
+                                FontFamily="MaterialIcons"
+                                Text="&#xe001;"
+                                FontSize="20"
+                                TextColor="#F44336"
+                                VerticalOptions="Start" />
+
+                                                <Label
+                                Text="{Binding Riesgo}"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                TextColor="Black"
+                                LineBreakMode="TailTruncation"
+                                HorizontalOptions="FillAndExpand"
+                                VerticalOptions="Start" />
                                             </HorizontalStackLayout>
-                                            <Label FontSize="12" LineBreakMode="WordWrap">
-                                                <Label.FormattedText>
-                                                    <FormattedString>
-                                                        <Span Text="{Binding Causa}" FontAttributes="Italic" TextColor="Gray"/>
-                                                    </FormattedString>
-                                                </Label.FormattedText>
-                                            </Label>
+
+                                            <!-- Causa -->
+                                            <Label
+                            Text="{Binding Causa}"
+                            FontSize="12"
+                            TextColor="Gray"
+                            FontAttributes="Italic"
+                            LineBreakMode="WordWrap"
+                            MaxLines="0"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="Start" />
                                         </VerticalStackLayout>
                                     </Frame>
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
-                        </StackLayout>
+                        </FlexLayout>
                     </ScrollView>
+
 
                     <Frame BackgroundColor="#F8F9FA"
                         CornerRadius="15"
