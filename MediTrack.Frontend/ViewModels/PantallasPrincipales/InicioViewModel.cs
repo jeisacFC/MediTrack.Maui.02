@@ -419,7 +419,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             try
             {
-                SintomasUsuario.Clear();
+                sintomasUsuario.Clear();
                 Debug.WriteLine("[VM] Iniciando carga de síntomas...");
 
                 var userIdStr = await SecureStorage.GetAsync("user_id");
@@ -443,7 +443,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     foreach (var sintoma in response.Sintomas)
                     {
                         Debug.WriteLine($"[VM] Agregando síntoma: {sintoma.Sintoma} - {sintoma.FechaReporte}");
-                        SintomasUsuario.Add(new SintomaUsuario
+                        sintomasUsuario.Add(new SintomaUsuario
                         {
                             IdSintoma = 0,
                             Nombre = sintoma.Sintoma,
@@ -452,7 +452,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                         });
                     }
 
-                    Debug.WriteLine($"[VM] Cargados {SintomasUsuario.Count} síntomas desde backend");
+                    Debug.WriteLine($"[VM] Cargados {sintomasUsuario.Count} síntomas desde backend");
                 }
                 else
                 {
@@ -463,7 +463,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     {
                         new SintomaUsuario
                         {
-                            IdSintoma = 1,
+                            IdSintoma = 1, 
                             Nombre = "Dolor de cabeza",
                             FechaReporte = DateTime.Today.AddDays(-1),
                             EsManual = false
@@ -479,14 +479,14 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 
                     foreach (var sintoma in sintomasEjemplo)
                     {
-                        SintomasUsuario.Add(sintoma);
+                        sintomasUsuario.Add(sintoma);
                     }
 
                     Debug.WriteLine($"[VM] Agregados {sintomasEjemplo.Count} síntomas de ejemplo");
                 }
 
-                HaySintomas = SintomasUsuario.Any();
-                Debug.WriteLine($"[VM] HaySintomas = {HaySintomas} - Total síntomas: {SintomasUsuario.Count}");
+                HaySintomas = sintomasUsuario.Any();
+                Debug.WriteLine($"[VM] HaySintomas = {HaySintomas} - Total síntomas: {sintomasUsuario.Count}");
             }
             catch (Exception ex)
             {
