@@ -1,9 +1,10 @@
-using MediTrack.Frontend.ViewModels;
-using MediTrack.Frontend.Models.Model;
-using System.Diagnostics;
-using MediTrack.Frontend.Vistas.Base;
-using MediTrack.Frontend.Popups;
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.Input;
+using MediTrack.Frontend.Models.Model;
+using MediTrack.Frontend.Popups;
+using MediTrack.Frontend.ViewModels;
+using MediTrack.Frontend.Vistas.Base;
+using System.Diagnostics;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {
@@ -37,7 +38,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // Manejo del scroll para hacer desaparecer el avatar
         private void OnScrollViewScrolled(object sender, ScrolledEventArgs e)
         {
             // Calculamos la opacidad basada en el scroll
@@ -73,10 +73,18 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                         return;
                     }
 
+                    // Obtener el ApiService del ViewModel
+                    var apiService = _viewModel.GetApiService();
+                    if (apiService == null)
+                    {
+                        await DisplayAlert("Error", "Error al acceder al servicio API", "OK");
+                        return;
+                    }
+
                     // Crear el ViewModel específico del popup con los parámetros requeridos
                     var popupViewModel = new ActualizarPerfilPopupViewModel(
-                        _viewModel._apiService, // Asume que PerfilViewModel tiene acceso al ApiService
-                        _viewModel.Usuario     // El objeto Usuario actual
+                        apiService,
+                        _viewModel.Usuario
                     );
 
                     var popup = new ActualizarPerfilPopup(popupViewModel);
@@ -88,7 +96,10 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                     {
                         Debug.WriteLine("=== POPUP CERRADO - ACTUALIZACIÓN EXITOSA ===");
                         // Refrescar los datos del perfil
-                        await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
+                        if (_viewModel.RefrescarPerfilCommand.CanExecute(null))
+                        {
+                            await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
+                        }
                     }
                     else
                     {
@@ -118,8 +129,52 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
+        // MÉTODO PRINCIPAL PARA ABRIR EL MODAL DE CONDICIONES MÉDICAS
+        private async void OnEditCondicionesMedicasClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                Debug.WriteLine("=== Abriendo modal de condiciones médicas ===");
 
-        // Manejo de edición de condiciones médicas
+                // Verificar que tenemos los datos del usuario necesarios
+                if (_viewModel.Usuario?.id_usuario == null)
+                {
+                    await DisplayAlert("Error", "No se pueden cargar los datos del usuario", "OK");
+                    return;
+                }
+
+                // Obtener el ApiService del ViewModel
+                var apiService = _viewModel.GetApiService();
+                if (apiService == null)
+                {
+                    await DisplayAlert("Error", "Error al acceder al servicio API", "OK");
+                    return;
+                }
+
+                // Crear el ViewModel del modal
+                var condicionesViewModel = new CondicionesMedicasViewModel(apiService, _viewModel.Usuario.id_usuario);
+
+                // Crear y mostrar el popup
+                var popup = new GestionCondicionesMedicasPopup(condicionesViewModel);
+                var result = await this.ShowPopupAsync(popup);
+
+                // Si se realizaron cambios, refrescar el perfil
+                if (result is bool success && success)
+                {
+                    Debug.WriteLine("=== Condiciones actualizadas - refrescando perfil ===");
+                    if (_viewModel.RefrescarPerfilCommand.CanExecute(null))
+                    {
+                        await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error al abrir modal de condiciones: {ex.Message}");
+                await DisplayAlert("Error", "Error al abrir el modal de condiciones médicas", "OK");
+            }
+        }
+
         private void OnEditCondicionesClicked(object sender, EventArgs e)
         {
             _editandoCondiciones = !_editandoCondiciones;
@@ -139,7 +194,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // Manejo de edición de alergias
         private void OnEditAlergiasClicked(object sender, EventArgs e)
         {
             _editandoAlergias = !_editandoAlergias;
@@ -159,7 +213,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // Evento para manejar selección de condiciones médicas
         private void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -182,7 +235,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // Evento para manejar selección de alergias
         private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -205,7 +257,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // Método para refrescar la página cuando se hace pull-to-refresh (opcional)
         private async void OnRefreshRequested(object sender, EventArgs e)
         {
             try
@@ -228,6 +279,16 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
         {
             base.OnDisappearing();
             Debug.WriteLine("=== PantallaPerfil OnDisappearing ===");
+        }
+
+        // ELIMINADO: El RelayCommand que causaba conflicto
+        // [RelayCommand]
+        // private async Task EditarCondicionesMedicas() { ... }
+
+        // Helper method to show alerts
+        private async Task ShowAlertAsync(string title, string message)
+        {
+            await DisplayAlert(title, message, "OK");
         }
     }
 }

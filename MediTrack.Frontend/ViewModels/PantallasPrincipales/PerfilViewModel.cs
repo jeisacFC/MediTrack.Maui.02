@@ -14,9 +14,12 @@ namespace MediTrack.Frontend.ViewModels
 {
     public partial class PerfilViewModel : BaseViewModel
     {
-        public readonly IApiService _apiService;
+        private readonly IApiService _apiService;
         private bool _isLoggingOut = false;
-
+        public IApiService GetApiService()
+        {
+            return _apiService;
+        }
         [ObservableProperty]
         private Usuarios usuario;
 
@@ -455,6 +458,37 @@ namespace MediTrack.Frontend.ViewModels
             {
                 Debug.WriteLine($"Error al abrir popup de editar perfil: {ex.Message}");
                 await ShowAlertAsync("Error", "Error al abrir el formulario de edición");
+            }
+        }
+        [RelayCommand]
+        private async Task GestionarCondicionesMedicas()
+        {
+            try
+            {
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
+                {
+                    await ShowAlertAsync("Error", "No se pudo obtener la información del usuario");
+                    return;
+                }
+
+                // Crear el ViewModel específico para condiciones
+                var condicionesViewModel = new CondicionesMedicasViewModel(_apiService, userId);
+
+                // Crear y mostrar el modal/popup
+                var popup = new GestionCondicionesMedicasPopup(condicionesViewModel);
+                var resultado = await Shell.Current.ShowPopupAsync(popup);
+
+                // Si hubo cambios, refrescar las condiciones en el perfil
+                if (resultado is bool actualizado && actualizado)
+                {
+                    await CargarCondicionesMedicasAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error al abrir gestión de condiciones: {ex.Message}");
+                await ShowAlertAsync("Error", "Error al abrir la gestión de condiciones médicas");
             }
         }
 

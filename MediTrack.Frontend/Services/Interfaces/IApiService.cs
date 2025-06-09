@@ -25,13 +25,19 @@ namespace MediTrack.Frontend.Services.Interfaces
         Task<ResLogout> LogoutAsync(ReqLogout request);
         Task<ResRegister> RegisterAsync(ReqRegister request);
         Task<ResObtenerUsuario> GetUserAsync(ReqObtenerUsuario request);
-        Task<ResObtenerAlergiasUsuario> ObtenerAlergiasUsuarioAsync(ReqObtenerAlergiasUsuario request);
-        Task<ResObtenerCondicionesUsuario> ObtenerCondicionesMedicasAsync(ReqObtenerCondicionesUsuario request);
         Task<ResActualizarUsuario> ActualizarUsuarioAsync(ReqActualizarUsuario request);
+
+        //Condiciones y Alergias
+        Task<ResInsertarAlergia> InsertarAlergiaAsync(ReqInsertarAlergia request);
+        Task<ResInsertarCondicion> InsertarCondicionAsync(ReqInsertarCondicion request);
         Task<ResListarCondiciones> ListarCondicionesMedicasAsync(ReqListarCondiciones request);
         Task<ResListarAlergias> ListarAlergiasAsync(ReqListarAlergias request);
+        Task<ResObtenerAlergiasUsuario> ObtenerAlergiasUsuarioAsync(ReqObtenerAlergiasUsuario request);
+        Task<ResObtenerCondicionesUsuario> ObtenerCondicionesMedicasAsync(ReqObtenerCondicionesUsuario request);
         Task<ResAsignarCondicionUsuario> AsignarCondicionUsuarioAsync(ReqAsignarCondicionUsuario request);
         Task<ResAsignarAlergiaUsuario> AsignarAlergiaUsuarioAsync(ReqAsignarAlergiaUsuario request);
+        Task<ResDesasignarAlergiaUsuario> DesasignarAlergiaUsuarioAsync(ReqDesasignarAlergiaUsuario request);
+        Task<ResDesasignarCondicionUsuario> DesasignarCondicionUsuarioAsync(ReqDesasignarCondicionUsuario request);
 
         // Recuperación de contraseña
         Task<ResSolicitarResetPassword> SolicitarResetPasswordAsync(ReqSolicitarResetPassword request);

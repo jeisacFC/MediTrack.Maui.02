@@ -111,15 +111,14 @@
                                      VerticalOptions="Center"
                                      Grid.Column="0" />
                                 <Button x:Name="BtnEditarCondiciones"
-                                        Grid.Column="1"
-                                        BackgroundColor="#3b71ff"
-                                        TextColor="White"
-                                        CornerRadius="18"
-                                        HeightRequest="36"
-                                        WidthRequest="36"
-                                        FontSize="18"
-                                        Command="{Binding EditarCondicionesMedicasCommand}"
-                                        Clicked="OnEditCondicionesClicked">
+        Grid.Column="1"
+        BackgroundColor="#3b71ff"
+        TextColor="White"
+        CornerRadius="18"
+        HeightRequest="36"
+        WidthRequest="36"
+        FontSize="18"
+        Clicked="OnEditCondicionesMedicasClicked">
                                     <Button.ImageSource>
                                         <FontImageSource Glyph="&#xE3C9;" FontFamily="MaterialIcons" Color="White" Size="18" />
                                     </Button.ImageSource>

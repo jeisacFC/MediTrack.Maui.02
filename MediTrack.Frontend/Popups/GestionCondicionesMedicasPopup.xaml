@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MediTrack.Frontend.Popups.GestionCondicionesMedicasPopup"
+               Color="Transparent">
+
+    <ScrollView>
+        <Frame CornerRadius="25" 
+               Padding="25" 
+               Margin="20" 
+               BackgroundColor="White"
+               VerticalOptions="Center" 
+               HorizontalOptions="Center"
+               WidthRequest="380"
+               MaximumHeightRequest="600"
+               HasShadow="True">
+
+            <VerticalStackLayout Spacing="20">
+
+                <!-- Header -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Gestionar Condiciones Médicas" 
+                           Grid.Column="0"
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           TextColor="#0B2B6E"
+                           VerticalOptions="Center"/>
+
+                    <Button Grid.Column="1"
+                            BackgroundColor="#dc3545"
+                            TextColor="White"
+                            CornerRadius="15"
+                            HeightRequest="30"
+                            WidthRequest="30"
+                            FontSize="16"
+                            Clicked="OnCerrarClicked">
+                        <Button.ImageSource>
+                            <FontImageSource Glyph="&#xE5CD;" FontFamily="MaterialIcons" Color="White" Size="16"/>
+                        </Button.ImageSource>
+                    </Button>
+                </Grid>
+
+                <!-- Separador -->
+                <BoxView BackgroundColor="#e9ecef" HeightRequest="1" HorizontalOptions="Fill"/>
+
+                <!-- Sección: Condiciones del Usuario -->
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Mis Condiciones Médicas"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="#495057"/>
+
+                    <Frame BackgroundColor="#f8f9fa" 
+                           CornerRadius="12" 
+                           Padding="15" 
+                           HasShadow="False"
+                           BorderColor="#dee2e6">
+                        <CollectionView ItemsSource="{Binding CondicionesUsuario}"
+                                      MinimumHeightRequest="80"
+                                      MaximumHeightRequest="150">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="6"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="White"
+                                           CornerRadius="12"
+                                           Padding="12,8"
+                                           HasShadow="False"
+                                           BorderColor="#dee2e6"
+                                           Margin="0,2">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Frame Grid.Column="0"
+                                                   BackgroundColor="#28a745"
+                                                   CornerRadius="10"
+                                                   HeightRequest="20"
+                                                   WidthRequest="20"
+                                                   Padding="0"
+                                                   HasShadow="False"
+                                                   VerticalOptions="Center"
+                                                   Margin="0,0,8,0">
+                                                <Image HorizontalOptions="Center" VerticalOptions="Center">
+                                                    <Image.Source>
+                                                        <FontImageSource Glyph="&#xE8F4;" FontFamily="MaterialIcons" Color="White" Size="12"/>
+                                                    </Image.Source>
+                                                </Image>
+                                            </Frame>
+
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding nombre_condicion}"
+                                                   FontSize="14"
+                                                   TextColor="#212529"
+                                                   VerticalOptions="Center"/>
+
+                                            <Button Grid.Column="2"
+                                                    BackgroundColor="#dc3545"
+                                                    TextColor="White"
+                                                    CornerRadius="10"
+                                                    HeightRequest="20"
+                                                    WidthRequest="20"
+                                                    FontSize="12"
+                                                    Padding="0"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Popup}}, Path=BindingContext.DesasignarCondicionCommand}"
+                                                    CommandParameter="{Binding .}">
+                                                <Button.ImageSource>
+                                                    <FontImageSource Glyph="&#xE5CD;" FontFamily="MaterialIcons" Color="White" Size="10"/>
+                                                </Button.ImageSource>
+                                            </Button>
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <StackLayout Padding="15" Spacing="8">
+                                    <Image HorizontalOptions="Center">
+                                        <Image.Source>
+                                            <FontImageSource Glyph="&#xE8F4;" FontFamily="MaterialIcons" Color="#adb5bd" Size="30"/>
+                                        </Image.Source>
+                                    </Image>
+                                    <Label Text="Sin condiciones médicas"
+                                           TextColor="#6c757d"
+                                           FontAttributes="Italic"
+                                           HorizontalOptions="Center"
+                                           FontSize="12"/>
+                                </StackLayout>
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </Frame>
+                </VerticalStackLayout>
+
+                <!-- Sección: Agregar Condiciones -->
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Agregar Condiciones"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="#495057"/>
+
+                    <!-- Botón para mostrar formulario nueva condición -->
+                    <Button Text="+ Nueva Condición"
+                            BackgroundColor="#17a2b8"
+                            TextColor="White"
+                            CornerRadius="15"
+                            HeightRequest="40"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            Command="{Binding ToggleMostrarFormularioNuevaCondicionCommand}"/>
+
+                    <!-- Formulario Nueva Condición -->
+                    <Frame IsVisible="{Binding MostrarFormularioNuevaCondicion}"
+                           BackgroundColor="#fff3cd"
+                           CornerRadius="12"
+                           Padding="15"
+                           HasShadow="False"
+                           BorderColor="#ffeaa7">
+                        <VerticalStackLayout Spacing="12">
+                            <Label Text="Crear Nueva Condición"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#856404"/>
+
+                            <Frame BackgroundColor="White" 
+                                   CornerRadius="12" 
+                                   Padding="0" 
+                                   HasShadow="False"
+                                   BorderColor="#dee2e6">
+                                <Entry Placeholder="Nombre de la condición"
+                                       Text="{Binding NombreNuevaCondicion}"
+                                       FontSize="14"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#212529"
+                                       PlaceholderColor="#6c757d"/>
+                            </Frame>
+
+                            <Frame BackgroundColor="White" 
+                                   CornerRadius="12" 
+                                   Padding="0" 
+                                   HasShadow="False"
+                                   BorderColor="#dee2e6">
+                                <Entry Placeholder="Descripción (opcional)"
+                                       Text="{Binding DescripcionNuevaCondicion}"
+                                       FontSize="14"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#212529"
+                                       PlaceholderColor="#6c757d"/>
+                            </Frame>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Button Text="Crear"
+                                        Grid.Column="0"
+                                        BackgroundColor="#28a745"
+                                        TextColor="White"
+                                        CornerRadius="15"
+                                        HeightRequest="40"
+                                        FontSize="14"
+                                        FontAttributes="Bold"
+                                        Command="{Binding CrearNuevaCondicionCommand}"/>
+
+                                <Button Text="Cancelar"
+                                        Grid.Column="1"
+                                        BackgroundColor="#6c757d"
+                                        TextColor="White"
+                                        CornerRadius="15"
+                                        HeightRequest="40"
+                                        FontSize="14"
+                                        FontAttributes="Bold"
+                                        Command="{Binding CancelarNuevaCondicionCommand}"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <!-- Lista de Condiciones Disponibles -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Condiciones Disponibles"
+                               TextColor="#495057" 
+                               FontAttributes="Bold"
+                               FontSize="14"/>
+
+                        <Frame BackgroundColor="#f8f9fa" 
+                               CornerRadius="12" 
+                               Padding="10" 
+                               HasShadow="False"
+                               BorderColor="#dee2e6">
+                            <CollectionView ItemsSource="{Binding CondicionesDisponibles}"
+                                          SelectionMode="Multiple"
+                                          SelectionChanged="OnCondicionesSeleccionadas"
+                                          MinimumHeightRequest="100"
+                                          MaximumHeightRequest="200">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="4"/>
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BackgroundColor="White"
+                                               CornerRadius="10"
+                                               Padding="10,6"
+                                               HasShadow="False"
+                                               BorderColor="#dee2e6"
+                                               Margin="0,1">
+                                            <Grid ColumnDefinitions="Auto,*">
+                                                <Frame Grid.Column="0"
+                                                       BackgroundColor="#3b71ff"
+                                                       CornerRadius="8"
+                                                       HeightRequest="16"
+                                                       WidthRequest="16"
+                                                       Padding="0"
+                                                       HasShadow="False"
+                                                       VerticalOptions="Center"
+                                                       Margin="0,0,8,0">
+                                                    <Image HorizontalOptions="Center" VerticalOptions="Center">
+                                                        <Image.Source>
+                                                            <FontImageSource Glyph="&#xE8F4;" FontFamily="MaterialIcons" Color="White" Size="10"/>
+                                                        </Image.Source>
+                                                    </Image>
+                                                </Frame>
+
+                                                <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                                    <Label Text="{Binding nombre_condicion}"
+                                                           FontSize="14"
+                                                           TextColor="#212529"
+                                                           FontAttributes="Bold"/>
+                                                    <Label Text="{Binding descripcion}"
+                                                           FontSize="12"
+                                                           TextColor="#6c757d"
+                                                           IsVisible="{Binding descripcion, Converter={StaticResource StringToBoolConverter}}"/>
+                                                </StackLayout>
+                                            </Grid>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                                <CollectionView.EmptyView>
+                                    <StackLayout Padding="15" Spacing="8">
+                                        <Image HorizontalOptions="Center">
+                                            <Image.Source>
+                                                <FontImageSource Glyph="&#xE8F4;" FontFamily="MaterialIcons" Color="#adb5bd" Size="25"/>
+                                            </Image.Source>
+                                        </Image>
+                                        <Label Text="Sin condiciones disponibles"
+                                               TextColor="#6c757d"
+                                               FontAttributes="Italic"
+                                               HorizontalOptions="Center"
+                                               FontSize="12"/>
+                                    </StackLayout>
+                                </CollectionView.EmptyView>
+                            </CollectionView>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <!-- Botón Asignar Seleccionadas -->
+                    <Button Text="{Binding CondicionesSeleccionadas.Count, StringFormat='Asignar {0} Condiciones'}"
+                            BackgroundColor="#28a745"
+                            TextColor="White"
+                            CornerRadius="15"
+                            HeightRequest="45"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            IsVisible="{Binding TieneCondicionesSeleccionadas}"
+                            Command="{Binding AsignarCondicionesSeleccionadasCommand}"/>
+                </VerticalStackLayout>
+
+                <!-- Botones de Acción -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
+                    <Button Text="Refrescar"
+                            Grid.Column="0"
+                            BackgroundColor="#6c757d"
+                            TextColor="White"
+                            CornerRadius="15"
+                            HeightRequest="45"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            Command="{Binding RefrescarDatosCommand}"/>
+
+                    <Button Text="Cerrar"
+                            Grid.Column="1"
+                            BackgroundColor="#3b71ff"
+                            TextColor="White"
+                            CornerRadius="15"
+                            HeightRequest="45"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            Clicked="OnCerrarClicked"/>
+                </Grid>
+
+                <!-- Indicador de carga -->
+                <StackLayout Orientation="Horizontal" 
+                             Spacing="10" 
+                             HorizontalOptions="Center"
+                             IsVisible="{Binding IsBusy}">
+                    <ActivityIndicator IsRunning="True" 
+                                       Color="#3b71ff" 
+                                       HeightRequest="20" 
+                                       WidthRequest="20"/>
+                    <Label Text="Procesando..." 
+                           TextColor="#3b71ff" 
+                           FontSize="14"
+                           VerticalOptions="Center"/>
+                </StackLayout>
+
+            </VerticalStackLayout>
+        </Frame>
+    </ScrollView>
+</toolkit:Popup>

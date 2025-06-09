@@ -63,23 +63,22 @@ public static class MauiProgram
         builder.Services.AddTransient<InicioViewModel>();
         builder.Services.AddTransient<AgendaViewModel>();
         builder.Services.AddTransient<PerfilViewModel>();
+        builder.Services.AddTransient<CondicionesMedicasViewModel>();
 
         // TODOS LOS VIEWMODELS INICIALES
         builder.Services.AddTransient<CargaViewModel>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<OlvidoContrasenaViewModel>();
-        builder.Services.AddTransient<CodigoVerificacionViewModel>();
-        builder.Services.AddTransient<NuevaContrasenaViewModel>();
         builder.Services.AddTransient<ActualizarPerfilPopupViewModel>();    
         builder.Services.AddTransient<RecuperarContrasenaViewModel>();
+
         // PANTALLAS PRINCIPALES
         builder.Services.AddTransient<PantallaScan>();
         builder.Services.AddTransient<PantallaBusqueda>();
         builder.Services.AddTransient<PantallaInicio>();
         builder.Services.AddTransient<PantallaAgenda>();        
         builder.Services.AddTransient<PantallaPerfil>();
-
 
         // PANTALLAS INICIALES
         builder.Services.AddTransient<PantallaCarga>();
@@ -91,6 +90,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ModalAgregarEvento>();
         builder.Services.AddTransient<ActualizarPerfilPopup>();
         builder.Services.AddTransient<ModalRecuperarContrasena>();
+        builder.Services.AddTransient<GestionCondicionesMedicasPopup>();
 
 
         var app = builder.Build();
