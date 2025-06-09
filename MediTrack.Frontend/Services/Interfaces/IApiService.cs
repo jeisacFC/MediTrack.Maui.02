@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using MediTrack.Frontend.Models.Request;
 using MediTrack.Frontend.Models.Response;
-using MediTrack.Frontend.Models;
 
 namespace MediTrack.Frontend.Services.Interfaces
 {
@@ -14,7 +13,6 @@ namespace MediTrack.Frontend.Services.Interfaces
         // Medicamentos
         Task<ResEscanearMedicamento> EscanearMedicamentoAsync(ReqEscanearMedicamento request);
         Task<ResBuscarMedicamento> BuscarMedicamentoManualAsync(ReqBuscarMedicamento request);
-        Task<ResGuardarMedicamento> GuardarMedicamentoAsync(ReqGuardarMedicamento request);
 
         // IA
         Task<ResHabitosSaludables> ObtenerHabitosAsync(ReqObtenerUsuario request);
@@ -44,12 +42,5 @@ namespace MediTrack.Frontend.Services.Interfaces
         // Recuperación de contraseña
         Task<ResSolicitarResetPassword> SolicitarResetPasswordAsync(ReqSolicitarResetPassword request);
         Task<ResRestablecerContrasena> RestablecerContrasenaAsync(ReqRestablecerContrasena request);
-       
-        // Síntomas - Nuevos métodos
-        Task<List<ResBuscarSintoma>> BuscarSintomasAsync(ReqBuscarSintoma request);
-        Task<ResInsertarSintomaManual> InsertarSintomaManualAsync(ReqInsertarSintomaManual request);
-        Task<ResAgregarSintomasSeleccionados> AgregarSintomasSeleccionadosAsync(ReqAgregarSintomasSeleccionados request);
-        Task<ResObtenerSintomasUsuario> ObtenerSintomasUsuarioAsync(ReqObtenerUsuario request);
-        Task<ResEliminarSintoma> EliminarSintomaUsuarioAsync(ReqEliminarSintoma request);
     }
 }
