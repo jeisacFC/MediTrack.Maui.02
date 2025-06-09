@@ -589,4 +589,141 @@ public class ApiService : IApiService
     }
 
     #endregion
+
+
+    #region RECUPERAR CONTRASEÑA
+
+    public async Task<ResSolicitarResetPassword> SolicitarResetPasswordAsync(ReqSolicitarResetPassword request)
+    {
+        var endpoint = "api/usuarios/solicitar-reset-password";
+
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"SolicitarResetPassword Response: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var backendResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                var resSolicitar = new ResSolicitarResetPassword();
+
+                MapProperty(backendResponse, "resultado", v => resSolicitar.resultado = v.GetBoolean());
+                MapProperty(backendResponse, "mensaje", v => resSolicitar.Mensaje = v.GetString());
+                MapProperty(backendResponse, "emailEnviado", v => resSolicitar.EmailEnviado = v.GetBoolean());
+                MapProperty(backendResponse, "fechaEnvio", v => resSolicitar.FechaEnvio = v.GetDateTime());
+
+                resSolicitar.errores = MapErrors(backendResponse);
+
+                return resSolicitar;
+            }
+            else
+            {
+                return await HandleErrorResponse<ResSolicitarResetPassword>(responseContent, () => new ResSolicitarResetPassword
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}",
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                });
+            }
+        }
+        catch (HttpRequestException)
+        {
+            return CreateErrorSolicitarResetResponse("Error de conexión HTTPS");
+        }
+        catch (TaskCanceledException)
+        {
+            return CreateErrorSolicitarResetResponse("Tiempo de espera agotado");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Excepción en SolicitarResetPassword: {ex.Message}");
+            return CreateErrorSolicitarResetResponse("Error de conexión general");
+        }
+    }
+
+    public async Task<ResRestablecerContrasena> RestablecerContrasenaAsync(ReqRestablecerContrasena request)
+    {
+        var endpoint = "api/usuarios/restablecer-contrasena";
+
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"RestablecerContrasena Response: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var backendResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                var resRestablecer = new ResRestablecerContrasena();
+
+                MapProperty(backendResponse, "resultado", v => resRestablecer.resultado = v.GetBoolean());
+                MapProperty(backendResponse, "mensaje", v => resRestablecer.Mensaje = v.GetString());
+                MapProperty(backendResponse, "fechaActualizacion", v => resRestablecer.FechaActualizacion = v.GetDateTime());
+
+                resRestablecer.errores = MapErrors(backendResponse);
+
+                return resRestablecer;
+            }
+            else
+            {
+                return await HandleErrorResponse<ResRestablecerContrasena>(responseContent, () => new ResRestablecerContrasena
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}",
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                });
+            }
+        }
+        catch (HttpRequestException)
+        {
+            return CreateErrorRestablecerResponse("Error de conexión HTTPS");
+        }
+        catch (TaskCanceledException)
+        {
+            return CreateErrorRestablecerResponse("Tiempo de espera agotado");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Excepción en RestablecerContrasena: {ex.Message}");
+            return CreateErrorRestablecerResponse("Error de conexión general");
+        }
+    }
+
+    private ResSolicitarResetPassword CreateErrorSolicitarResetResponse(string mensaje)
+    {
+        return new ResSolicitarResetPassword
+        {
+            resultado = false,
+            Mensaje = mensaje,
+            EmailEnviado = false,
+            errores = new List<Errores> { new Errores { mensaje = mensaje } }
+        };
+    }
+
+    private ResRestablecerContrasena CreateErrorRestablecerResponse(string mensaje)
+    {
+        return new ResRestablecerContrasena
+        {
+            resultado = false,
+            Mensaje = mensaje,
+            errores = new List<Errores> { new Errores { mensaje = mensaje } }
+        };
+    }
+
+    #endregion
 }

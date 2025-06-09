@@ -371,13 +371,10 @@
 	  <MauiXaml Update="Popups\InstruccionesEscaneoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Popups\ModalCodigoVerificacion.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Popups\ModalGestionarSintomas.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Popups\ModalNuevaContrasena.xaml">
+	  <MauiXaml Update="Popups\ModalRecuperarContrasena.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\Styles.xaml">

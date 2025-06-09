@@ -65,7 +65,7 @@
                             <HorizontalStackLayout>
                                 <Image>
                                     <Image.Source>
-                                        <FontImageSource Glyph="&#xE0BE;"
+                                        <FontImageSource Glyph="&#xe0be;"
                                      FontFamily="MaterialIcons"
                                      Color="#3B71FF"
                                      Size="20"/>
