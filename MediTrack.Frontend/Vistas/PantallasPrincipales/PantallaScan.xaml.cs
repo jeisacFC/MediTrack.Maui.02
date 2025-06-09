@@ -38,13 +38,26 @@ public partial class PantallaScan : ContentPage
         }
     }
 
-
-
     // MANEJAR EVENTOS DEL VIEWMODEL
     private async void OnMostrarResultado(object sender, ResEscanearMedicamento medicamento)
     {
         var infoPopup = new InformacionMedicamentoEscaneo(medicamento);
+
+
+        // --- INICIO DE LA LÓGICA DE INTEGRACIÓN --- //
+        async void ManejadorMedicamentoAgregado(object s, ResEscanearMedicamento med)
+        { 
+            if (_viewModel?.GuardarMedicamentoCommand != null)
+            {
+                await _viewModel.GuardarMedicamentoCommand.ExecuteAsync(med);
+            }
+        }
+
+        infoPopup.MedicamentoAgregado += ManejadorMedicamentoAgregado;
+
         await this.ShowPopupAsync(infoPopup);
+
+        infoPopup.MedicamentoAgregado -= ManejadorMedicamentoAgregado;
 
         _viewModel?.ReactivarEscaneo();
 
@@ -59,32 +72,6 @@ public partial class PantallaScan : ContentPage
     }
 
    
-    // MANEJADOR PARA EL BOTÓN CANCELAR EN EL HEADER
-    private async void Cancelar_Clicked_Header(object sender, EventArgs e)
-    {
-        System.Diagnostics.Debug.WriteLine("=== BOTÓN CANCELAR PRESIONADO (HEADER) ===");
-
-        try
-        {
-            if (_viewModel?.CancelarEscaneoCommand != null)
-            {
-                System.Diagnostics.Debug.WriteLine("Ejecutando CancelarEscaneoCommand...");
-
-                // CORRECCIÓN: Usar Execute() en lugar de ExecuteAsync()
-                _viewModel.CancelarEscaneoCommand.Execute(null);
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("CancelarEscaneoCommand es null");
-            }
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error ejecutando comando cancelar: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-        }
-    }
-
     // MANEJADOR MEJORADO PARA DETECCIÓN DE CÓDIGOS
     private void OnBarcodesDetected(object sender, BarcodeDetectionEventArgs e)
     {
@@ -127,6 +114,38 @@ public partial class PantallaScan : ContentPage
                 _viewModel.ReactivarEscaneo(); // Reactivar si no se pudo procesar
             }
         });
+    }
+
+
+
+
+
+
+
+    // MANEJADOR PARA EL BOTÓN CANCELAR EN EL HEADER
+    private async void Cancelar_Clicked_Header(object sender, EventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine("=== BOTÓN CANCELAR PRESIONADO (HEADER) ===");
+
+        try
+        {
+            if (_viewModel?.CancelarEscaneoCommand != null)
+            {
+                System.Diagnostics.Debug.WriteLine("Ejecutando CancelarEscaneoCommand...");
+
+                // CORRECCIÓN: Usar Execute() en lugar de ExecuteAsync()
+                _viewModel.CancelarEscaneoCommand.Execute(null);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("CancelarEscaneoCommand es null");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error ejecutando comando cancelar: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+        }
     }
 
     // MÉTODO PARA REACTIVAR MANUALMENTE EL ESCANEO (si necesitas un botón)

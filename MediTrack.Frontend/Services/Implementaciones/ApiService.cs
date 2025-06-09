@@ -117,6 +117,53 @@ public class ApiService : IApiService
         }
     }
 
+    public async Task<ResGuardarMedicamento> GuardarMedicamentoAsync(ReqGuardarMedicamento request)
+    {
+        var endpoint = "api/medicamentos/guardar";
+
+        try
+        {
+            // Serializamos el objeto de solicitud a JSON
+            var jsonRequest = JsonSerializer.Serialize(request);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            Debug.WriteLine($"Llamando a POST: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"JSON Enviado: {jsonRequest}");
+
+            // Realizamos la llamada POST
+            var response = await _httpClient.PostAsync(endpoint, content);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"Respuesta de Guardar Medicamento: {responseContent}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Deserializamos la respuesta del backend
+                return JsonSerializer.Deserialize<ResGuardarMedicamento>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                // Si hay un error de servidor (ej. 400, 500), lo manejamos
+                return new ResGuardarMedicamento
+                {
+                    resultado = false,
+                    Mensaje = $"Error del servidor: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error de conexión en GuardarMedicamentoAsync: {ex.Message}");
+            return new ResGuardarMedicamento
+            {
+                resultado = false,
+                Mensaje = "No se pudo conectar con el servidor."
+            };
+        }
+    }
     #endregion
 
     #region AUTENTICACIÓN USUARIOS

@@ -185,7 +185,7 @@
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <!-- Botón Agregar -->
                         <Button Grid.Column="0"
-                                Text="Agregar"
+                                Text="Guardar"
                                 BackgroundColor="#4caf50"
                                 TextColor="White"
                                 FontAttributes="Bold"
