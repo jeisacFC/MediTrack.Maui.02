@@ -90,7 +90,7 @@
                         </calendar:CalendarMonthView>
                     </calendar:SfCalendar.MonthView>
 
-                    <!-- ✅ INTENTAR CONFIGURAR ESTILOS GLOBALES EN EL CALENDARIO -->
+                    <!--  INTENTAR CONFIGURAR ESTILOS GLOBALES EN EL CALENDARIO -->
                     <calendar:SfCalendar.Resources>
                         <ResourceDictionary>
                             <!-- Estilo para el círculo de selección -->

@@ -18,7 +18,7 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 _viewModel = new AgendaViewModel();
                 BindingContext = _viewModel;
 
-                // ✅ CONFIGURACIÓN SIMPLE
+                //  CONFIGURACIÓN SIMPLE
                 ConfigurarCalendario();
 
                 System.Diagnostics.Debug.WriteLine("PantallaAgenda con Syncfusion inicializada");
@@ -29,7 +29,7 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // ✅ MÉTODO SIMPLE Y LIMPIO
+        //  MÉTODO SIMPLE Y LIMPIO
         private void ConfigurarCalendario()
         {
             try
@@ -37,7 +37,7 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 // Solo configurar lo básico
                 CalendarioSync.SelectionMode = CalendarSelectionMode.Single;
 
-                System.Diagnostics.Debug.WriteLine("✅ Calendario configurado");
+                System.Diagnostics.Debug.WriteLine(" Calendario configurado");
             }
             catch (Exception ex)
             {

@@ -35,7 +35,7 @@ namespace MediTrack.Frontend.Vistas.Base
         return ServiceProvider.GetService<T>();
     }
 
-    // ✅ Acceso al ServiceProvider
+    //  Acceso al ServiceProvider
     private static IServiceProvider ServiceProvider =>
 #if WINDOWS10_0_17763_0_OR_GREATER
             MauiWinUIApplication.Current.Services;
