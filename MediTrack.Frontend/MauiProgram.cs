@@ -65,6 +65,8 @@ public static class MauiProgram
         builder.Services.AddTransient<PerfilViewModel>();
         builder.Services.AddTransient<CondicionesMedicasViewModel>();
         builder.Services.AddTransient<AlergiasViewModel>();
+        builder.Services.AddTransient<AgregarEventoViewModel>();
+        builder.Services.AddTransient<GestionarSintomasViewModel>();
 
         // TODOS LOS VIEWMODELS INICIALES
         builder.Services.AddTransient<CargaViewModel>();
@@ -93,6 +95,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ModalRecuperarContrasena>();
         builder.Services.AddTransient<GestionCondicionesMedicasPopup>();
         builder.Services.AddTransient<GestionAlergiasPopup>();
+        builder.Services.AddTransient<ModalGestionarSintomas>();
 
 
         var app = builder.Build();
