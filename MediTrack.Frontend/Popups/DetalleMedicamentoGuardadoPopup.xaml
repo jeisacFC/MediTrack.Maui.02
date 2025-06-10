@@ -5,65 +5,90 @@
              xmlns:models="clr-namespace:MediTrack.Frontend.Models.Response"
              x:DataType="models:ResDetalleMedicamentoUsuario"
              x:Class="MediTrack.Frontend.Popups.DetalleMedicamentoGuardadoPopup"
-             CanBeDismissedByTappingOutsideOfPopup="False">
+             Color="Black"
+             CanBeDismissedByTappingOutsideOfPopup="True"
+             HorizontalOptions="Center"
+             VerticalOptions="Center">
 
-    <Frame WidthRequest="350" CornerRadius="20" Padding="0" BorderColor="LightGray" HasShadow="True">
-        <VerticalStackLayout>
-            <Label Text="{Binding Medicamento.Nombre}" FontAttributes="Bold" FontSize="20" HorizontalTextAlignment="Center" Padding="20,25" BackgroundColor="{StaticResource ColorPrimario}" TextColor="White"/>
+    <Border BackgroundColor="White" 
+            StrokeThickness="0"
+            WidthRequest="360"
+            HeightRequest="650">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="20"/>
+        </Border.StrokeShape>
 
-            <ScrollView Padding="20" HeightRequest="350">
-                <VerticalStackLayout Spacing="18">
+        <ScrollView>
+            <StackLayout Spacing="0">
 
-                    <Label>
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Principio Activo: " FontAttributes="Bold"/>
-                                <Span Text="{Binding Medicamento.PrincipioActivo}"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Label>
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Dosis: " FontAttributes="Bold"/>
-                                <Span Text="{Binding Medicamento.Dosis}"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Label>
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Fabricante: " FontAttributes="Bold"/>
-                                <Span Text="{Binding Medicamento.Fabricante}"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
+                <Border BackgroundColor="#667eea" Padding="20,25,20,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20,20,0,0"/>
+                    </Border.StrokeShape>
+                    <StackLayout Spacing="8">
+                        <Label Text="Detalle del Medicamento" TextColor="White" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding Medicamento.Nombre}" TextColor="White" FontSize="22" FontAttributes="Bold" HorizontalTextAlignment="Center" LineBreakMode="WordWrap"/>
+                    </StackLayout>
+                </Border>
 
-                    <Label Text="Usos Comunes" FontAttributes="Bold" Margin="0,10,0,5"/>
-                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Medicamento.Usos}" Spacing="5">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="{Binding ., StringFormat='• {0}'}"/>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </VerticalStackLayout>
-                    <Label Text="Advertencias" FontAttributes="Bold" TextColor="OrangeRed" Margin="0,10,0,5"/>
-                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Medicamento.Advertencias}" Spacing="5">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="{Binding ., StringFormat='• {0}'}"/>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </VerticalStackLayout>
-                </VerticalStackLayout>
-            </ScrollView>
+                <StackLayout Padding="20,20,20,10" Spacing="16">
 
-            <BoxView HeightRequest="1" Color="LightGray"/>
+                    <StackLayout Spacing="5">
+                        <Label Text="Principio Activo" FontSize="14" FontAttributes="Bold" TextColor="#333"/>
+                        <Border Padding="12,8">
+                            <Label Text="{Binding Medicamento.PrincipioActivo}" FontSize="15" TextColor="#495057" LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
 
-            <Grid ColumnDefinitions="*,*" Padding="15" ColumnSpacing="10">
-                <Button Grid.Column="0" Text="Eliminar" Style="{StaticResource BotonDestructivo}" Clicked="Eliminar_Clicked"/>
-                <Button Grid.Column="1" Text="Cerrar" Style="{StaticResource BotonPrimario}" Clicked="Cerrar_Clicked"/>
-            </Grid>
-        </VerticalStackLayout>
-    </Frame>
+                    <StackLayout Spacing="5">
+                        <Label Text="Dosis" FontSize="14" FontAttributes="Bold" TextColor="#333"/>
+                        <Border Padding="12,8">
+                            <Label Text="{Binding Medicamento.Dosis}" FontSize="15" TextColor="#1976d2" LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Fabricante" FontSize="14" FontAttributes="Bold" TextColor="#333"/>
+                        <Border Padding="12,8">
+                            <Label Text="{Binding Medicamento.Fabricante}" FontSize="15" TextColor="#388e3c" LineBreakMode="WordWrap"/>
+                        </Border>
+                    </StackLayout>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Usos Comunes" FontSize="14" FontAttributes="Bold" TextColor="#333"/>
+                        <Border Padding="12,10">
+                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Medicamento.Usos}" Spacing="6">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Text="{Binding ., StringFormat='• {0}'}" FontSize="15" TextColor="#495057" LineBreakMode="WordWrap"/>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </Border>
+                    </StackLayout>
+
+                    <StackLayout Spacing="5">
+                        <Label Text="Advertencias Importantes" FontSize="14" FontAttributes="Bold" TextColor="#d32f2f"/>
+                        <Border Padding="12,10">
+                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Medicamento.Advertencias}" Spacing="6">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Text="{Binding ., StringFormat='• {0}'}" FontSize="15" TextColor="#d32f2f" LineBreakMode="WordWrap"/>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </Border>
+                    </StackLayout>
+
+                </StackLayout>
+
+                <Border Padding="20,15,20,20">
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Text="Eliminar" BackgroundColor="#f44336" TextColor="White" Clicked="Eliminar_Clicked"/>
+                        <Button Grid.Column="1" Text="Cerrar" BackgroundColor="#4caf50" TextColor="White" Clicked="Cerrar_Clicked"/>
+                    </Grid>
+                </Border>
+            </StackLayout>
+        </ScrollView>
+    </Border>
 </toolkit:Popup>
