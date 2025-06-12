@@ -182,8 +182,8 @@
                         </VerticalStackLayout>
                     </Frame>
                 </VerticalStackLayout>
-
-                <!-- .. HÁBITOS SALUDABLES -->
+    
+                <!-- 3. HÁBITOS SALUDABLES -->
                 <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
                     <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
                         <Label Grid.Column="0"
@@ -266,7 +266,7 @@
                     </Frame>
                 </VerticalStackLayout>
 
-                <!-- 5. RECOMENDACIONES IA (DISEÑO ESTANDARIZADO) -->
+                <!-- 4. RECOMENDACIONES IA (DISEÑO ESTANDARIZADO) -->
                 <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
                     <Grid ColumnDefinitions="*,Auto" Margin="0,5">
                         <Label Grid.Column="0"
@@ -345,7 +345,7 @@
                     </Frame>
                 </VerticalStackLayout>
 
-                <!-- 6. INTERACCIONES-->
+                <!-- 5. INTERACCIONES-->
                 <VerticalStackLayout Spacing="10"
                             IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
                     <Grid ColumnDefinitions="*,Auto" Margin="0,5">
@@ -427,7 +427,7 @@
                     </Frame>
                 </VerticalStackLayout>
 
-                <!-- 7. ALERTAS DE SALUD (DISEÑO ESTANDARIZADO) -->
+                <!-- 6. ALERTAS DE SALUD (DISEÑO ESTANDARIZADO) -->
                 <VerticalStackLayout Spacing="10"
                             IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
                     <Grid ColumnDefinitions="*,Auto" Margin="0,5">
