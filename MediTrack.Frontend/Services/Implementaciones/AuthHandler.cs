@@ -1,48 +1,121 @@
-﻿using CommunityToolkit.Maui;
-using MediTrack.Frontend.Popups;
-using MediTrack.Frontend.Services.Interfaces;
-using MediTrack.Frontend.ViewModels;
-using MediTrack.Frontend.ViewModels.PantallasInicio;
-using MediTrack.Frontend.ViewModels.PantallasPrincipales;
-using MediTrack.Frontend.Vistas.PantallasInicio;
-using MediTrack.Frontend.Vistas.PantallasPrincipales;
-using Microsoft.Extensions.Logging;
-using Syncfusion.Maui.Core.Hosting;
-using System.Globalization;
-using System.Net.Http.Headers;
-using ZXing.Net.Maui.Controls;
+﻿using System.Net.Http.Headers;
+using System.Diagnostics;
 
-namespace MediTrack.Frontend.Services.Implementaciones;
-
-public class AuthHandler : DelegatingHandler
+namespace MediTrack.Frontend.Services.Implementaciones
 {
-    protected override async Task<HttpResponseMessage> SendAsync(
-        HttpRequestMessage request,
-        CancellationToken cancellationToken)
+    public class AuthHandler : DelegatingHandler
     {
-        try
+        private string? _cachedToken = null;
+        private DateTime _lastTokenCheck = DateTime.MinValue;
+        private readonly TimeSpan _cacheTimeout = TimeSpan.FromMinutes(5);
+        private readonly SemaphoreSlim _tokenSemaphore = new(1, 1);
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            // Obtener token del almacenamiento seguro
-            var token = await SecureStorage.GetAsync("jwt_token");
-
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                // Agregar el header Authorization automáticamente
-                request.Headers.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
+                // PASO 1: Asegurar que el token está configurado
+                await EnsureTokenIsSetAsync(request);
 
-                System.Diagnostics.Debug.WriteLine($"Token agregado automáticamente a la petición: {request.RequestUri}");
+                // PASO 2: Hacer la petición
+                var response = await base.SendAsync(request, cancellationToken);
+
+                // PASO 3: Manejar 401 Unauthorized
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    Debug.WriteLine($"[AuthHandler] 401 Unauthorized en {request.RequestUri} - intentando refrescar token");
+
+                    // Limpiar cache y recargar token
+                    await RefreshTokenCacheAsync();
+                    await EnsureTokenIsSetAsync(request);
+
+                    // Reintentar la petición una sola vez
+                    response.Dispose(); // Liberar la respuesta anterior
+                    response = await base.SendAsync(request, cancellationToken);
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        Debug.WriteLine("[AuthHandler] ❌ Segundo intento también falló - token probablemente expirado");
+                    }
+                    else
+                    {
+                        Debug.WriteLine("[AuthHandler] ✅ Reintento exitoso después de refrescar token");
+                    }
+                }
+
+                return response;
             }
-            else
+            catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"No hay token disponible para: {request.RequestUri}");
+                Debug.WriteLine($"[AuthHandler] Error procesando petición: {ex.Message}");
+                throw;
             }
         }
-        catch (Exception ex)
+
+        private async Task EnsureTokenIsSetAsync(HttpRequestMessage request)
         {
-            System.Diagnostics.Debug.WriteLine($"Error agregando token: {ex.Message}");
+            await _tokenSemaphore.WaitAsync();
+            try
+            {
+                // Verificar si necesitamos recargar el token
+                var needsRefresh = _cachedToken == null ||
+                                 DateTime.Now - _lastTokenCheck > _cacheTimeout;
+
+                if (needsRefresh)
+                {
+                    try
+                    {
+                        _cachedToken = await SecureStorage.GetAsync("jwt_token");
+                        _lastTokenCheck = DateTime.Now;
+
+                        var tokenStatus = !string.IsNullOrEmpty(_cachedToken) ? "✓ Token cargado" : "⚠️ Sin token";
+                        Debug.WriteLine($"[AuthHandler] {tokenStatus} para {request.RequestUri?.Host}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[AuthHandler] Error obteniendo token: {ex.Message}");
+                        _cachedToken = null;
+                    }
+                }
+
+                // Aplicar o remover header de autorización
+                if (!string.IsNullOrEmpty(_cachedToken))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _cachedToken);
+                }
+                else
+                {
+                    request.Headers.Authorization = null;
+                }
+            }
+            finally
+            {
+                _tokenSemaphore.Release();
+            }
         }
 
-        return await base.SendAsync(request, cancellationToken);
+        private async Task RefreshTokenCacheAsync()
+        {
+            await _tokenSemaphore.WaitAsync();
+            try
+            {
+                _cachedToken = null;
+                _lastTokenCheck = DateTime.MinValue;
+                Debug.WriteLine("[AuthHandler] Cache de token limpiado para recarga");
+            }
+            finally
+            {
+                _tokenSemaphore.Release();
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _tokenSemaphore?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }

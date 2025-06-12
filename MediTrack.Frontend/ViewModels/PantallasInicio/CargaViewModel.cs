@@ -48,23 +48,28 @@ namespace MediTrack.Frontend.ViewModels.PantallasInicio
         {
             try
             {
-                // TIEMPO AÚN MÁS REDUCIDO - Solo 1.5 segundos para startup súper rápido
-                await Task.Delay(1500, cancellationToken);
+                System.Diagnostics.Debug.WriteLine("[CargaViewModel] Iniciando transición...");
+
+                // TIEMPO REDUCIDO - Solo mostrar splash lo necesario
+                await Task.Delay(2500, cancellationToken);
 
                 if (!cancellationToken.IsCancellationRequested)
                 {
                     IsAnimating = false;
+                    System.Diagnostics.Debug.WriteLine("[CargaViewModel] Animación terminada, verificando sesión...");
 
-                    // Verificar sesión en paralelo con animación final
+                    // Verificar si el usuario ya está logueado
                     await VerificarSesionYNavegar();
                 }
             }
             catch (OperationCanceledException)
             {
-                System.Diagnostics.Debug.WriteLine("Transición cancelada correctamente");
+                System.Diagnostics.Debug.WriteLine("[CargaViewModel] Transición cancelada correctamente");
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[CargaViewModel] ERROR: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[CargaViewModel] StackTrace: {ex.StackTrace}");
                 await HandleErrorAsync(ex);
                 // Fallback: ir a bienvenida en caso de error
                 await NavegarABienvenida();
