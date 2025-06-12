@@ -48,9 +48,10 @@ namespace MediTrack.Frontend.Services.Interfaces
         // Recuperación de contraseña
         Task<ResSolicitarResetPassword> SolicitarResetPasswordAsync(ReqSolicitarResetPassword request);
         Task<ResRestablecerContrasena> RestablecerContrasenaAsync(ReqRestablecerContrasena request);
-       
-        // Síntomas - Nuevos métodos
+
+        // Síntomas - Métodos limpios con JWT
         Task<List<ResBuscarSintoma>> BuscarSintomasAsync(ReqBuscarSintoma request);
+        Task<ResObtenerSintomasEnum> ObtenerTodosLosSintomasAsync();
         Task<ResInsertarSintomaManual> InsertarSintomaManualAsync(ReqInsertarSintomaManual request);
         Task<ResAgregarSintomasSeleccionados> AgregarSintomasSeleccionadosAsync(ReqAgregarSintomasSeleccionados request);
         Task<ResObtenerSintomasUsuario> ObtenerSintomasUsuarioAsync(ReqObtenerUsuario request);
