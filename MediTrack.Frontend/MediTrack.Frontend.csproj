@@ -117,6 +117,8 @@
 	  
 	  <Compile Include="Models\Model\SeveridadEnum.cs" />
 	  
+	  <Compile Include="Models\Model\SintomasEnum.cs" />
+	  
 	  <Compile Include="Models\Model\UsuarioAlergias.cs" />
 	  
 	  <Compile Include="Models\Model\UsuarioMedicamentos.cs" />
@@ -186,6 +188,8 @@
 	  <Compile Include="Models\Request\Recordatorios\ReqMarcarEstadoRecordatorio.cs" />
 	  
 	  <Compile Include="Models\Request\Recordatorios\ReqObtenerRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Request\Sintomas\ReqObtenerSintomasEnum.cs" />
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqRegister.cs" />
 	  
@@ -299,6 +303,8 @@
 	  
 	  <Compile Include="Models\Response\Recordatorios\ResObtenerRecordatorio.cs" />
 	  
+	  <Compile Include="Models\Response\Sintomas\ResObtenerSintomasEnum.cs" />
+	  
 	  <Compile Include="Models\Response\Usuarios\ResRegister.cs" />
 	  
 	  <Compile Include="Models\Response\Sintomas\ResAgregarSintomasSeleccionados.cs" />
@@ -333,7 +339,7 @@
 	  
 	  <Compile Include="Models\Response\Usuarios\ResSolicitarResetPassword.cs" />
 	  
-	  <Compile Include="Services\AuthHandler.cs" />
+	  <Compile Include="Services\Implementaciones\AuthHandler.cs" />
 	  
 	  <Compile Include="Services\DevHttpsConnectionHelper.cs" />
 	  

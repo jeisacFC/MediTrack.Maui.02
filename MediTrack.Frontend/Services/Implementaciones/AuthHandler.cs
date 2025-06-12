@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui;
 using MediTrack.Frontend.Popups;
-using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Services.Interfaces;
 using MediTrack.Frontend.ViewModels;
 using MediTrack.Frontend.ViewModels.PantallasInicio;
@@ -13,7 +12,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using ZXing.Net.Maui.Controls;
 
-namespace MediTrack.Frontend;
+namespace MediTrack.Frontend.Services.Implementaciones;
 
 public class AuthHandler : DelegatingHandler
 {
@@ -30,7 +29,7 @@ public class AuthHandler : DelegatingHandler
             {
                 // Agregar el header Authorization automáticamente
                 request.Headers.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                    new AuthenticationHeaderValue("Bearer", token);
 
                 System.Diagnostics.Debug.WriteLine($"Token agregado automáticamente a la petición: {request.RequestUri}");
             }

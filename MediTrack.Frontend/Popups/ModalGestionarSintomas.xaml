@@ -129,7 +129,7 @@
                             </CollectionView>
                         </VerticalStackLayout>
 
-                        <!-- Lista de síntomas disponibles -->
+                        <!-- Lista de síntomas disponibles - VERSIÓN CORREGIDA -->
                         <VerticalStackLayout Spacing="8">
                             <Label Text="Síntomas disponibles:"
                                    FontSize="13"
@@ -137,10 +137,11 @@
                                    TextColor="Black"
                                    IsVisible="{Binding HaySintomasDisponibles}" />
 
-                            <CollectionView ItemsSource="{Binding SintomasFiltrados}"
-                                            IsVisible="{Binding HaySintomasDisponibles}"
-                                            HeightRequest="200">
-                                <CollectionView.ItemTemplate>
+                            <!-- Usar StackLayout con BindableLayout en lugar de CollectionView -->
+                            <StackLayout IsVisible="{Binding HaySintomasDisponibles}"
+                                         BindableLayout.ItemsSource="{Binding SintomasFiltrados}"
+                                         Spacing="4">
+                                <BindableLayout.ItemTemplate>
                                     <DataTemplate>
                                         <Frame BackgroundColor="White"
                                                CornerRadius="8"
@@ -156,13 +157,18 @@
 
                                                 <CheckBox Grid.Column="1"
                                                           IsChecked="{Binding EstaSeleccionado}"
-                                                          Color="#9C27B0"
-                                                          CheckedChanged="OnSintomaSeleccionado" />
+                                                          Color="#9C27B0" />
                                             </Grid>
+
+                                            <!-- Gesture recognizer para manejar el toque -->
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding BindingContext.ToggleSintomaSeleccionCommand, Source={x:Reference PopupSintomas}}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Frame.GestureRecognizers>
                                         </Frame>
                                     </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
                         </VerticalStackLayout>
 
                         <!-- Agregar síntoma manual -->
@@ -197,7 +203,7 @@
                             </Frame>
                         </VerticalStackLayout>
 
-                        <!-- Mensaje cuando no hay síntomas -->
+                        <!-- Mensaje cuando no hay síntomas - SIN CHECKBOX -->
                         <VerticalStackLayout Spacing="10"
                                              IsVisible="{Binding HaySintomasDisponibles, Converter={StaticResource InverseBoolConverter}}"
                                              HorizontalOptions="Center">
@@ -206,10 +212,15 @@
                                    FontSize="30"
                                    TextColor="#cccccc"
                                    HorizontalTextAlignment="Center" />
-                            <Label Text="No se encontraron síntomas"
+                            <Label Text="Escribe para buscar síntomas"
                                    TextColor="Gray"
                                    FontSize="12"
                                    HorizontalTextAlignment="Center" />
+                            <Label Text="Puedes agregar síntomas personalizados"
+                                   TextColor="Gray"
+                                   FontSize="11"
+                                   HorizontalTextAlignment="Center"
+                                   Opacity="0.7" />
                         </VerticalStackLayout>
 
                     </VerticalStackLayout>

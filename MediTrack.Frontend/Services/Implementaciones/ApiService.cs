@@ -1217,12 +1217,12 @@ public class ApiService : IApiService
             });
 
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            Debug.WriteLine($"Buscando síntomas: {_httpClient.BaseAddress}{endpoint}");
-            Debug.WriteLine($"Request: {jsonRequest}");
+            Debug.WriteLine($"[ApiService] Buscando síntomas: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"[ApiService] Request: {jsonRequest}");
 
             var response = await _httpClient.PostAsync(endpoint, content);
             var responseContent = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine($"Response síntomas: {responseContent}");
+            Debug.WriteLine($"[ApiService] Response síntomas: {responseContent}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -1233,14 +1233,76 @@ public class ApiService : IApiService
             }
             else
             {
-                Debug.WriteLine($"Error buscando síntomas: {response.StatusCode}");
+                Debug.WriteLine($"[ApiService] Error buscando síntomas: {response.StatusCode}");
                 return new List<ResBuscarSintoma>();
             }
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Excepción buscando síntomas: {ex.Message}");
+            Debug.WriteLine($"[ApiService] Excepción buscando síntomas: {ex.Message}");
             return new List<ResBuscarSintoma>();
+        }
+    }
+
+    public async Task<ResObtenerSintomasEnum> ObtenerTodosLosSintomasAsync()
+    {
+        var endpoint = "api/sintomas/ListaSintomasEnum";
+        try
+        {
+            Debug.WriteLine($"[ApiService TODOS] URL: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"[ApiService TODOS] Request: Sin parámetros (solo JWT)");
+
+            // Enviar POST sin contenido pero con JWT automático
+            var content = new StringContent("{}", Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"[ApiService TODOS] Status: {response.StatusCode}");
+            Debug.WriteLine($"[ApiService TODOS] Response Length: {responseContent.Length}");
+            Debug.WriteLine($"[ApiService TODOS] Response Preview: {responseContent.Substring(0, Math.Min(300, responseContent.Length))}...");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<ResObtenerSintomasEnum>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new ResObtenerSintomasEnum { resultado = false };
+
+                Debug.WriteLine($"[ApiService TODOS] ✅ Síntomas deserializados: {result.Sintomas?.Count ?? 0}");
+
+                if (result.Sintomas?.Any() == true)
+                {
+                    foreach (var sintoma in result.Sintomas.Take(3))
+                    {
+                        Debug.WriteLine($"[ApiService TODOS] - ID: {sintoma.IdSintoma}, Nombre: {sintoma.Nombre}");
+                    }
+                    if (result.Sintomas.Count > 3)
+                    {
+                        Debug.WriteLine($"[ApiService TODOS] ... y {result.Sintomas.Count - 3} más");
+                    }
+                }
+
+                return result;
+            }
+            else
+            {
+                Debug.WriteLine($"[ApiService TODOS] ❌ Error: {response.StatusCode}");
+                return new ResObtenerSintomasEnum
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[ApiService TODOS] ❌ Excepción: {ex.Message}");
+            return new ResObtenerSintomasEnum
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "Error de conexión" } }
+            };
         }
     }
 
@@ -1255,7 +1317,7 @@ public class ApiService : IApiService
             });
 
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            Debug.WriteLine($"Insertando síntoma manual: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"[ApiService] Insertando síntoma manual: {_httpClient.BaseAddress}{endpoint}");
 
             var response = await _httpClient.PostAsync(endpoint, content);
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -1278,7 +1340,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error insertando síntoma manual: {ex.Message}");
+            Debug.WriteLine($"[ApiService] Error insertando síntoma manual: {ex.Message}");
             return new ResInsertarSintomaManual
             {
                 resultado = false,
@@ -1298,7 +1360,7 @@ public class ApiService : IApiService
             });
 
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            Debug.WriteLine($"Agregando síntomas seleccionados: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"[ApiService] Agregando síntomas seleccionados: {_httpClient.BaseAddress}{endpoint}");
 
             var response = await _httpClient.PostAsync(endpoint, content);
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -1321,7 +1383,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error agregando síntomas seleccionados: {ex.Message}");
+            Debug.WriteLine($"[ApiService] Error agregando síntomas seleccionados: {ex.Message}");
             return new ResAgregarSintomasSeleccionados
             {
                 resultado = false,
@@ -1341,7 +1403,7 @@ public class ApiService : IApiService
             });
 
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            Debug.WriteLine($"Obteniendo síntomas usuario: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"[ApiService] Obteniendo síntomas usuario: {_httpClient.BaseAddress}{endpoint}");
 
             var response = await _httpClient.PostAsync(endpoint, content);
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -1364,7 +1426,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error obteniendo síntomas usuario: {ex.Message}");
+            Debug.WriteLine($"[ApiService] Error obteniendo síntomas usuario: {ex.Message}");
             return new ResObtenerSintomasUsuario
             {
                 resultado = false,
@@ -1384,7 +1446,7 @@ public class ApiService : IApiService
             });
 
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            Debug.WriteLine($"Eliminando síntoma usuario: {_httpClient.BaseAddress}{endpoint}");
+            Debug.WriteLine($"[ApiService] Eliminando síntoma usuario: {_httpClient.BaseAddress}{endpoint}");
 
             var response = await _httpClient.PostAsync(endpoint, content);
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -1407,7 +1469,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error eliminando síntoma: {ex.Message}");
+            Debug.WriteLine($"[ApiService] Error eliminando síntoma: {ex.Message}");
             return new ResEliminarSintoma
             {
                 resultado = false,

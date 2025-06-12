@@ -588,9 +588,13 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 var viewModel = new GestionarSintomasViewModel(_apiService);
                 var popup = new ModalGestionarSintomas(viewModel);
 
-                // Mostrar el popup
-                Application.Current?.MainPage?.ShowPopup(popup);
-                Debug.WriteLine("[VM] Popup de síntomas abierto exitosamente");
+                // Mostrar el popup y esperar resultado
+                var result = await Application.Current?.MainPage?.ShowPopupAsync(popup);
+
+                Debug.WriteLine("[VM] Popup de síntomas cerrado");
+
+                // Recargar síntomas después de cerrar el modal
+                await CargarSintomasUsuario();
             }
             catch (Exception ex)
             {
