@@ -212,6 +212,75 @@
                             TextColor="Gray"
                             FontSize="14"
                             HorizontalTextAlignment="Center" />
+                <!-- 2. SÍNTOMAS RECIENTES (SEGUNDO LUGAR) -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                        <Label Grid.Column="0"
+                               Text="Síntomas recientes"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="Black"
+                               VerticalTextAlignment="Center" />
+
+                        <Button Grid.Column="1"
+                                Text="{Binding HaySintomas, Converter={StaticResource BoolToGestionarTextConverter}}"
+                                BackgroundColor="#9C27B0"
+                                TextColor="White"
+                                CornerRadius="10"
+                                FontSize="11"
+                                Padding="8,5"
+                                WidthRequest="{Binding HaySintomas, Converter={StaticResource BoolToButtonWidthConverter}}"
+                                HeightRequest="26"
+                                Command="{Binding GestionarSintomasCommand}" />
+                    </Grid>
+
+                    <!-- Lista de síntomas en chips -->
+                    <ScrollView Orientation="Horizontal"
+                                HorizontalScrollBarVisibility="Never"
+                                IsVisible="{Binding HaySintomas}">
+                        <StackLayout Orientation="Horizontal" 
+                                     Spacing="8" 
+                                     Padding="0,5"
+                                     BindableLayout.ItemsSource="{Binding SintomasUsuario}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="#E8E4FF"
+                                           CornerRadius="20"
+                                           Padding="12,8"
+                                           HasShadow="False"
+                                           HeightRequest="36">
+                                        <Label Text="{Binding Nombre}"
+                                               TextColor="#6B46C1"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               VerticalOptions="Center" />
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ScrollView>
+
+                    <!-- Mensaje cuando no hay síntomas -->
+                    <Frame BackgroundColor="#F8F9FA" 
+                           CornerRadius="15" 
+                           Padding="20"
+                           HasShadow="False"
+                           IsVisible="{Binding HaySintomas, Converter={StaticResource InverseBoolConverter}}">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label FontFamily="MaterialIcons"
+                                   Text="&#xe87c;"
+                                   FontSize="30"
+                                   TextColor="#cccccc"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="No hay síntomas reportados"
+                                   TextColor="Gray"
+                                   FontSize="14"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Toca en '¿Cómo te sientes?' para agregar síntomas"
+                                   TextColor="Gray"
+                                   FontSize="12"
+                                   HorizontalTextAlignment="Center"
+                                   Opacity="0.7" />
                         </VerticalStackLayout>
                     </Frame>
                 </VerticalStackLayout>
