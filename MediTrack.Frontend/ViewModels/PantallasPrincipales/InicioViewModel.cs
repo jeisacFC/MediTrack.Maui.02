@@ -47,9 +47,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         private bool hayMedicamentos = false;
 
         [ObservableProperty]
-        private bool hayEscaneos = false;
-
-        [ObservableProperty]
         private bool hayHabitos = false;
 
         [ObservableProperty]
@@ -115,7 +112,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 // Cargar datos en el orden deseado: Medicamentos -> Síntomas -> resto
                 await CargarMedicamentosHoy();
                 await CargarSintomasUsuario();
-                await CargarEscaneosRecientes();
 
                 // Pequeña pausa antes de cargar datos de IA
                 await Task.Delay(100);
@@ -192,55 +188,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             {
                 System.Diagnostics.Debug.WriteLine($"Error cargando medicamentos: {ex.Message}");
                 HayMedicamentos = false;
-            }
-        }
-
-        private async Task CargarEscaneosRecientes()
-        {
-            try
-            {
-                Debug.WriteLine("[VM] Iniciando carga de escaneos recientes...");
-
-                // Limpiar lista
-                EscaneosRecientes.Clear();
-
-                // TODO: Conectar con backend real
-                // Por ahora, datos de ejemplo
-                var escaneosEjemplo = new List<EscaneoReciente>
-                {
-                    new EscaneoReciente
-                    {
-                        NombreComercial = "Divalproato Sódico 250mg",
-                        FechaEscaneo = DateTime.Now.AddDays(-2),
-                        Fabricante = "Laboratorio ABC"
-                    },
-                    new EscaneoReciente
-                    {
-                        NombreComercial = "Amoxicilina 500mg",
-                        FechaEscaneo = DateTime.Now.AddDays(-3),
-                        Fabricante = "Pharma XYZ"
-                    },
-                    new EscaneoReciente
-                    {
-                        NombreComercial = "Ibuprofeno 400mg",
-                        FechaEscaneo = DateTime.Now.AddDays(-5),
-                        Fabricante = "Medicina S.A."
-                    }
-                };
-
-                foreach (var escaneo in escaneosEjemplo)
-                {
-                    EscaneosRecientes.Add(escaneo);
-                }
-
-                HayEscaneos = EscaneosRecientes.Any();
-
-                Debug.WriteLine($"[VM] Cargados {EscaneosRecientes.Count} escaneos recientes - HayEscaneos: {HayEscaneos}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[VM] Error cargando escaneos recientes: {ex.Message}");
-                HayEscaneos = false;
             }
         }
 
