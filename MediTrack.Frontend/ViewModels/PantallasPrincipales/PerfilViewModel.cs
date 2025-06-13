@@ -413,6 +413,8 @@ namespace MediTrack.Frontend.ViewModels
             }
         }
 
+        // Reemplaza estos métodos en tu PerfilViewModel:
+
         [RelayCommand]
         private async Task EditarPerfil()
         {
@@ -433,40 +435,43 @@ namespace MediTrack.Frontend.ViewModels
                 var popup = new ActualizarPerfilPopup(popupViewModel);
                 var resultado = await Shell.Current.ShowPopupAsync(popup);
 
-                // Si se actualizó correctamente, refrescar los datos
-                if (resultado is bool actualizado && actualizado)
-                {
-                    Debug.WriteLine("=== PERFIL ACTUALIZADO, REFRESCANDO DATOS ===");
+                Debug.WriteLine($"Modal de editar perfil cerrado con resultado: {resultado}");
 
-                    // Actualizar las propiedades formateadas con los nuevos datos
-                    ActualizarPropiedadesFormateadas();
+                // SIEMPRE refrescar después de cerrar el modal
+                Debug.WriteLine("=== REFRESCANDO DATOS DEL USUARIO DESPUÉS DEL MODAL ===");
+                await CargarDatosUsuarioAsync();
 
-                    // Forzar notificaciones de cambio para actualizar la UI
-                    OnPropertyChanged(nameof(Usuario));
-                    OnPropertyChanged(nameof(NombreCompleto));
-                    OnPropertyChanged(nameof(FechaNacimientoFormateada));
-                    OnPropertyChanged(nameof(GeneroTexto));
+                // Forzar notificaciones de cambio para actualizar la UI
+                OnPropertyChanged(nameof(Usuario));
+                OnPropertyChanged(nameof(NombreCompleto));
+                OnPropertyChanged(nameof(FechaNacimientoFormateada));
+                OnPropertyChanged(nameof(GeneroTexto));
 
-                    Debug.WriteLine("=== DATOS ACTUALIZADOS EN LA UI ===");
-                }
+                Debug.WriteLine("=== DATOS DEL USUARIO ACTUALIZADOS EN LA UI ===");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error al abrir popup de editar perfil: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                 await ShowAlertAsync("Error", "Error al abrir el formulario de edición");
             }
         }
+
         [RelayCommand]
         private async Task GestionarCondicionesMedicas()
         {
             try
             {
+                Debug.WriteLine("=== ABRIENDO GESTIÓN DE CONDICIONES MÉDICAS ===");
+
                 var userIdStr = await SecureStorage.GetAsync("user_id");
                 if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
                 {
                     await ShowAlertAsync("Error", "No se pudo obtener la información del usuario");
                     return;
                 }
+
+                Debug.WriteLine($"Creando ViewModel para condiciones médicas, userId: {userId}");
 
                 // Crear el ViewModel específico para condiciones
                 var condicionesViewModel = new CondicionesMedicasViewModel(_apiService, userId);
@@ -475,15 +480,21 @@ namespace MediTrack.Frontend.ViewModels
                 var popup = new GestionCondicionesMedicasPopup(condicionesViewModel);
                 var resultado = await Shell.Current.ShowPopupAsync(popup);
 
-                // Si hubo cambios, refrescar las condiciones en el perfil
-                if (resultado is bool actualizado && actualizado)
-                {
-                    await CargarCondicionesMedicasAsync();
-                }
+                Debug.WriteLine($"Modal cerrado con resultado: {resultado}");
+
+                // SIEMPRE refrescar después de cerrar el modal, independientemente del resultado
+                Debug.WriteLine("=== REFRESCANDO CONDICIONES MÉDICAS DESPUÉS DEL MODAL ===");
+                await CargarCondicionesMedicasAsync();
+
+                // Forzar notificación de cambio en la UI
+                OnPropertyChanged(nameof(CondicionesMedicas));
+
+                Debug.WriteLine($"Condiciones médicas actualizadas. Total: {CondicionesMedicas?.Count ?? 0}");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error al abrir gestión de condiciones: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                 await ShowAlertAsync("Error", "Error al abrir la gestión de condiciones médicas");
             }
         }
@@ -626,6 +637,91 @@ namespace MediTrack.Frontend.ViewModels
                 await CargarAlergiasAsync();
                 Debug.WriteLine("=== REFRESCO DEL PERFIL COMPLETADO ===");
             });
+        }
+
+        [RelayCommand]
+        private async Task EditarInformacionPersonal()
+        {
+            try
+            {
+                Debug.WriteLine("=== ABRIENDO POPUP DE EDITAR INFORMACIÓN PERSONAL ===");
+
+                if (Usuario == null)
+                {
+                    await ShowAlertAsync("Error", "No hay información del usuario para editar");
+                    return;
+                }
+
+                // Crear el ViewModel del popup
+                var popupViewModel = new ActualizarPerfilPopupViewModel(_apiService, Usuario);
+
+                // Crear y mostrar el popup
+                var popup = new ActualizarPerfilPopup(popupViewModel);
+                var resultado = await Shell.Current.ShowPopupAsync(popup);
+
+                Debug.WriteLine($"Modal de información personal cerrado con resultado: {resultado}");
+
+                // SIEMPRE refrescar después de cerrar el modal
+                Debug.WriteLine("=== REFRESCANDO INFORMACIÓN PERSONAL DESPUÉS DEL MODAL ===");
+                await CargarDatosUsuarioAsync();
+
+                // Forzar notificaciones de cambio para actualizar la UI
+                OnPropertyChanged(nameof(Usuario));
+                OnPropertyChanged(nameof(NombreCompleto));
+                OnPropertyChanged(nameof(FechaNacimientoFormateada));
+                OnPropertyChanged(nameof(GeneroTexto));
+                OnPropertyChanged(nameof(EstadoCuenta));
+
+                Debug.WriteLine("=== INFORMACIÓN PERSONAL ACTUALIZADA EN LA UI ===");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error al abrir popup de información personal: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                await ShowAlertAsync("Error", "Error al abrir el formulario de edición");
+            }
+        }
+
+        [RelayCommand]
+        private async Task GestionarAlergias()
+        {
+            try
+            {
+                Debug.WriteLine("=== ABRIENDO GESTIÓN DE ALERGIAS ===");
+
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
+                {
+                    await ShowAlertAsync("Error", "No se pudo obtener la información del usuario");
+                    return;
+                }
+
+                Debug.WriteLine($"Creando ViewModel para alergias, userId: {userId}");
+
+                // Crear el ViewModel específico para alergias
+                var alergiasViewModel = new AlergiasViewModel(_apiService, userId);
+
+                // Crear y mostrar el modal
+                var popup = new GestionAlergiasPopup(alergiasViewModel);
+                var resultado = await Shell.Current.ShowPopupAsync(popup);
+
+                Debug.WriteLine($"Modal de alergias cerrado con resultado: {resultado}");
+
+                // SIEMPRE refrescar después de cerrar el modal
+                Debug.WriteLine("=== REFRESCANDO ALERGIAS DESPUÉS DEL MODAL ===");
+                await CargarAlergiasAsync();
+
+                // Forzar notificación de cambio en la UI
+                OnPropertyChanged(nameof(Alergias));
+
+                Debug.WriteLine($"Alergias actualizadas. Total: {Alergias?.Count ?? 0}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error al abrir gestión de alergias: {ex.Message}");
+                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                await ShowAlertAsync("Error", "Error al abrir la gestión de alergias");
+            }
         }
     }
 }
