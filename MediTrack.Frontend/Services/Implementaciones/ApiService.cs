@@ -416,12 +416,17 @@ public class ApiService : IApiService
     }
     public async Task<ResObtenerUsuario> GetUserAsync(ReqObtenerUsuario request)
     {
-        var endpoint = "api/usuarios/perfil";
+        // CAMBIAR: Usar GET con query parameter
+        var endpoint = $"api/usuarios/perfil?idUsuario={request.IdUsuario}";
 
         try
         {
+            Debug.WriteLine($"[ApiService] GetUser GET: {_httpClient.BaseAddress}{endpoint}");
+
             var response = await _httpClient.GetAsync(endpoint);
             var responseContent = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"[ApiService] GetUser Response: {responseContent}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -438,7 +443,6 @@ public class ApiService : IApiService
                 }
 
                 resObtenerUsuario.errores = MapErrors(backendResponse);
-
                 return resObtenerUsuario;
             }
             else
@@ -467,8 +471,9 @@ public class ApiService : IApiService
         {
             return CreateErrorUsuarioResponse("Tiempo de espera agotado");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Debug.WriteLine($"[ApiService] Error en GetUserAsync: {ex.Message}");
             return CreateErrorUsuarioResponse("Error de conexión general");
         }
     }

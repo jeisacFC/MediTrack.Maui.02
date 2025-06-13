@@ -7,39 +7,48 @@ namespace MediTrack.Frontend.Services.Implementaciones
     {
         private string? _cachedToken = null;
         private DateTime _lastTokenCheck = DateTime.MinValue;
-        private readonly TimeSpan _cacheTimeout = TimeSpan.FromMinutes(5);
+        private readonly TimeSpan _cacheTimeout = TimeSpan.FromMinutes(10); // ✅ Incrementado de 5 a 10 minutos
         private readonly SemaphoreSlim _tokenSemaphore = new(1, 1);
+        private bool _isRefreshing = false;
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             try
             {
-                // PASO 1: Asegurar que el token está configurado
+                // ✅ PASO 1: Solo configurar token si no está ya configurado
                 await EnsureTokenIsSetAsync(request);
 
-                // PASO 2: Hacer la petición
+                // ✅ PASO 2: Hacer la petición
                 var response = await base.SendAsync(request, cancellationToken);
 
-                // PASO 3: Manejar 401 Unauthorized
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                // ✅ PASO 3: Solo manejar 401 si no estamos ya refrescando
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized && !_isRefreshing)
                 {
-                    Debug.WriteLine($"[AuthHandler] 401 Unauthorized en {request.RequestUri} - intentando refrescar token");
+                    Debug.WriteLine($"[AuthHandler] 401 Unauthorized en {request.RequestUri?.PathAndQuery} - intentando refrescar token");
 
-                    // Limpiar cache y recargar token
-                    await RefreshTokenCacheAsync();
-                    await EnsureTokenIsSetAsync(request);
-
-                    // Reintentar la petición una sola vez
-                    response.Dispose(); // Liberar la respuesta anterior
-                    response = await base.SendAsync(request, cancellationToken);
-
-                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    _isRefreshing = true;
+                    try
                     {
-                        Debug.WriteLine("[AuthHandler] ❌ Segundo intento también falló - token probablemente expirado");
+                        // Limpiar cache y recargar token
+                        await RefreshTokenCacheAsync();
+                        await EnsureTokenIsSetAsync(request);
+
+                        // Reintentar la petición una sola vez
+                        response.Dispose();
+                        response = await base.SendAsync(request, cancellationToken);
+
+                        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        {
+                            Debug.WriteLine("[AuthHandler] ❌ Token definitivamente expirado");
+                        }
+                        else
+                        {
+                            Debug.WriteLine("[AuthHandler] ✅ Reintento exitoso");
+                        }
                     }
-                    else
+                    finally
                     {
-                        Debug.WriteLine("[AuthHandler] ✅ Reintento exitoso después de refrescar token");
+                        _isRefreshing = false;
                     }
                 }
 
@@ -54,43 +63,50 @@ namespace MediTrack.Frontend.Services.Implementaciones
 
         private async Task EnsureTokenIsSetAsync(HttpRequestMessage request)
         {
-            await _tokenSemaphore.WaitAsync();
-            try
+            // ✅ Solo obtener token si realmente necesitamos uno nuevo
+            if (_cachedToken == null || DateTime.Now - _lastTokenCheck > _cacheTimeout)
             {
-                // Verificar si necesitamos recargar el token
-                var needsRefresh = _cachedToken == null ||
-                                 DateTime.Now - _lastTokenCheck > _cacheTimeout;
-
-                if (needsRefresh)
+                await _tokenSemaphore.WaitAsync();
+                try
                 {
-                    try
+                    // ✅ Double-check pattern para evitar múltiples lecturas
+                    if (_cachedToken == null || DateTime.Now - _lastTokenCheck > _cacheTimeout)
                     {
-                        _cachedToken = await SecureStorage.GetAsync("jwt_token");
-                        _lastTokenCheck = DateTime.Now;
+                        try
+                        {
+                            _cachedToken = await SecureStorage.GetAsync("jwt_token");
+                            _lastTokenCheck = DateTime.Now;
 
-                        var tokenStatus = !string.IsNullOrEmpty(_cachedToken) ? "✓ Token cargado" : "⚠️ Sin token";
-                        Debug.WriteLine($"[AuthHandler] {tokenStatus} para {request.RequestUri?.Host}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"[AuthHandler] Error obteniendo token: {ex.Message}");
-                        _cachedToken = null;
+                            if (!string.IsNullOrEmpty(_cachedToken))
+                            {
+                                Debug.WriteLine($"[AuthHandler] ✓ Token cargado para {request.RequestUri?.Host}");
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"[AuthHandler] ⚠️ Sin token para {request.RequestUri?.Host}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[AuthHandler] Error obteniendo token: {ex.Message}");
+                            _cachedToken = null;
+                        }
                     }
                 }
-
-                // Aplicar o remover header de autorización
-                if (!string.IsNullOrEmpty(_cachedToken))
+                finally
                 {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _cachedToken);
-                }
-                else
-                {
-                    request.Headers.Authorization = null;
+                    _tokenSemaphore.Release();
                 }
             }
-            finally
+
+            // ✅ Aplicar header solo si tenemos token
+            if (!string.IsNullOrEmpty(_cachedToken))
             {
-                _tokenSemaphore.Release();
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _cachedToken);
+            }
+            else
+            {
+                request.Headers.Authorization = null;
             }
         }
 
@@ -101,7 +117,7 @@ namespace MediTrack.Frontend.Services.Implementaciones
             {
                 _cachedToken = null;
                 _lastTokenCheck = DateTime.MinValue;
-                Debug.WriteLine("[AuthHandler] Cache de token limpiado para recarga");
+                Debug.WriteLine("[AuthHandler] Cache de token limpiado");
             }
             finally
             {

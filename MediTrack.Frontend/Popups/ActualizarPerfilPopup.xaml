@@ -5,215 +5,312 @@
                x:Class="MediTrack.Frontend.Popups.ActualizarPerfilPopup"
                Color="Transparent">
 
-    <ScrollView>
-        <Frame CornerRadius="25" 
-               Padding="25" 
-               Margin="20" 
-               BackgroundColor="White"
-               VerticalOptions="Center" 
-               HorizontalOptions="Center"
-               WidthRequest="350"
-               HasShadow="True">
+    <!-- Contenedor principal con sombra y gradiente -->
+    <Frame CornerRadius="30" 
+           Padding="0" 
+           Margin="25" 
+           BackgroundColor="Transparent"
+           VerticalOptions="Center" 
+           HorizontalOptions="Center"
+           WidthRequest="340"
+           HasShadow="True">
 
-            <VerticalStackLayout Spacing="20">
+        <!-- Fondo con gradiente -->
+        <Grid>
+            <Frame CornerRadius="30" 
+                   BackgroundColor="#e6f0ff" 
+                   HasShadow="False"
+                   Padding="0"/>
 
-                <!-- Header -->
-                <Grid ColumnDefinitions="*,Auto">
-                    <Label Text="Actualizar Perfil" 
-                           Grid.Column="0"
-                           FontSize="20" 
-                           FontAttributes="Bold" 
-                           TextColor="#0B2B6E"
-                           VerticalOptions="Center"/>
+            <VerticalStackLayout Spacing="0">
 
-                    <Button Grid.Column="1"
-                            BackgroundColor="#dc3545"
-                            TextColor="White"
-                            CornerRadius="15"
-                            HeightRequest="30"
-                            WidthRequest="30"
-                            FontSize="16"
-                            Clicked="OnCerrarClicked">
-                        <Button.ImageSource>
-                            <FontImageSource Glyph="&#xE5CD;" FontFamily="MaterialIcons" Color="White" Size="16"/>
-                        </Button.ImageSource>
-                    </Button>
-                </Grid>
+                <!-- Header con avatar y título -->
+                <VerticalStackLayout Spacing="15" 
+                                   Padding="25,30,25,20" 
+                                   BackgroundColor="Transparent">
 
-                <!-- Separador -->
-                <BoxView BackgroundColor="#e9ecef" HeightRequest="1" HorizontalOptions="Fill"/>
-
-                <!-- Formulario -->
-                <VerticalStackLayout Spacing="15">
-
-                    <!-- Nombre -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Nombre *" 
-                               TextColor="#495057" 
-                               FontAttributes="Bold"
-                               FontSize="14"/>
-                        <Frame BackgroundColor="#f8f9fa" 
-                               CornerRadius="12" 
-                               Padding="0" 
-                               HasShadow="False"
-                               BorderColor="#dee2e6">
-                            <Entry x:Name="EntryNombre"
-                                   Text="{Binding Nombre}"
-                                   Placeholder="Ingresa tu nombre"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#212529"
-                                   PlaceholderColor="#6c757d"
-                                   FontSize="14"/>
+                    <!-- Avatar círculo -->
+                    <Frame BackgroundColor="White" 
+                           CornerRadius="35" 
+                           HeightRequest="70" 
+                           WidthRequest="70" 
+                           Padding="0"
+                           HorizontalOptions="Center"
+                           HasShadow="True">
+                        <Frame BackgroundColor="#3b71ff" 
+                               CornerRadius="30" 
+                               HeightRequest="60" 
+                               WidthRequest="60" 
+                               Padding="0"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HasShadow="False">
+                            <Label Text="&#xe853;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="35"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center"
+                                   TextColor="White"/>
                         </Frame>
-                        <Label Text="{Binding ErrorNombre}" 
-                               TextColor="#dc3545" 
-                               FontSize="12"
-                               IsVisible="{Binding TieneErrorNombre}"/>
-                    </VerticalStackLayout>
+                    </Frame>
 
-                    <!-- Primer Apellido -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Primer Apellido *" 
-                               TextColor="#495057" 
-                               FontAttributes="Bold"
-                               FontSize="14"/>
-                        <Frame BackgroundColor="#f8f9fa" 
-                               CornerRadius="12" 
-                               Padding="0" 
-                               HasShadow="False"
-                               BorderColor="#dee2e6">
-                            <Entry x:Name="EntryApellido1"
-                                   Text="{Binding Apellido1}"
-                                   Placeholder="Ingresa tu primer apellido"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#212529"
-                                   PlaceholderColor="#6c757d"
-                                   FontSize="14"/>
-                        </Frame>
-                        <Label Text="{Binding ErrorApellido1}" 
-                               TextColor="#dc3545" 
-                               FontSize="12"
-                               IsVisible="{Binding TieneErrorApellido1}"/>
-                    </VerticalStackLayout>
+                    <!-- Título y botón cerrar -->
+                    <Grid>
+                        <Label Text="Actualizar Perfil" 
+                               FontSize="20" 
+                               FontAttributes="Bold" 
+                               TextColor="#2c5282"
+                               HorizontalTextAlignment="Center"
+                               VerticalOptions="Center"/>
 
-                    <!-- Segundo Apellido -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Segundo Apellido" 
-                               TextColor="#495057" 
-                               FontAttributes="Bold"
-                               FontSize="14"/>
-                        <Frame BackgroundColor="#f8f9fa" 
-                               CornerRadius="12" 
-                               Padding="0" 
-                               HasShadow="False"
-                               BorderColor="#dee2e6">
-                            <Entry x:Name="EntryApellido2"
-                                   Text="{Binding Apellido2}"
-                                   Placeholder="Ingresa tu segundo apellido (opcional)"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#212529"
-                                   PlaceholderColor="#6c757d"
-                                   FontSize="14"/>
-                        </Frame>
-                    </VerticalStackLayout>
-
-                    <!-- Fecha de Nacimiento -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Fecha de Nacimiento" 
-                               TextColor="#495057" 
-                               FontAttributes="Bold"
-                               FontSize="14"/>
-                        <Frame BackgroundColor="#f8f9fa" 
-                               CornerRadius="12" 
-                               Padding="0" 
-                               HasShadow="False"
-                               BorderColor="#dee2e6">
-                            <DatePicker x:Name="DatePickerFechaNacimiento"
-                                        Date="{Binding FechaNacimiento}"
-                                        BackgroundColor="Transparent"
-                                        TextColor="#212529"
-                                        FontSize="14"
-                                        MinimumDate="01/01/1900"
-                                        MaximumDate="{Binding FechaMaxima}"/>
-                        </Frame>
-                        <Label Text="{Binding ErrorFechaNacimiento}" 
-                               TextColor="#dc3545" 
-                               FontSize="12"
-                               IsVisible="{Binding TieneErrorFechaNacimiento}"/>
-                    </VerticalStackLayout>
-
-                    <!-- Género -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Género" 
-                               TextColor="#495057" 
-                               FontAttributes="Bold"
-                               FontSize="14"/>
-                        <Frame BackgroundColor="#f8f9fa" 
-                               CornerRadius="12" 
-                               Padding="0" 
-                               HasShadow="False"
-                               BorderColor="#dee2e6">
-                            <Picker x:Name="PickerGenero"
-                                    ItemsSource="{Binding OpcionesGenero}"
-                                    ItemDisplayBinding="{Binding Texto}"
-                                    SelectedItem="{Binding GeneroSeleccionado}"
-                                    BackgroundColor="Transparent"
-                                    TextColor="#212529"
-                                    FontSize="14"
-                                    Title="Selecciona tu género"/>
-                        </Frame>
-                    </VerticalStackLayout>
-
+                        <Button Text="&#xe5cd;"
+                                FontFamily="MaterialIcons"
+                                BackgroundColor="#ff6b6b"
+                                TextColor="White"
+                                CornerRadius="15"
+                                HeightRequest="30"
+                                WidthRequest="30"
+                                FontSize="18"
+                                HorizontalOptions="End"
+                                VerticalOptions="Start"
+                                Clicked="OnCerrarClicked"/>
+                    </Grid>
                 </VerticalStackLayout>
 
-                <!-- Botones -->
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
+                <!-- Contenido en tarjeta blanca -->
+                <Frame CornerRadius="25" 
+                       BackgroundColor="White" 
+                       Margin="15,0,15,15"
+                       Padding="20"
+                       HasShadow="True">
 
-                    <Button Grid.Column="0"
-                            Text="Cancelar"
-                            BackgroundColor="#6c757d"
-                            TextColor="White"
-                            CornerRadius="15"
-                            HeightRequest="45"
-                            FontSize="14"
-                            FontAttributes="Bold"
-                            Clicked="OnCancelarClicked"/>
+                    <VerticalStackLayout Spacing="18">
 
-                    <Button Grid.Column="1"
-                            Text="{Binding TextoBotonGuardar}"
-                            BackgroundColor="#3b71ff"
-                            TextColor="White"
-                            CornerRadius="15"
-                            HeightRequest="45"
-                            FontSize="14"
-                            FontAttributes="Bold"
-                            IsEnabled="{Binding PuedeGuardar}"
-                            Command="{Binding GuardarCommand}">
-                        <Button.Triggers>
-                            <DataTrigger TargetType="Button" Binding="{Binding EstaGuardando}" Value="True">
-                                <Setter Property="BackgroundColor" Value="#adb5bd"/>
-                            </DataTrigger>
-                        </Button.Triggers>
-                    </Button>
+                        <!-- Nombre completo -->
+                        <VerticalStackLayout Spacing="8">
+                            <StackLayout Orientation="Horizontal" Spacing="8">
+                                <Label Text="&#xe7fd;"
+                                       FontFamily="MaterialIcons"
+                                       TextColor="#3b71ff" 
+                                       FontSize="16"
+                                       VerticalOptions="Center"/>
+                                <Label Text="Nombre Completo" 
+                                       TextColor="#4a5568" 
+                                       FontAttributes="Bold"
+                                       FontSize="14"
+                                       VerticalOptions="Center"/>
+                            </StackLayout>
+                            <Border Stroke="#e2e8f0" 
+                                    StrokeThickness="2"
+                                    BackgroundColor="#f7fafc"
+                                    StrokeShape="RoundRectangle 12">
+                                <Entry x:Name="EntryNombre"
+                                       Text="{Binding Nombre}"
+                                       Placeholder="Ingresa tu nombre"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#2d3748"
+                                       PlaceholderColor="#a0aec0"
+                                       FontSize="14"
+                                       Margin="12,8"/>
+                            </Border>
+                            <Label Text="{Binding ErrorNombre}" 
+                                   TextColor="#e53e3e" 
+                                   FontSize="11"
+                                   IsVisible="{Binding TieneErrorNombre}"/>
+                        </VerticalStackLayout>
 
-                </Grid>
+                        <!-- Apellidos en fila -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
 
-                <!-- Indicador de carga -->
-                <StackLayout Orientation="Horizontal" 
-                             Spacing="10" 
-                             HorizontalOptions="Center"
-                             IsVisible="{Binding EstaGuardando}">
-                    <ActivityIndicator IsRunning="True" 
-                                       Color="#3b71ff" 
-                                       HeightRequest="20" 
-                                       WidthRequest="20"/>
-                    <Label Text="Actualizando perfil..." 
-                           TextColor="#3b71ff" 
-                           FontSize="14"
-                           VerticalOptions="Center"/>
-                </StackLayout>
+                            <!-- Primer Apellido -->
+                            <VerticalStackLayout Grid.Column="0" Spacing="8">
+                                <StackLayout Orientation="Horizontal" Spacing="6">
+                                    <Label Text="&#xe866;"
+                                           FontFamily="MaterialIcons"
+                                           TextColor="#3b71ff" 
+                                           FontSize="14"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="Primer Apellido" 
+                                           TextColor="#4a5568" 
+                                           FontAttributes="Bold"
+                                           FontSize="13"
+                                           VerticalOptions="Center"/>
+                                </StackLayout>
+                                <Border Stroke="#e2e8f0" 
+                                        StrokeThickness="2"
+                                        BackgroundColor="#f7fafc"
+                                        StrokeShape="RoundRectangle 12">
+                                    <Entry x:Name="EntryApellido1"
+                                           Text="{Binding Apellido1}"
+                                           Placeholder="Apellido"
+                                           BackgroundColor="Transparent"
+                                           TextColor="#2d3748"
+                                           PlaceholderColor="#a0aec0"
+                                           FontSize="14"
+                                           Margin="12,8"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <!-- Segundo Apellido -->
+                            <VerticalStackLayout Grid.Column="1" Spacing="8">
+                                <StackLayout Orientation="Horizontal" Spacing="6">
+                                    <Label Text="&#xe8f9;"
+                                           FontFamily="MaterialIcons"
+                                           TextColor="#3b71ff" 
+                                           FontSize="14"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="Segundo Apellido" 
+                                           TextColor="#4a5568" 
+                                           FontAttributes="Bold"
+                                           FontSize="13"
+                                           VerticalOptions="Center"/>
+                                </StackLayout>
+                                <Border Stroke="#e2e8f0" 
+                                        StrokeThickness="2"
+                                        BackgroundColor="#f7fafc"
+                                        StrokeShape="RoundRectangle 12">
+                                    <Entry x:Name="EntryApellido2"
+                                           Text="{Binding Apellido2}"
+                                           Placeholder="Opcional"
+                                           BackgroundColor="Transparent"
+                                           TextColor="#2d3748"
+                                           PlaceholderColor="#a0aec0"
+                                           FontSize="14"
+                                           Margin="12,8"/>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <!-- Fecha y Género -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+
+                            <!-- Fecha -->
+                            <VerticalStackLayout Grid.Column="0" Spacing="8">
+                                <StackLayout Orientation="Horizontal" Spacing="6">
+                                    <Label Text="&#xe878;"
+                                           FontFamily="MaterialIcons"
+                                           TextColor="#3b71ff" 
+                                           FontSize="14"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="Fecha Nacimiento" 
+                                           TextColor="#4a5568" 
+                                           FontAttributes="Bold"
+                                           FontSize="13"
+                                           VerticalOptions="Center"/>
+                                </StackLayout>
+                                <Border Stroke="#e2e8f0" 
+                                        StrokeThickness="2"
+                                        BackgroundColor="#f7fafc"
+                                        StrokeShape="RoundRectangle 12">
+                                    <DatePicker x:Name="DatePickerFechaNacimiento"
+                                                Date="{Binding FechaNacimiento}"
+                                                BackgroundColor="Transparent"
+                                                TextColor="#2d3748"
+                                                FontSize="13"
+                                                Margin="12,8"
+                                                MinimumDate="01/01/1900"
+                                                MaximumDate="{Binding FechaMaxima}"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <!-- Género -->
+                            <VerticalStackLayout Grid.Column="1" Spacing="8">
+                                <StackLayout Orientation="Horizontal" Spacing="6">
+                                    <Label Text="&#xe7e1;"
+                                           FontFamily="MaterialIcons"
+                                           TextColor="#3b71ff" 
+                                           FontSize="14"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="Género" 
+                                           TextColor="#4a5568" 
+                                           FontAttributes="Bold"
+                                           FontSize="13"
+                                           VerticalOptions="Center"/>
+                                </StackLayout>
+                                <Border Stroke="#e2e8f0" 
+                                        StrokeThickness="2"
+                                        BackgroundColor="#f7fafc"
+                                        StrokeShape="RoundRectangle 12">
+                                    <Picker x:Name="PickerGenero"
+                                            ItemsSource="{Binding OpcionesGenero}"
+                                            ItemDisplayBinding="{Binding Texto}"
+                                            SelectedItem="{Binding GeneroSeleccionado}"
+                                            BackgroundColor="Transparent"
+                                            TextColor="#2d3748"
+                                            FontSize="13"
+                                            Margin="12,8"
+                                            Title="Seleccionar"/>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <!-- Loading -->
+                        <StackLayout Orientation="Horizontal" 
+                                     Spacing="10" 
+                                     HorizontalOptions="Center"
+                                     IsVisible="{Binding EstaGuardando}"
+                                     Margin="0,10,0,0">
+                            <ActivityIndicator IsRunning="True" 
+                                               Color="#3b71ff" 
+                                               HeightRequest="20" 
+                                               WidthRequest="20"/>
+                            <StackLayout Orientation="Horizontal" Spacing="5">
+                                <Label Text="&#xe627;"
+                                       FontFamily="MaterialIcons"
+                                       TextColor="#3b71ff" 
+                                       FontSize="16"
+                                       VerticalOptions="Center"/>
+                                <Label Text="Actualizando tu perfil..." 
+                                       TextColor="#3b71ff" 
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center"/>
+                            </StackLayout>
+                        </StackLayout>
+
+                        <!-- Botones modernos -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,0">
+
+                            <Button Grid.Column="0"
+                                    Text="Cancelar"
+                                    BackgroundColor="#f1f5f9"
+                                    TextColor="#64748b"
+                                    CornerRadius="15"
+                                    HeightRequest="48"
+                                    FontSize="14"
+                                    FontAttributes="Bold"
+                                    BorderWidth="2"
+                                    BorderColor="#e2e8f0"
+                                    Clicked="OnCancelarClicked"/>
+
+                            <Button Grid.Column="1"
+                                    Text="{Binding TextoBotonGuardar}"
+                                    CornerRadius="15"
+                                    HeightRequest="48"
+                                    FontSize="14"
+                                    FontAttributes="Bold"
+                                    TextColor="White"
+                                    IsEnabled="{Binding PuedeGuardar}"
+                                    Command="{Binding GuardarCommand}">
+                                <Button.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#3b71ff" Offset="0"/>
+                                        <GradientStop Color="#667eea" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Button.Background>
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button" Binding="{Binding EstaGuardando}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="#cbd5e0"/>
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
+
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Frame>
 
             </VerticalStackLayout>
-        </Frame>
-    </ScrollView>
+        </Grid>
+    </Frame>
 </toolkit:Popup>
