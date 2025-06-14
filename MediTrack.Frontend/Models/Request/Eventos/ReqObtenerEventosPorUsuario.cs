@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediTrack.Frontend.Models.Request
+namespace MediTrack.Frontend.Models.Request.Eventos
 {
-    public class ReqListarRecordatorios : ReqBase
+    public class ReqObtenerEventosPorUsuario : ReqBase
     {
         public int IdUsuario { get; set; }
-        public bool? Activo { get; set; }
     }
 }

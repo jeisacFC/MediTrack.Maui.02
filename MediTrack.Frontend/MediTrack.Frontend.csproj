@@ -79,7 +79,6 @@
 	  <Compile Include="Models\Model\CondicionesMedicas.cs" />
 	  
 	  <Compile Include="Models\Model\Direcciones.cs" />
-	  <Compile Include="Models\Model\EfectosSecundarios.cs" />
 	  
 	  <Compile Include="Models\Model\Errores.cs" />
 	  
@@ -87,21 +86,16 @@
 	  
 	  <Compile Include="Models\Model\EstadoEnum.cs" />
 	  <Compile Include="Models\Model\EstadoSesionEnum.cs" />
-	  
+	  <Compile Include="Models\Model\EventoMedicoUsuario.cs" />
 	  <Compile Include="Models\Model\EventosMedicos.cs" />
 	  
 	  <Compile Include="Models\Model\Fabricantes.cs" />
 	  
-	  <Compile Include="Models\Model\FechasRecordatorios.cs" />
-	  
 	  <Compile Include="Models\Model\FrecuenciaEnum.cs" />
 	  
 	  <Compile Include="Models\Model\GeneroEnum.cs" />
-	  <Compile Include="Models\Model\HistorialRecordatorios.cs" />
 	  
 	  <Compile Include="Models\Model\InteraccionesMedicamentos.cs" />
-	  
-	  <Compile Include="Models\Model\MedicamentoEfectos.cs" />
 	  
 	  <Compile Include="Models\Model\MedicamentoExterno.cs" />
 	  
@@ -109,13 +103,7 @@
 	  
 	  <Compile Include="Models\Model\MetodoEscaneoEnum.cs" />
 	  
-	  <Compile Include="Models\Model\ProgramacionRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Model\RecordatoriosMedicacion.cs" />
-	  
 	  <Compile Include="Models\Model\Sesiones.cs" />
-	  
-	  <Compile Include="Models\Model\SeveridadEnum.cs" />
 	  
 	  <Compile Include="Models\Model\UsuarioAlergias.cs" />
 	  
@@ -126,6 +114,22 @@
 	  <Compile Include="Models\Model\UsuariosCondiciones.cs" />
 	  
 	  <Compile Include="Models\Model\UsuarioSintomaReportado.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqActualizarEstadoEvento.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqActualizarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqActualizarEventosPorGrupo.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqEliminarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqEliminarEventosPorGrupo.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqInsertarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqListarEventosUsuario.cs" />
+	  
+	  <Compile Include="Models\Request\Eventos\ReqObtenerEventosPorUsuario.cs" />
 	  
 	  <Compile Include="Models\Request\ReqBase.cs" />
 	  
@@ -161,12 +165,6 @@
 	  
 	  <Compile Include="Models\Request\Condicion\ReqObtenerCondicionesUsuario.cs" />
 	  
-	  <Compile Include="Models\Request\Eventos\ReqActualizarEventoMedico.cs" />
-	  
-	  <Compile Include="Models\Request\Eventos\ReqEvento.cs" />
-	  
-	  <Compile Include="Models\Request\Eventos\ReqInsertarEventoMedico.cs" />
-	  
 	  <Compile Include="Models\Request\Medicamentos\ReqBuscarMedicamento.cs" />
 	  
 	  <Compile Include="Models\Request\Medicamentos\ReqEscanearMedicamento.cs" />
@@ -174,18 +172,6 @@
 	  <Compile Include="Models\Request\Medicamentos\ReqGuardarMedicamento.cs" />
 	  
 	  <Compile Include="Models\Request\Medicamentos\ReqMedicamento.cs" />
-	  
-	  <Compile Include="Models\Request\Recordatorios\ReqActualizarRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Request\Recordatorios\ReqEliminarRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Request\Recordatorios\ReqInsertarRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Request\Recordatorios\ReqListarRecordatorios.cs" />
-	  
-	  <Compile Include="Models\Request\Recordatorios\ReqMarcarEstadoRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Request\Recordatorios\ReqObtenerRecordatorio.cs" />
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqRegister.cs" />
 	  
@@ -218,6 +204,22 @@
 	  <Compile Include="Models\Request\Usuarios\ReqRestablecerContrasena.cs" />
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqSolicitarResetPassword.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResActualizarEstadoEvento.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResActualizarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResActualizarEventosPorGrupo.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResEliminarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResEliminarEventosPorGrupo.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResInsertarEventoMedico.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResListarEventosUsuario.cs" />
+	  
+	  <Compile Include="Models\Response\Eventos\ResObtenerEventosPorUsuario.cs" />
 	  
 	  <Compile Include="Models\Response\ResBase.cs" />
 	  
@@ -253,18 +255,6 @@
 	  
 	  <Compile Include="Models\Response\Condiciones\ResObtenerCondicionesUsuario.cs" />
 	  
-	  <Compile Include="Models\Response\Eventos\ResActualizarEventoMedico.cs" />
-	  
-	  <Compile Include="Models\Response\Eventos\ResCompletarEvento.cs" />
-	  
-	  <Compile Include="Models\Response\Eventos\ResEliminarEventoUsuario.cs" />
-	  
-	  <Compile Include="Models\Response\Eventos\ResEventoCalendario.cs" />
-	  
-	  <Compile Include="Models\Response\Eventos\ResInsertarEventoMedico.cs" />
-	  
-	  <Compile Include="Models\Response\Eventos\ResListarEventosCalendario.cs" />
-	  
 	  <Compile Include="Models\Response\IA\ResAlertaSalud.cs" />
 	  
 	  <Compile Include="Models\Response\IA\ResHabitosSaludables.cs" />
@@ -286,18 +276,6 @@
 	  <Compile Include="Models\Response\Medicamentos\ResInsertarUsuarioMedicamento.cs" />
 	  
 	  <Compile Include="Models\Response\Medicamentos\ResListarMedicamentosUsuario.cs" />
-	  
-	  <Compile Include="Models\Response\Recordatorios\ResActualizarRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Response\Recordatorios\ResEliminarRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Response\Recordatorios\ResInsertarRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Response\Recordatorios\ResListarRecordatorios.cs" />
-	  
-	  <Compile Include="Models\Response\Recordatorios\ResMarcarEstadoRecordatorio.cs" />
-	  
-	  <Compile Include="Models\Response\Recordatorios\ResObtenerRecordatorio.cs" />
 	  
 	  <Compile Include="Models\Response\Usuarios\ResRegister.cs" />
 	  

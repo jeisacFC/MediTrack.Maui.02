@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Response.Eventos
 {
-    public class ResInsertarEventoMedico : ResBase
+    public class ResActualizarEventosPorGrupo : ResBase
     {
     }
 }
