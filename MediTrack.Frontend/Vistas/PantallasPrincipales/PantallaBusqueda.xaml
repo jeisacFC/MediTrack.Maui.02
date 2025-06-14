@@ -5,81 +5,178 @@
              xmlns:vistas="clr-namespace:MediTrack.Frontend.Vistas"
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaBusqueda"
              Title="Búsqueda de medicamentos"
-             BackgroundColor="{StaticResource ColorFondoClaro}"
+             BackgroundColor="White"
              NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto, *, Auto">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="25">
 
-        <Border Grid.Row="0"
-                StrokeThickness="0"
-                BackgroundColor="{StaticResource ColorPrimario}"
-                Padding="20,20,20,30">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="0,0,30,30" />
-            </Border.StrokeShape>
-            <Label Text="Buscar Medicamento"
-                   TextColor="{StaticResource ColorBlanco}"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   HorizontalTextAlignment="Center"
-                   VerticalOptions="End"/>
-        </Border>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Buscar Medicamento"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="Black"
+                           Margin="0,5,0,5" />
 
-        <VerticalStackLayout Grid.Row="1" Padding="25" Spacing="20">
+                    <Frame BackgroundColor="White"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="True"
+                           Margin="0,3">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="MaterialIcons"
+                                   Text="&#xe02f;"
+                                   FontSize="20"
+                                   TextColor="DodgerBlue"
+                                   VerticalOptions="Center" />
+                            <Entry Grid.Column="1"
+                                   Placeholder="Nombre del medicamento"
+                                   Text="{Binding TerminoBusqueda.NombreMedicamento}"
+                                   BackgroundColor="Transparent"
+                                   FontSize="15"
+                                   HorizontalOptions="Fill" />
+                        </Grid>
+                    </Frame>
 
-            <Frame Style="{StaticResource FrameFormulario}">
-                <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
-                    <Entry Placeholder="Nombre del medicamento"
-                           Text="{Binding TerminoBusqueda.NombreMedicamento}"
-                           HorizontalOptions="Fill"
-                           Style="{StaticResource EntryBaseStyle}"/>
-                </HorizontalStackLayout>
-            </Frame>
+                    <Frame BackgroundColor="White"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="True"
+                           Margin="0,3">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="MaterialIcons"
+                                   Text="&#xe02f;"
+                                   FontSize="20"
+                                   TextColor="DodgerBlue"
+                                   VerticalOptions="Center" />
+                            <Entry Grid.Column="1"
+                                   Placeholder="Dosis del medicamento"
+                                   Text="{Binding TerminoBusqueda.Dosis}"
+                                   BackgroundColor="Transparent"
+                                   FontSize="15"
+                                   HorizontalOptions="Fill" />
+                        </Grid>
+                    </Frame>
 
-            <Frame Style="{StaticResource FrameFormulario}">
-                <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
-                    <Entry Placeholder="Dosis del medicamento"
-                           Text="{Binding TerminoBusqueda.Dosis}"
-                           HorizontalOptions="Fill"
-                           Style="{StaticResource EntryBaseStyle}"/>
-                </HorizontalStackLayout>
-            </Frame>
+                    <Frame BackgroundColor="White"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="True"
+                           Margin="0,3">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="MaterialIcons"
+                                   Text="&#xe87d;"
+                                   FontSize="20"
+                                   TextColor="DodgerBlue"
+                                   VerticalOptions="Center" />
+                            <Entry Grid.Column="1"
+                                   Placeholder="Principio Activo"
+                                   Text="{Binding TerminoBusqueda.PrincipioActivo}"
+                                   BackgroundColor="Transparent"
+                                   FontSize="15"
+                                   HorizontalOptions="Fill" />
+                        </Grid>
+                    </Frame>
 
-            <Frame Style="{StaticResource FrameFormulario}">
-                <HorizontalStackLayout Spacing="10">
-                    <Label FontFamily="MaterialIcons" Text="&#xe862;" VerticalOptions="Center" TextColor="{StaticResource ColorTextoSecundario}"/>
-                    <Entry Placeholder="Principio Activo"
-                           Text="{Binding TerminoBusqueda.PrincipioActivo}" 
-                           HorizontalOptions="Fill"
-                           Style="{StaticResource EntryBaseStyle}"/>
-                </HorizontalStackLayout>
-            </Frame>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,15,0,0">
+                        <Button Grid.Column="0"
+                                Text="Buscar"
+                                Command="{Binding BuscarCommand}"
+                                BackgroundColor="#007AFF"
+                                TextColor="White"
+                                CornerRadius="10"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                HeightRequest="50"
+                                Padding="10">
+                            <Button.ImageSource>
+                                <FontImageSource FontFamily="MaterialIcons" 
+                                                 Glyph="&#xe8b6;" 
+                                                 Color="White" 
+                                                 Size="20"/>
+                            </Button.ImageSource>
+                        </Button>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource ColorPrimario}" Margin="0,10"/>
+                        <Button Grid.Column="1"
+                                Text="Limpiar"
+                                Command="{Binding LimpiarCommand}"
+                                BackgroundColor="#F8F9FA"
+                                TextColor="#FF9500"
+                                CornerRadius="10"
+                                FontSize="16"
+                                HeightRequest="50"
+                                Padding="10"
+                                BorderColor="#FF9500"
+                                BorderWidth="1">
+                            <Button.ImageSource>
+                                <FontImageSource FontFamily="MaterialIcons" 
+                                                 Glyph="&#xe5cd;" 
+                                                 Color="#007AFF" 
+                                                 Size="18"/>
+                            </Button.ImageSource>
+                        </Button>
+                    </Grid>
+                </VerticalStackLayout>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
-                <Button Grid.Column="0"
-                        Text="Buscar"
-                        Command="{Binding BuscarCommand}"
-                        IsEnabled="{Binding IsNotBusy}"
-                        Style="{StaticResource BotonPrimario}">
-                    <Button.ImageSource>
-                        <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe8b6;" Color="White" Size="20"/>
-                    </Button.ImageSource>
-                </Button>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="¿Cómo buscar?"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="Black"
+                           Margin="0,15,0,5" />
 
-                <Button Grid.Column="1"
-                        Text="Limpiar"
-                        Command="{Binding LimpiarCommand}"
-                        Style="{StaticResource BotonSecundario}"/>
-            </Grid>
+                    <Frame BackgroundColor="White"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="True"
+                           Margin="0,3">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="MaterialIcons"
+                                   Text="&#xe88e;"
+                                   FontSize="20"
+                                   TextColor="#FF9500"
+                                   VerticalOptions="Start" />
+                            <Label Grid.Column="1"
+                                   Text="Puedes buscar por cualquiera de los campos o combinarlos para resultados más específicos"
+                                   FontSize="14"
+                                   TextColor="Gray"
+                                   LineBreakMode="WordWrap"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Start" />
+                        </Grid>
+                    </Frame>
 
-        </VerticalStackLayout>
+                    <Frame BackgroundColor="White"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="True"
+                           Margin="0,3">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   FontFamily="MaterialIcons"
+                                   Text="&#xe8fd;"
+                                   FontSize="20"
+                                   TextColor="#007AFF"
+                                   VerticalOptions="Start" />
+                            <Label Grid.Column="1"
+                                   Text="Ejemplos: 'Paracetamol', '500mg', 'Acetaminofén'"
+                                   FontSize="14"
+                                   TextColor="Gray"
+                                   LineBreakMode="WordWrap"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Start" />
+                        </Grid>
+                    </Frame>
+                </VerticalStackLayout>
 
+            </VerticalStackLayout>
+        </ScrollView>
 
-        <!-- Botón flotante -->
-        <vistas:BotonFlotanteEscaner Grid.Row="2"  />
+        <vistas:BotonFlotanteEscaner />
     </Grid>
 </ContentPage>
