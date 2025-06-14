@@ -6,6 +6,7 @@ using MediTrack.Frontend.Models.Model;
 using MediTrack.Frontend.Models.Request;
 using MediTrack.Frontend.Models.Response;
 using MediTrack.Frontend.Services.Interfaces;
+using MediTrack.Frontend.Popups;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq; // Asegúrate de tener este using

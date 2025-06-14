@@ -7,6 +7,7 @@ using MediTrack.Frontend.ViewModels.PantallasInicio;
 using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 using MediTrack.Frontend.Vistas.PantallasInicio;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
+using MediTrack.Frontend.Services;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
 using System.Globalization;
@@ -48,19 +49,10 @@ public static class MauiProgram
         {
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.Timeout = TimeSpan.FromSeconds(10);
+            client.Timeout = TimeSpan.FromSeconds(30);
             client.DefaultRequestHeaders.Add("User-Agent", "MediTrack-Mobile/1.0");
         })
-        .ConfigurePrimaryHttpMessageHandler(() =>
-        {
-            return new HttpClientHandler()
-            {
-                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
-                UseCookies = false,
-                AllowAutoRedirect = true,
-                MaxAutomaticRedirections = 2
-            };
-        })
+        .ConfigurePrimaryHttpMessageHandler(() => new DevHttpsConnectionHelper().GetPlatformSpecificHttpMessageHandler())
         .AddHttpMessageHandler<AuthHandler>();
 
         // === VIEWMODELS CRÍTICOS ===

@@ -317,14 +317,9 @@
                         Command="{Binding CerrarModalCommand}" />
 
                 <Button Grid.Column="1"
-                        Text="Guardar Síntomas"
-                        BackgroundColor="#9C27B0"
-                        TextColor="White"
-                        CornerRadius="10"
-                        FontSize="14"
-                        HeightRequest="44"
+                        Text="Guardar Síntoma"
                         Command="{Binding GuardarSintomasCommand}"
-                        IsEnabled="true" />
+                        IsEnabled="{Binding HaySintomasSeleccionados}" />
             </Grid>
         </Grid>
     </Frame>
