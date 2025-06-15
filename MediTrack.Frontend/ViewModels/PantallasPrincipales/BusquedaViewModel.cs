@@ -15,10 +15,6 @@ public partial class BusquedaViewModel : ObservableObject
 {
     private readonly IApiService _apiService;
 
-    // --- Propiedades para enlazar en la UI --- //
-   
-
-
     [ObservableProperty] private ReqBuscarMedicamento _terminoBusqueda = new();
     [ObservableProperty] private ResBuscarMedicamento _resultadoBusqueda;
     [ObservableProperty] private bool _mostrarResultados;

@@ -26,7 +26,6 @@ namespace MediTrack.Frontend.ViewModels
         [ObservableProperty]
         private Alergias alergiaSeleccionada;
 
-        // CORREGIDO: PascalCase para consistencia con CondicionesViewModel
         [ObservableProperty]
         private string nombreNuevaAlergia = string.Empty;
 

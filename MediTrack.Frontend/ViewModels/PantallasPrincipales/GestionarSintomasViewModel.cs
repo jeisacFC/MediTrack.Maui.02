@@ -86,7 +86,7 @@ public partial class GestionarSintomasViewModel : ObservableObject
             }
 
             // 1. Obtener todos los síntomas del ENUM desde el backend (lista maestra)
-            ResObtenerSintomasEnum todosLosSintomasResponse = null;
+            ResObtenerSintomasUsuario todosLosSintomasResponse = null;
             try
             {
                 todosLosSintomasResponse = await _apiService.ObtenerTodosLosSintomasAsync();
@@ -122,8 +122,8 @@ public partial class GestionarSintomasViewModel : ObservableObject
                     {
                         var sintoma = new SintomaSeleccionable
                         {
-                            Id = sintomaEnum.IdSintoma,
-                            Nombre = sintomaEnum.Nombre,
+                            //Id = sintomaEnum.Sintoma.,
+                            //Nombre = sintomaEnum.Nombre,
                             EsManual = false,
                             EstaSeleccionado = false,
                             MostrarTipo = false

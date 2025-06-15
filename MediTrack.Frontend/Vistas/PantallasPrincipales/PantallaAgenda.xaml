@@ -6,31 +6,55 @@
              x:Class="MediTrack.Frontend.Vistas.PantallasPrincipales.PantallaAgenda"
              x:Name="CalendarioPage"
              BackgroundColor="#F2F2F7"
-             Title="Agenda">
+             Title="Agenda"
+             BindingContext="{Binding Source={RelativeSource AncestorType={x:Type vm:AgendaViewModel}}}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Convertidores -->
+            <x:Converter x:TypeArguments="x:Boolean" x:Key="IntToBoolConverter">
+                <x:Converter.Convert>
+                    <x:Reference Name="IntToBoolConverterImpl" />
+                </x:Converter.Convert>
+            </x:Converter>
+            <x:Converter x:TypeArguments="x:Boolean" x:Key="StringNotEmptyConverter">
+                <x:Converter.Convert>
+                    <x:Reference Name="StringNotEmptyConverterImpl" />
+                </x:Converter.Convert>
+            </x:Converter>
+            <x:Converter x:TypeArguments="x:String" x:Key="BoolToCheckConverter">
+                <x:Converter.Convert>
+                    <x:Reference Name="BoolToCheckConverterImpl" />
+                </x:Converter.Convert>
+            </x:Converter>
+            <x:Converter x:TypeArguments="Color" x:Key="BoolToColorConverter">
+                <x:Converter.Convert>
+                    <x:Reference Name="BoolToColorConverterImpl" />
+                </x:Converter.Convert>
+            </x:Converter>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*,Auto">
-
         <!-- Contenedor azul estilo iOS -->
-        <Frame Grid.Row="0" 
-               BackgroundColor="#6084F2" 
-               CornerRadius="20" 
-               HasShadow="True" 
+        <Frame Grid.Row="0"
+               BackgroundColor="#6084F2"
+               CornerRadius="20"
+               HasShadow="True"
                Margin="20,10,20,0"
                Padding="20">
-
             <VerticalStackLayout Spacing="10">
-
                 <!-- Header personalizado del calendario -->
                 <Grid ColumnDefinitions="Auto,*,Auto" HeightRequest="50">
                     <Button Grid.Column="0"
-                            Text="&#xe5cb;"
+                            Text=""
                             FontFamily="MaterialIcons"
                             FontSize="28"
                             BackgroundColor="Transparent"
                             TextColor="White"
                             WidthRequest="40"
-                            Clicked="AnteriorMes" />
-
+                            Command="{Binding NavegarMesCommand}"
+                            CommandParameter="anterior" />
                     <Label Grid.Column="1"
                            Text="{Binding MesActual}"
                            FontSize="20"
@@ -38,69 +62,49 @@
                            TextColor="White"
                            HorizontalTextAlignment="Center"
                            VerticalTextAlignment="Center" />
-
                     <Button Grid.Column="2"
-                            Text="&#xe5cc;"
+                            Text=""
                             FontFamily="MaterialIcons"
                             FontSize="28"
                             BackgroundColor="Transparent"
                             TextColor="White"
                             WidthRequest="40"
-                            Clicked="SiguienteMes" />
+                            Command="{Binding NavegarMesCommand}"
+                            CommandParameter="siguiente" />
                 </Grid>
-
-                <!-- Calendario Syncfusion con ESTILOS APLICADOS -->
+                <!-- Calendario Syncfusion -->
                 <calendar:SfCalendar x:Name="CalendarioSync"
                                    View="Month"
-                                   SelectedDate="{Binding FechaSeleccionada}"
+                                   SelectedDate="{Binding FechaSeleccionada, Mode=TwoWay}"
                                    HeightRequest="300"
                                    BackgroundColor="Transparent"
-                                   SelectionChanged="OnCalendarSelectionChanged"
                                    SelectionBackground="#435CA9"
-                                   TodayHighlightBrush="#435CA9"  >
-
-                    <!-- Ocultar SOLO el header -->
+                                   TodayHighlightBrush="#435CA9">
                     <calendar:SfCalendar.HeaderView>
                         <calendar:CalendarHeaderView Height="0" Background="Transparent" />
                     </calendar:SfCalendar.HeaderView>
-
-                    <!-- Vista del mes con RECURSOS DE ESTILO -->
                     <calendar:SfCalendar.MonthView>
-                        <calendar:CalendarMonthView Background="Transparent" >
-                            <!-- Intentar configurar TextStyle -->
+                        <calendar:CalendarMonthView Background="Transparent">
                             <calendar:CalendarMonthView.TextStyle>
                                 <calendar:CalendarTextStyle TextColor="White" FontSize="16" />
                             </calendar:CalendarMonthView.TextStyle>
-
-                            <!-- Días deshabilitados -->
                             <calendar:CalendarMonthView.DisabledDatesTextStyle>
                                 <calendar:CalendarTextStyle TextColor="#80FFFFFF" FontSize="16" />
                             </calendar:CalendarMonthView.DisabledDatesTextStyle>
-
-                            <!-- Días de otros meses -->
                             <calendar:CalendarMonthView.TrailingLeadingDatesTextStyle>
                                 <calendar:CalendarTextStyle TextColor="#60FFFFFF" FontSize="14" />
                             </calendar:CalendarMonthView.TrailingLeadingDatesTextStyle>
-
-                            <!-- Día actual SIN fondo -->
                             <calendar:CalendarMonthView.TodayBackground>Transparent</calendar:CalendarMonthView.TodayBackground>
-
-                            <!-- Texto del día actual -->
                             <calendar:CalendarMonthView.TodayTextStyle>
                                 <calendar:CalendarTextStyle TextColor="White" FontSize="16" FontAttributes="Bold" />
                             </calendar:CalendarMonthView.TodayTextStyle>
                         </calendar:CalendarMonthView>
                     </calendar:SfCalendar.MonthView>
-
-                    <!--  INTENTAR CONFIGURAR ESTILOS GLOBALES EN EL CALENDARIO -->
                     <calendar:SfCalendar.Resources>
                         <ResourceDictionary>
-                            <!-- Estilo para el círculo de selección -->
                             <SolidColorBrush x:Key="SyncfusionCalendarSelectionBackground" Color="#87CEEB" />
                             <SolidColorBrush x:Key="CalendarSelectionBackground" Color="#87CEEB" />
                             <SolidColorBrush x:Key="SelectionBackground" Color="#87CEEB" />
-
-                            <!-- Estilos de texto para días de semana -->
                             <Style x:Key="CalendarViewHeaderTextStyle" TargetType="Label">
                                 <Setter Property="TextColor" Value="White" />
                                 <Setter Property="FontSize" Value="14" />
@@ -108,38 +112,28 @@
                             </Style>
                         </ResourceDictionary>
                     </calendar:SfCalendar.Resources>
-
                 </calendar:SfCalendar>
-
             </VerticalStackLayout>
         </Frame>
-
         <!-- Lista de eventos -->
         <ScrollView Grid.Row="1" Margin="20,10,20,20">
             <VerticalStackLayout Spacing="15">
-
-                <!-- Header de eventos con ESTADÍSTICAS Y BOTONES -->
+                <!-- Header de eventos con estadísticas y botones -->
                 <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,10,0,10" RowDefinitions="Auto,Auto">
-
-                    <!-- Título principal -->
                     <Label Grid.Column="0" Grid.Row="0"
                            Text="{Binding FechaFormateada, StringFormat='Eventos - {0}'}"
                            FontSize="20"
                            FontAttributes="Bold"
                            TextColor="Black"
                            VerticalTextAlignment="Center" />
-
-                    <!-- Estadísticas -->
                     <Label Grid.Column="0" Grid.Row="1"
                            Text="{Binding EstadisticasTexto}"
                            FontSize="12"
                            TextColor="Gray"
                            VerticalTextAlignment="Center"
                            Margin="0,2,0,0" />
-
-                    <!-- Botón Estadísticas -->
                     <Button Grid.Column="1" Grid.RowSpan="2"
-                            Text="&#xe6e1;"
+                            Text=""
                             FontFamily="MaterialIcons"
                             Command="{Binding MostrarEstadisticasCommand}"
                             BackgroundColor="#007AFF"
@@ -149,8 +143,6 @@
                             WidthRequest="40"
                             HeightRequest="36"
                             Margin="5,0" />
-
-                    <!-- Botón Agregar Evento -->
                     <Button Grid.Column="2" Grid.RowSpan="2"
                             Text="+ Evento"
                             BackgroundColor="#34C759"
@@ -163,30 +155,26 @@
                             HeightRequest="36"
                             Command="{Binding AgregarEventoCommand}" />
                 </Grid>
-
-                <!-- Botones de acción rápida (solo si hay eventos) -->
-                <HorizontalStackLayout Spacing="10" 
+                <!-- Botones de acción rápida -->
+                <HorizontalStackLayout Spacing="10"
                                      IsVisible="{Binding TotalEventos, Converter={StaticResource IntToBoolConverter}}"
                                      Margin="0,0,0,10">
-
                     <Button Text="Limpiar Tomados"
-                        Command="{Binding LimpiarCompletadosCommand}"
-                        BackgroundColor="#FF9500"
-                        TextColor="White"
-                        CornerRadius="12"
-                        FontSize="12"
-                        Padding="10,6"
-                        IsVisible="{Binding EventosCompletados, Converter={StaticResource IntToBoolConverter}}" />
-
+                            Command="{Binding LimpiarCompletadosCommand}"
+                            BackgroundColor="#FF9500"
+                            TextColor="White"
+                            CornerRadius="12"
+                            FontSize="12"
+                            Padding="10,6"
+                            IsVisible="{Binding EventosCompletados, Converter={StaticResource IntToBoolConverter}}" />
                 </HorizontalStackLayout>
-
-                <!-- Lista de eventos CON BOTÓN ELIMINAR -->
+                <!-- Lista de eventos -->
                 <CollectionView ItemsSource="{Binding EventosDelDia}">
                     <CollectionView.EmptyView>
                         <ContentView>
                             <VerticalStackLayout Spacing="8" Padding="15">
                                 <Label FontFamily="MaterialIcons"
-                                       Text="&#xe878;"
+                                       Text=""
                                        FontSize="40"
                                        TextColor="#cccccc"
                                        HorizontalTextAlignment="Center" />
@@ -202,7 +190,6 @@
                             </VerticalStackLayout>
                         </ContentView>
                     </CollectionView.EmptyView>
-
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame BackgroundColor="White"
@@ -211,55 +198,44 @@
                                    Margin="0,3"
                                    HasShadow="True"
                                    HeightRequest="75">
-
-                                <!-- Swipe para editar -->
                                 <SwipeView>
                                     <SwipeView.LeftItems>
                                         <SwipeItems>
                                             <SwipeItem Text="Editar"
-                                                      BackgroundColor="#007AFF"
-                                                      Command="{Binding BindingContext.EditarEventoCommand, Source={x:Reference CalendarioPage}}"
-                                                      CommandParameter="{Binding .}" />
+                                                       BackgroundColor="#007AFF"
+                                                       Command="{Binding Source={x:Reference CalendarioPage}, Path=BindingContext.EditarEventoCommand}"
+                                                       CommandParameter="{Binding .}" />
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
-
                                     <SwipeView.RightItems>
                                         <SwipeItems>
                                             <SwipeItem Text="Eliminar"
-                                                      BackgroundColor="#FF3B30"
-                                                      Command="{Binding BindingContext.EliminarEventoCommand, Source={x:Reference CalendarioPage}}"
-                                                      CommandParameter="{Binding .}" />
+                                                       BackgroundColor="#FF3B30"
+                                                       Command="{Binding Source={x:Reference CalendarioPage}, Path=BindingContext.EliminarEventoCommand}"
+                                                       CommandParameter="{Binding .}" />
                                         </SwipeItems>
                                     </SwipeView.RightItems>
-
-                                    <!-- Contenido del evento -->
-                                    <Grid ColumnDefinitions="4,*,Auto,Auto" 
+                                    <Grid ColumnDefinitions="4,*,Auto,Auto"
                                           Padding="0"
                                           HeightRequest="75">
-
-                                        <!-- Barra de color lateral -->
                                         <BoxView Grid.Column="0"
                                                  BackgroundColor="{Binding Color}" />
-
-                                        <!-- Contenido del evento -->
-                                        <VerticalStackLayout Grid.Column="1" 
+                                        <VerticalStackLayout Grid.Column="1"
                                                            Padding="12"
                                                            Spacing="3"
                                                            VerticalOptions="Center">
-                                            <Label Text="{Binding Titulo}"
+                                            <Label Text="{Binding TituloCompleto}"
                                                    FontSize="15"
                                                    FontAttributes="Bold"
                                                    TextColor="Black"
                                                    LineBreakMode="TailTruncation" />
-
-                                            <Label Text="{Binding Descripcion}"
+                                            <Label Text="{Binding DescripcionCompleta}"
                                                    FontSize="13"
                                                    TextColor="Gray"
                                                    LineBreakMode="TailTruncation"
                                                    IsVisible="{Binding Descripcion, Converter={StaticResource StringNotEmptyConverter}}" />
-
                                             <HorizontalStackLayout Spacing="4">
-                                                <Label Text="&#xe8b5;"
+                                                <Label Text=""
                                                        FontFamily="MaterialIcons"
                                                        FontSize="12"
                                                        TextColor="#007AFF"
@@ -270,8 +246,6 @@
                                                        VerticalOptions="Center" />
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
-
-                                        <!-- Botón de estado -->
                                         <Button Grid.Column="2"
                                                 Text="{Binding Completado, Converter={StaticResource BoolToCheckConverter}}"
                                                 BackgroundColor="{Binding Completado, Converter={StaticResource BoolToColorConverter}}"
@@ -283,12 +257,10 @@
                                                 WidthRequest="65"
                                                 HeightRequest="28"
                                                 VerticalOptions="Center"
-                                                Command="{Binding BindingContext.MarcarCompletadoCommand, Source={x:Reference CalendarioPage}}"
+                                                Command="{Binding Source={x:Reference CalendarioPage}, Path=BindingContext.MarcarCompletadoCommand}"
                                                 CommandParameter="{Binding .}" />
-
-                                        <!-- Botón eliminar -->
                                         <Button Grid.Column="3"
-                                                Text="&#xe872;"
+                                                Text=""
                                                 FontFamily="MaterialIcons"
                                                 BackgroundColor="#FF3B30"
                                                 TextColor="White"
@@ -299,7 +271,7 @@
                                                 WidthRequest="35"
                                                 HeightRequest="28"
                                                 VerticalOptions="Center"
-                                                Command="{Binding BindingContext.EliminarEventoCommand, Source={x:Reference CalendarioPage}}"
+                                                Command="{Binding Source={x:Reference CalendarioPage}, Path=BindingContext.EliminarEventoCommand}"
                                                 CommandParameter="{Binding .}" />
                                     </Grid>
                                 </SwipeView>
@@ -307,16 +279,9 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
             </VerticalStackLayout>
         </ScrollView>
-
-
-
         <!-- Botón flotante -->
-        <vistas:BotonFlotanteEscaner Grid.Row="2"  />
-
+        <vistas:BotonFlotanteEscaner Grid.Row="2" />
     </Grid>
-    
-    
 </ContentPage>

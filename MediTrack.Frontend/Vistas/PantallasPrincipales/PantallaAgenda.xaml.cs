@@ -31,7 +31,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        //  MÉTODO SIMPLE Y LIMPIO
         private void ConfigurarCalendario()
         {
             try
@@ -47,7 +46,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // Manejar el evento de selección del calendario Syncfusion
         private void OnCalendarSelectionChanged(object sender, CalendarSelectionChangedEventArgs e)
         {
             try
@@ -64,7 +62,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // MEJORADO: Navegación anterior con animación
         private async void AnteriorMes(object sender, EventArgs e)
         {
             try
@@ -95,7 +92,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // MEJORADO: Navegación siguiente con animación
         private async void SiguienteMes(object sender, EventArgs e)
         {
             try
@@ -199,7 +195,6 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // No olvides desuscribirse en OnDisappearing
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

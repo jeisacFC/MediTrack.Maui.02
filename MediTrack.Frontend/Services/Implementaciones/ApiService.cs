@@ -1769,7 +1769,7 @@ public class ApiService : IApiService
         }
     }
 
-    public async Task<ResObtenerSintomasEnum> ObtenerTodosLosSintomasAsync()
+    public async Task<ResObtenerSintomasUsuario> ObtenerTodosLosSintomasAsync()
     {
         var endpoint = "api/sintomas/ListaSintomasEnum";
         try
@@ -1789,10 +1789,10 @@ public class ApiService : IApiService
 
             if (response.IsSuccessStatusCode)
             {
-                var result = JsonSerializer.Deserialize<ResObtenerSintomasEnum>(responseContent, new JsonSerializerOptions
+                var result = JsonSerializer.Deserialize<ResObtenerSintomasUsuario>(responseContent, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                }) ?? new ResObtenerSintomasEnum { resultado = false };
+                }) ?? new ResObtenerSintomasUsuario { resultado = false };
 
                 Debug.WriteLine($"[ApiService TODOS] ✅ Síntomas deserializados: {result.Sintomas?.Count ?? 0}");
 
@@ -1800,7 +1800,7 @@ public class ApiService : IApiService
                 {
                     foreach (var sintoma in result.Sintomas.Take(3))
                     {
-                        Debug.WriteLine($"[ApiService TODOS] - ID: {sintoma.IdSintoma}, Nombre: {sintoma.Nombre}");
+                        //Debug.WriteLine($"[ApiService TODOS] - ID: {sintoma.IdSintoma}, Nombre: {sintoma.Nombre}");
                     }
                     if (result.Sintomas.Count > 3)
                     {
@@ -1813,7 +1813,7 @@ public class ApiService : IApiService
             else
             {
                 Debug.WriteLine($"[ApiService TODOS] ❌ Error: {response.StatusCode}");
-                return new ResObtenerSintomasEnum
+                return new ResObtenerSintomasUsuario
                 {
                     resultado = false,
                     errores = new List<Errores> { new Errores { mensaje = $"Error del servidor: {response.StatusCode}" } }
@@ -1823,7 +1823,7 @@ public class ApiService : IApiService
         catch (Exception ex)
         {
             Debug.WriteLine($"[ApiService TODOS] ❌ Excepción: {ex.Message}");
-            return new ResObtenerSintomasEnum
+            return new ResObtenerSintomasUsuario
             {
                 resultado = false,
                 errores = new List<Errores> { new Errores { mensaje = "Error de conexión" } }
