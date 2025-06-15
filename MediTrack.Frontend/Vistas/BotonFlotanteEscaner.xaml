@@ -11,7 +11,7 @@
             FontFamily="MaterialIcons"
             FontSize="20"
             TextColor="White"
-            BackgroundColor="#004aad"
+            BackgroundColor="#007AFF"
             WidthRequest="50"
             HeightRequest="50"
             CornerRadius="15"
