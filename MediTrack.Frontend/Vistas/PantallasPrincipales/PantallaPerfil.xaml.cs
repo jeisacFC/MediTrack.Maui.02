@@ -1,16 +1,14 @@
 using MediTrack.Frontend.ViewModels;
-using MediTrack.Frontend.Models.Model;
-using System.Diagnostics;
 using MediTrack.Frontend.Vistas.Base;
+using MediTrack.Frontend.Popups;
+using CommunityToolkit.Maui.Views;
+using System.Diagnostics;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {
     public partial class PantallaPerfil : BaseContentPage
     {
         private PerfilViewModel _viewModel;
-        private bool _editandoCondiciones = false;
-        private bool _editandoAlergias = false;
-        private bool _editandoInfoPersonal = false;
 
         public PantallaPerfil(PerfilViewModel viewModel)
         {
@@ -27,6 +25,7 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             {
                 Debug.WriteLine("=== PantallaPerfil OnAppearing ===");
                 await _viewModel.InitializeAsync();
+                Debug.WriteLine("=== PantallaPerfil datos cargados ===");
             }
             catch (Exception ex)
             {
@@ -35,151 +34,51 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             }
         }
 
-        // Manejo del scroll para hacer desaparecer el avatar
-        private void OnScrollViewScrolled(object sender, ScrolledEventArgs e)
-        {
-            // Calculamos la opacidad basada en el scroll
-            double scrollY = e.ScrollY;
-            double maxScroll = 100; // Distancia máxima para desaparecer completamente
-
-            double opacity = Math.Max(0, 1 - (scrollY / maxScroll));
-            double scale = Math.Max(0.5, 1 - (scrollY / (maxScroll * 2)));
-
-            // Aplicamos la transformación al avatar
-            AvatarContainer.Opacity = opacity;
-            AvatarContainer.Scale = scale;
-
-            // También podemos mover el avatar hacia arriba
-            AvatarContainer.TranslationY = -scrollY * 0.5;
-        }
-
-        // Manejo de edición de información personal
-        private void OnEditInfoPersonalClicked(object sender, EventArgs e)
-        {
-            _editandoInfoPersonal = !_editandoInfoPersonal;
-
-            // Cambiar ícono del botón
-            if (_editandoInfoPersonal)
-            {
-                BtnEditarInfoPersonal.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
-                BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#28a745");
-            }
-            else
-            {
-                BtnEditarInfoPersonal.Text = "&#xE3C9;"; // edit_24
-                BtnEditarInfoPersonal.BackgroundColor = Color.FromArgb("#3b71ff");
-            }
-        }
-
-        // Manejo de edición de condiciones médicas
-        private void OnEditCondicionesClicked(object sender, EventArgs e)
-        {
-            _editandoCondiciones = !_editandoCondiciones;
-
-            // Cambiar ícono del botón y mostrar/ocultar botón agregar
-            if (_editandoCondiciones)
-            {
-                BtnEditarCondiciones.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
-                BtnEditarCondiciones.BackgroundColor = Color.FromArgb("#28a745");
-                BtnAgregarCondicion.IsVisible = true;
-            }
-            else
-            {
-                BtnEditarCondiciones.Text = "&#xE3C9;"; // edit_24
-                BtnEditarCondiciones.BackgroundColor = Color.FromArgb("#3b71ff");
-                BtnAgregarCondicion.IsVisible = false;
-            }
-        }
-
-        // Manejo de edición de alergias
-        private void OnEditAlergiasClicked(object sender, EventArgs e)
-        {
-            _editandoAlergias = !_editandoAlergias;
-
-            // Cambiar ícono del botón y mostrar/ocultar botón agregar
-            if (_editandoAlergias)
-            {
-                BtnEditarAlergias.Text = "&#xE14C;"; // edit_off_24 (done/check icon)
-                BtnEditarAlergias.BackgroundColor = Color.FromArgb("#28a745");
-                BtnAgregarAlergia.IsVisible = true;
-            }
-            else
-            {
-                BtnEditarAlergias.Text = "&#xE3C9;"; // edit_24
-                BtnEditarAlergias.BackgroundColor = Color.FromArgb("#dc3545");
-                BtnAgregarAlergia.IsVisible = false;
-            }
-        }
-
-        // Evento para manejar selección de condiciones médicas
-        private void OnCondicionesMedicasSeleccionadas(object sender, SelectionChangedEventArgs e)
+        private async void OnNotificacionesToggled(object sender, ToggledEventArgs e)
         {
             try
             {
-                Debug.WriteLine("=== Condiciones médicas seleccionadas ===");
-
-                // Llamar al método del ViewModel
-                _viewModel.OnCondicionesMedicasSeleccionadas(sender, e);
-
-                // Log de las selecciones
-                Debug.WriteLine($"Condiciones seleccionadas: {e.CurrentSelection.Count}");
-                foreach (CondicionesMedicas condicion in e.CurrentSelection)
+                if (_viewModel.AlternarNotificacionesCommand?.CanExecute(null) == true)
                 {
-                    Debug.WriteLine($"- {condicion.nombre_condicion}");
+                    await _viewModel.AlternarNotificacionesCommand.ExecuteAsync(null);
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error en OnCondicionesMedicasSeleccionadas: {ex.Message}");
+                Debug.WriteLine($"Error al alternar notificaciones: {ex.Message}");
             }
         }
 
-        // Evento para manejar selección de alergias
-        private void OnAlergiasSeleccionadas(object sender, SelectionChangedEventArgs e)
+        private async void OnGestionarAlergiasClicked(object sender, EventArgs e)
         {
             try
             {
-                Debug.WriteLine("=== Alergias seleccionadas ===");
-
-                // Llamar al método del ViewModel
-                _viewModel.OnAlergiasSeleccionadas(sender, e);
-
-                // Log de las selecciones
-                Debug.WriteLine($"Alergias seleccionadas: {e.CurrentSelection.Count}");
-                foreach (Alergias alergia in e.CurrentSelection)
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
                 {
-                    Debug.WriteLine($"- {alergia.nombre_alergia}");
+                    await DisplayAlert("Error", "No se pudo obtener la información del usuario", "OK");
+                    return;
+                }
+
+                var apiService = _viewModel.GetApiService();
+                var alergiasViewModel = new AlergiasViewModel(apiService, userId);
+                var popup = new GestionAlergiasPopup(alergiasViewModel);
+
+                var result = await this.ShowPopupAsync(popup);
+
+                if (result is bool success && success)
+                {
+                    if (_viewModel.RefrescarPerfilCommand.CanExecute(null))
+                    {
+                        await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error en OnAlergiasSeleccionadas: {ex.Message}");
+                Debug.WriteLine($"Error al abrir modal de alergias: {ex.Message}");
+                await DisplayAlert("Error", "Error al abrir la gestión de alergias", "OK");
             }
-        }
-
-        // Método para refrescar la página cuando se hace pull-to-refresh (opcional)
-        private async void OnRefreshRequested(object sender, EventArgs e)
-        {
-            try
-            {
-                Debug.WriteLine("=== Refresh solicitado ===");
-
-                if (_viewModel.RefrescarPerfilCommand.CanExecute(null))
-                {
-                    await _viewModel.RefrescarPerfilCommand.ExecuteAsync(null);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error en OnRefreshRequested: {ex.Message}");
-                await DisplayAlert("Error", "Error al refrescar el perfil", "OK");
-            }
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            Debug.WriteLine("=== PantallaPerfil OnDisappearing ===");
         }
     }
 }

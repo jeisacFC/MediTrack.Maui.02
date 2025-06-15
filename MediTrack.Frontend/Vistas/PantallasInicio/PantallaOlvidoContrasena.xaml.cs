@@ -25,10 +25,10 @@ public partial class PantallaOlvidoContrasena : BaseContentPage
     private async void OnCodigoEnviado(object sender, string email)
     {
         // Mostrar mensaje de éxito brevemente
-        await DisplayAlert("¡Código enviado!", $"Se ha enviado un código de verificación a {email}", "OK");
+        await DisplayAlert("¡Token enviado!", $"Se ha enviado un token de verificación a {email}", "OK");
 
-        // Abrir modal de código de verificación
-        await AbrirModalCodigoVerificacion(email);
+        // Abrir modal unificado de recuperación
+        await AbrirModalRecuperacion(email);
     }
 
     private async void OnEnvioFallido(object sender, string mensaje)
@@ -36,12 +36,13 @@ public partial class PantallaOlvidoContrasena : BaseContentPage
         await DisplayAlert("Error", mensaje, "OK");
     }
 
-    // Método para abrir el modal de código de verificación - CORREGIDO
-    private async Task AbrirModalCodigoVerificacion(string email)
+    // Método para abrir el modal unificado de recuperación
+    private async Task AbrirModalRecuperacion(string email)
     {
         try
         {
-            // Crear directamente las instancias con los servicios
+            System.Diagnostics.Debug.WriteLine($"=== AbrirModalRecuperacion con email: {email} ===");
+
             var serviceProvider = Application.Current?.Handler?.MauiContext?.Services;
 
             if (serviceProvider == null)
@@ -50,154 +51,72 @@ public partial class PantallaOlvidoContrasena : BaseContentPage
                 return;
             }
 
-            var codigoViewModel = serviceProvider.GetService<CodigoVerificacionViewModel>();
+            var recuperarViewModel = serviceProvider.GetService<RecuperarContrasenaViewModel>();
 
-            if (codigoViewModel == null)
+            if (recuperarViewModel == null)
             {
                 await DisplayAlert("Error", "No se pudo crear el ViewModel", "OK");
                 return;
             }
 
-            // Crear el modal directamente
-            var modalCodigo = new ModalCodigoVerificacion(codigoViewModel);
+            // Crear el modal unificado
+            var modalRecuperacion = new ModalRecuperarContrasena(recuperarViewModel);
 
             // Inicializar el modal con el email
-            modalCodigo.InicializarConEmail(email);
+            modalRecuperacion.InicializarConEmail(email);
 
             // Suscribirse a los eventos del modal
-            modalCodigo.CodigoVerificadoExitosamente += OnCodigoVerificadoExitosamente;
-            modalCodigo.ModalCancelado += OnModalCodigoCancelado;
+            modalRecuperacion.RecuperacionCompletada += OnRecuperacionCompletada;
+            modalRecuperacion.ModalCancelado += OnModalRecuperacionCancelado;
 
             // Mostrar el modal
-            await Navigation.PushModalAsync(modalCodigo);
+            await Navigation.PushModalAsync(modalRecuperacion);
+
+            System.Diagnostics.Debug.WriteLine("Modal de recuperación mostrado exitosamente");
         }
         catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"Error en AbrirModalRecuperacion: {ex.Message}");
             await DisplayAlert("Error", $"No se pudo abrir el modal: {ex.Message}", "OK");
         }
     }
 
-    // Método para abrir el modal de nueva contraseña
-    private async Task AbrirModalNuevaContrasena(string email)
+    // Manejadores de eventos del modal unificado
+    private async void OnRecuperacionCompletada(object sender, string mensaje)
     {
-        System.Diagnostics.Debug.WriteLine("=== INICIO AbrirModalNuevaContrasena ===");
-        System.Diagnostics.Debug.WriteLine($"Email recibido: '{email}'");
+        // Mostrar mensaje de éxito
+        await DisplayAlert("¡Contraseña actualizada!",
+            "Tu contraseña ha sido actualizada correctamente.",
+            "OK");
 
+        // Reiniciar la app para ir a login fresco
+        System.Diagnostics.Debug.WriteLine("Reiniciando aplicación después de cambio de contraseña...");
+
+        // Limpiar cualquier dato almacenado si es necesario
         try
         {
-            System.Diagnostics.Debug.WriteLine("Obteniendo serviceProvider...");
-
-            // Crear directamente las instancias con los servicios
-            var serviceProvider = Application.Current?.Handler?.MauiContext?.Services;
-
-            if (serviceProvider == null)
-            {
-                System.Diagnostics.Debug.WriteLine("ERROR: serviceProvider es null");
-                await DisplayAlert("Error", "No se pudo acceder a los servicios", "OK");
-                return;
-            }
-
-            System.Diagnostics.Debug.WriteLine("serviceProvider obtenido correctamente");
-            System.Diagnostics.Debug.WriteLine("Obteniendo NuevaContrasenaViewModel...");
-
-            var nuevaContrasenaViewModel = serviceProvider.GetService<NuevaContrasenaViewModel>();
-
-            if (nuevaContrasenaViewModel == null)
-            {
-                System.Diagnostics.Debug.WriteLine("ERROR: nuevaContrasenaViewModel es null");
-                await DisplayAlert("Error", "No se pudo crear el ViewModel", "OK");
-                return;
-            }
-
-            System.Diagnostics.Debug.WriteLine("NuevaContrasenaViewModel obtenido correctamente");
-            System.Diagnostics.Debug.WriteLine("Creando ModalNuevaContrasena...");
-
-            // Crear el modal directamente
-            var modalNuevaContrasena = new ModalNuevaContrasena(nuevaContrasenaViewModel);
-
-            System.Diagnostics.Debug.WriteLine("ModalNuevaContrasena creado correctamente");
-            System.Diagnostics.Debug.WriteLine($"Inicializando modal con email: '{email}'");
-
-            // Inicializar el modal con el email
-            modalNuevaContrasena.InicializarConEmail(email);
-
-            System.Diagnostics.Debug.WriteLine("Modal inicializado");
-            System.Diagnostics.Debug.WriteLine("Suscribiendo eventos...");
-
-            // Suscribirse a los eventos del modal
-            modalNuevaContrasena.ContrasenaActualizadaExitosamente += OnContrasenaActualizadaExitosamente;
-            modalNuevaContrasena.ModalCancelado += OnModalNuevaContrasenaCancelado;
-
-            System.Diagnostics.Debug.WriteLine("Eventos suscritos");
-            System.Diagnostics.Debug.WriteLine("Mostrando modal...");
-
-            // Mostrar el modal
-            await Navigation.PushModalAsync(modalNuevaContrasena);
-
-            System.Diagnostics.Debug.WriteLine("Modal mostrado exitosamente");
+            SecureStorage.Remove("jwt_token");
+            SecureStorage.Remove("refresh_token");
+            SecureStorage.Remove("user_id");
+            SecureStorage.Remove("user_email");
+            SecureStorage.Remove("user_name");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"EXCEPCIÓN en AbrirModalNuevaContrasena: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
-            await DisplayAlert("Error", $"No se pudo abrir el modal: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error limpiando storage: {ex.Message}");
         }
-        finally
-        {
-            System.Diagnostics.Debug.WriteLine("=== FIN AbrirModalNuevaContrasena ===");
-        }
-    }
 
-    // Manejadores de eventos del modal de código
-    // Manejadores de eventos del modal de código - SOLUCION CORRECTA
-    private async void OnCodigoVerificadoExitosamente(object sender, string email)
-    {
-        System.Diagnostics.Debug.WriteLine($"=== OnCodigoVerificadoExitosamente INICIO ===");
-        System.Diagnostics.Debug.WriteLine($"Email recibido: '{email}'");
-        System.Diagnostics.Debug.WriteLine($"Sender: {sender?.GetType()?.Name}");
+        // Reiniciar la app
+        Application.Current.MainPage = new AppShell();
 
-        // IMPORTANTE: Cerrar el modal actual ANTES de abrir el siguiente
-        System.Diagnostics.Debug.WriteLine("Cerrando modal de código actual...");
-
-        // Agregar un pequeño delay para que la UI se actualice
-        await Task.Delay(300);
-
-        // El código fue verificado exitosamente, abrir modal de nueva contraseña
-        System.Diagnostics.Debug.WriteLine("Llamando a AbrirModalNuevaContrasena...");
-        await AbrirModalNuevaContrasena(email);
-
-        System.Diagnostics.Debug.WriteLine("=== OnCodigoVerificadoExitosamente FIN ===");
-    }
-
-    private void OnModalCodigoCancelado(object sender, EventArgs e)
-    {
-        System.Diagnostics.Debug.WriteLine("=== OnModalCodigoCancelado INICIO ===");
-        System.Diagnostics.Debug.WriteLine($"Sender: {sender?.GetType()?.Name}");
-
-        // El usuario canceló el modal de código, volver a la pantalla actual
-        System.Diagnostics.Debug.WriteLine("Modal de código cancelado");
-        // El modal ya se cerró automáticamente, no necesitamos hacer nada más
-
-        System.Diagnostics.Debug.WriteLine("=== OnModalCodigoCancelado FIN ===");
-    }
-
-    // Manejadores de eventos del modal de nueva contraseña
-    private async void OnContrasenaActualizadaExitosamente(object sender, string mensaje)
-    {
-        // La contraseña fue actualizada exitosamente
-        // Mostrar mensaje final y regresar a inicio de sesión
-        await DisplayAlert("¡Proceso completado!",
-            "Tu contraseña ha sido actualizada correctamente. Ahora puedes iniciar sesión con tu nueva contraseña.",
-            "Ir a inicio de sesión");
-
-        // Regresar a la pantalla de inicio de sesión
+        // Asegurar que vaya a login
         await Shell.Current.GoToAsync("//inicioSesion");
     }
 
-    private void OnModalNuevaContrasenaCancelado(object sender, EventArgs e)
+    private void OnModalRecuperacionCancelado(object sender, EventArgs e)
     {
-        // El usuario canceló el modal de nueva contraseña
-        System.Diagnostics.Debug.WriteLine("Modal de nueva contraseña cancelado");
+        // El usuario canceló el modal de recuperación
+        System.Diagnostics.Debug.WriteLine("Modal de recuperación cancelado");
         // El modal ya se cerró automáticamente, no necesitamos hacer nada más
     }
 

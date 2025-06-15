@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MediTrack.Frontend.Popups.GestionAlergiasPopup"
+               Color="Transparent">
+
+    <!-- Grid principal que abarca todo el contenido -->
+    <Grid>
+        <ScrollView Padding="20,40,20,40">
+            <Frame CornerRadius="25" 
+                   Padding="25" 
+                   BackgroundColor="White"
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   WidthRequest="350"
+                   HasShadow="True">
+
+                <VerticalStackLayout Spacing="20">
+
+                    <!-- Header -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Gestionar Alergias" 
+                               Grid.Column="0"
+                               FontSize="20" 
+                               FontAttributes="Bold" 
+                               TextColor="#0B2B6E"
+                               VerticalOptions="Center"/>
+
+                        <Button Grid.Column="1"
+                                BackgroundColor="#dc3545"
+                                TextColor="White"
+                                CornerRadius="15"
+                                HeightRequest="30"
+                                WidthRequest="30"
+                                FontSize="16"
+                                Clicked="OnCerrarClicked">
+                            <Button.ImageSource>
+                                <FontImageSource Glyph="&#xE5CD;" FontFamily="MaterialIcons" Color="White" Size="16"/>
+                            </Button.ImageSource>
+                        </Button>
+                    </Grid>
+
+                    <!-- Separador -->
+                    <BoxView BackgroundColor="#e9ecef" HeightRequest="1" HorizontalOptions="Fill"/>
+
+                    <!-- Sección: Alergias del Usuario -->
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Mis Alergias"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#495057"/>
+
+                        <Frame BackgroundColor="#f8f9fa" 
+                               CornerRadius="12" 
+                               Padding="15" 
+                               HasShadow="False"
+                               BorderColor="#dee2e6"
+                               HeightRequest="225">
+                            <ScrollView>
+                                <CollectionView ItemsSource="{Binding AlergiasUsuario}">
+                                    <CollectionView.ItemsLayout>
+                                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="6"/>
+                                    </CollectionView.ItemsLayout>
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Frame BackgroundColor="White"
+                                                   CornerRadius="12"
+                                                   Padding="12,8"
+                                                   HasShadow="False"
+                                                   BorderColor="#dee2e6"
+                                                   Margin="0,2">
+                                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                                    <Frame Grid.Column="0"
+                                                           BackgroundColor="#ff6b35"
+                                                           CornerRadius="10"
+                                                           HeightRequest="20"
+                                                           WidthRequest="20"
+                                                           Padding="0"
+                                                           HasShadow="False"
+                                                           VerticalOptions="Center"
+                                                           Margin="0,0,8,0">
+                                                        <Image HorizontalOptions="Center" VerticalOptions="Center">
+                                                            <Image.Source>
+                                                                <FontImageSource Glyph="&#xE002;" FontFamily="MaterialIcons" Color="White" Size="12"/>
+                                                            </Image.Source>
+                                                        </Image>
+                                                    </Frame>
+
+                                                    <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                                        <Label Text="{Binding nombre_alergia}"
+                                                               FontSize="14"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#212529"/>
+                                                        <Label Text="{Binding descripcion}"
+                                                               FontSize="11"
+                                                               TextColor="#6c757d"
+                                                               IsVisible="{Binding descripcion, Converter={StaticResource StringToBoolConverter}}"/>
+                                                    </StackLayout>
+
+                                                    <Button Grid.Column="2"
+                                                            BackgroundColor="#dc3545"
+                                                            TextColor="White"
+                                                            CornerRadius="10"
+                                                            HeightRequest="20"
+                                                            WidthRequest="20"
+                                                            FontSize="12"
+                                                            Padding="0"
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Popup}}, Path=BindingContext.DesasignarAlergiaCommand}"
+                                                            CommandParameter="{Binding .}">
+                                                        <Button.ImageSource>
+                                                            <FontImageSource Glyph="&#xE5CD;" FontFamily="MaterialIcons" Color="White" Size="10"/>
+                                                        </Button.ImageSource>
+                                                    </Button>
+                                                </Grid>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                    <CollectionView.EmptyView>
+                                        <StackLayout Padding="15" Spacing="8">
+                                            <Image HorizontalOptions="Center">
+                                                <Image.Source>
+                                                    <FontImageSource Glyph="&#xE002;" FontFamily="MaterialIcons" Color="#adb5bd" Size="30"/>
+                                                </Image.Source>
+                                            </Image>
+                                            <Label Text="Sin alergias registradas"
+                                                   TextColor="#6c757d"
+                                                   FontAttributes="Italic"
+                                                   HorizontalOptions="Center"
+                                                   FontSize="12"/>
+                                        </StackLayout>
+                                    </CollectionView.EmptyView>
+                                </CollectionView>
+                            </ScrollView>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <!-- Sección: Agregar Alergias -->
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Agregar Alergias"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#495057"/>
+
+                        <!-- Botón para mostrar formulario nueva alergia -->
+                        <Button Text="+ Nueva Alergia"
+                                BackgroundColor="#17a2b8"
+                                TextColor="White"
+                                CornerRadius="15"
+                                HeightRequest="40"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                Command="{Binding ToggleMostrarFormularioNuevaAlergiaCommand}"
+                                IsVisible="{Binding MostrarFormularioNuevaAlergia, Converter={StaticResource InverseBoolConverter}}"/>
+
+                        <!-- Lista de Alergias Disponibles -->
+                        <VerticalStackLayout Spacing="5" IsVisible="{Binding MostrarFormularioNuevaAlergia}">
+                            <Label Text="Alergias Disponibles para Asignar"
+                                   TextColor="#495057" 
+                                   FontAttributes="Bold"
+                                   FontSize="14"/>
+
+                            <Frame BackgroundColor="#f8f9fa" 
+                                   CornerRadius="12" 
+                                   Padding="10" 
+                                   HasShadow="False"
+                                   BorderColor="#dee2e6"
+                                   HeightRequest="225">
+                                <ScrollView>
+                                    <CollectionView ItemsSource="{Binding AlergiasDisponiblesParaAsignar}">
+                                        <CollectionView.ItemsLayout>
+                                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="4"/>
+                                        </CollectionView.ItemsLayout>
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Frame BackgroundColor="White"
+                                                       CornerRadius="10"
+                                                       Padding="10,6"
+                                                       HasShadow="False"
+                                                       BorderColor="#dee2e6"
+                                                       Margin="0,1">
+                                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                                        <Frame Grid.Column="0"
+                                                               BackgroundColor="#ff6b35"
+                                                               CornerRadius="8"
+                                                               HeightRequest="16"
+                                                               WidthRequest="16"
+                                                               Padding="0"
+                                                               HasShadow="False"
+                                                               VerticalOptions="Center"
+                                                               Margin="0,0,8,0">
+                                                            <Image HorizontalOptions="Center" VerticalOptions="Center">
+                                                                <Image.Source>
+                                                                    <FontImageSource Glyph="&#xE002;" FontFamily="MaterialIcons" Color="White" Size="10"/>
+                                                                </Image.Source>
+                                                            </Image>
+                                                        </Frame>
+
+                                                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                                            <Label Text="{Binding nombre_alergia}"
+                                                                   FontSize="13"
+                                                                   TextColor="#212529"
+                                                                   FontAttributes="Bold"/>
+                                                            <Label Text="{Binding descripcion}"
+                                                                   FontSize="11"
+                                                                   TextColor="#6c757d"
+                                                                   IsVisible="{Binding descripcion, Converter={StaticResource StringToBoolConverter}}"/>
+                                                        </StackLayout>
+
+                                                        <Button Grid.Column="2"
+                                                                BackgroundColor="#28a745"
+                                                                TextColor="White"
+                                                                CornerRadius="10"
+                                                                HeightRequest="24"
+                                                                WidthRequest="24"
+                                                                FontSize="12"
+                                                                Padding="0"
+                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Popup}}, Path=BindingContext.AsignarAlergiaIndividualCommand}"
+                                                                CommandParameter="{Binding .}">
+                                                            <Button.ImageSource>
+                                                                <FontImageSource Glyph="&#xE145;" FontFamily="MaterialIcons" Color="White" Size="12"/>
+                                                            </Button.ImageSource>
+                                                        </Button>
+                                                    </Grid>
+                                                </Frame>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                        <CollectionView.EmptyView>
+                                            <StackLayout Padding="15" Spacing="8">
+                                                <Image HorizontalOptions="Center">
+                                                    <Image.Source>
+                                                        <FontImageSource Glyph="&#xE002;" FontFamily="MaterialIcons" Color="#adb5bd" Size="20"/>
+                                                    </Image.Source>
+                                                </Image>
+                                                <Label Text="Todas las alergias están asignadas"
+                                                       TextColor="#6c757d"
+                                                       FontAttributes="Italic"
+                                                       HorizontalOptions="Center"
+                                                       FontSize="11"/>
+                                            </StackLayout>
+                                        </CollectionView.EmptyView>
+                                    </CollectionView>
+                                </ScrollView>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <!-- Formulario Nueva Alergia -->
+                        <Frame IsVisible="{Binding MostrarFormularioNuevaAlergia}"
+                               BackgroundColor="White"
+                               CornerRadius="12"
+                               Padding="15"
+                               HasShadow="False"
+                               BorderColor="#495057" >
+                            <VerticalStackLayout Spacing="12">
+                                <Label Text="O Crear Nueva Alergia (Se asignará automáticamente)"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="#212529"/>
+
+                                <Frame BackgroundColor="White" 
+                                       CornerRadius="12" 
+                                       Padding="0" 
+                                       HasShadow="False"
+                                       BorderColor="#dee2e6">
+                                    <Entry Placeholder="Nombre de la alergia"
+                                           Text="{Binding NombreNuevaAlergia}"
+                                           FontSize="14"
+                                           BackgroundColor="Transparent"
+                                           TextColor="#212529"
+                                           PlaceholderColor="#6c757d"/>
+                                </Frame>
+
+                                <Frame BackgroundColor="White" 
+                                       CornerRadius="12" 
+                                       Padding="0" 
+                                       HasShadow="False"
+                                       BorderColor="#dee2e6">
+                                    <Entry Placeholder="Descripción (opcional)"
+                                           Text="{Binding DescripcionNuevaAlergia}"
+                                           FontSize="14"
+                                           BackgroundColor="Transparent"
+                                           TextColor="#212529"
+                                           PlaceholderColor="#6c757d"/>
+                                </Frame>
+
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                    <Button Grid.Column="0"
+                                            Text="Crear"
+                                            BackgroundColor="#28a745"
+                                            TextColor="White"
+                                            CornerRadius="15"
+                                            HeightRequest="40"
+                                            FontSize="13"
+                                            FontAttributes="Bold"
+                                            Command="{Binding CrearNuevaAlergiaCommand}"/>
+
+                                    <Button Grid.Column="1"
+                                            Text="Cancelar"
+                                            BackgroundColor="#6c757d"
+                                            TextColor="White"
+                                            CornerRadius="15"
+                                            HeightRequest="40"
+                                            FontSize="13"
+                                            Command="{Binding CancelarNuevaAlergiaCommand}"/>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+        </ScrollView>
+    </Grid>
+</toolkit:Popup>

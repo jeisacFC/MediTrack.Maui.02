@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:MediTrack.Frontend.ViewModels.PantallasInicio"
+    x:Class="MediTrack.Frontend.Popups.ModalRecuperarContrasena"
+    BackgroundColor="Transparent"
+    NavigationPage.HasNavigationBar="False">
+
+    <!-- Overlay semi-transparente -->
+    <Grid BackgroundColor="#80000000">
+
+        <!-- Modal centrado -->
+        <Frame BackgroundColor="White"
+               CornerRadius="20"
+               HasShadow="True"
+               Padding="30"
+               Margin="40,0"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               MaximumWidthRequest="400"
+               MaximumHeightRequest="600">
+
+            <ScrollView>
+                <VerticalStackLayout Spacing="20">
+
+                    <!-- Header con icono y título dinámico -->
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource Color="#3B71FF" Size="40" FontFamily="MaterialIcons">
+                                    <FontImageSource.Glyph>
+                                        <MultiBinding Converter="{StaticResource BoolToIconConverter}">
+                                            <Binding Path="EstaIngresandoToken"/>
+                                            <Binding Source="&#xe0be;"/>
+                                            <!-- email icon -->
+                                            <Binding Source="&#xe899;"/>
+                                            <!-- lock icon -->
+                                        </MultiBinding>
+                                    </FontImageSource.Glyph>
+                                </FontImageSource>
+                            </Image.Source>
+                        </Image>
+
+                        <Label Text="{Binding TituloModal}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="#3B71FF"
+                               HorizontalOptions="Center"/>
+
+                        <Label Text="{Binding SubtituloModal}"
+                               FontSize="14"
+                               TextColor="Gray"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+
+                    <!-- Mensaje de estado -->
+                    <Label Text="{Binding MensajeEstado}"
+                           TextColor="#3B71FF"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           IsVisible="{Binding MensajeEstado, Converter={StaticResource StringNotEmptyConverter}}"/>
+
+                    <!-- CONTENIDO PARA INGRESO DE TOKEN -->
+                    <VerticalStackLayout Spacing="15" IsVisible="{Binding EstaIngresandoToken}">
+
+                        <Label Text="Ingresa el token recibido en tu email:"
+                               TextColor="Black"
+                               FontSize="16"
+                               HorizontalOptions="Center"/>
+
+                        <Frame CornerRadius="12"
+                               BackgroundColor="#F8F8F8"
+                               HasShadow="False"
+                               Padding="15">
+                            <HorizontalStackLayout HorizontalOptions="Center">
+                                <Image>
+                                    <Image.Source>
+                                        <FontImageSource Glyph="&#xe32a;"
+                                                       FontFamily="MaterialIcons"
+                                                       Color="#3B71FF"
+                                                       Size="20"/>
+                                    </Image.Source>
+                                </Image>
+                                <Entry x:Name="TokenEntry"
+                                       Text="{Binding Token}"
+                                       Placeholder="Token de verificación"
+                                       PlaceholderColor="#A0A0A0"
+                                       TextColor="Black"
+                                       FontSize="16"
+                                       HorizontalTextAlignment="Center"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                       Margin="10,0"
+                                       WidthRequest="200"/>
+                            </HorizontalStackLayout>
+                        </Frame>
+
+                        <!-- Botones para token -->
+                        <VerticalStackLayout Spacing="15">
+                            <Button Text="Continuar"
+                                    Command="{Binding ContinuarCommand}"
+                                    FontSize="16"
+                                    BackgroundColor="#3B71FF"
+                                    TextColor="White"
+                                    CornerRadius="12"
+                                    HeightRequest="45"
+                                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button" Binding="{Binding IsLoading}" Value="True">
+                                        <Setter Property="Text" Value="Verificando..." />
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
+
+                            <Button Text="Reenviar token"
+                                    Command="{Binding ReenviarTokenCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#3B71FF"
+                                    FontAttributes="Bold"
+                                    FontSize="14"
+                                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- CONTENIDO PARA NUEVA CONTRASEÑA -->
+                    <VerticalStackLayout Spacing="15" IsVisible="{Binding EstaCambiandoContrasena}">
+
+                        <!-- Nueva contraseña -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Nueva contraseña:"
+                                   TextColor="Black"
+                                   FontSize="14"/>
+
+                            <Frame CornerRadius="12"
+                                   BackgroundColor="#F8F8F8"
+                                   HasShadow="False"
+                                   Padding="10">
+                                <HorizontalStackLayout>
+                                    <Image>
+                                        <Image.Source>
+                                            <FontImageSource Glyph="&#xe897;"
+                                                           FontFamily="MaterialIcons"
+                                                           Color="#3B71FF"
+                                                           Size="20"/>
+                                        </Image.Source>
+                                    </Image>
+                                    <Entry x:Name="NuevaContrasenaEntry"
+                                           Text="{Binding NuevaContrasena}"
+                                           Placeholder="Mínimo 6 caracteres"
+                                           IsPassword="True"
+                                           PlaceholderColor="#A0A0A0"
+                                           TextColor="Black"
+                                           IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                           Margin="10,0"/>
+                                </HorizontalStackLayout>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <!-- Confirmar contraseña -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Confirmar contraseña:"
+                                   TextColor="Black"
+                                   FontSize="14"/>
+
+                            <Frame CornerRadius="12"
+                                   BackgroundColor="#F8F8F8"
+                                   HasShadow="False"
+                                   Padding="10">
+                                <HorizontalStackLayout>
+                                    <Image>
+                                        <Image.Source>
+                                            <FontImageSource Glyph="&#xe5ca;"
+                                                           FontFamily="MaterialIcons"
+                                                           Color="#3B71FF"
+                                                           Size="20"/>
+                                        </Image.Source>
+                                    </Image>
+                                    <Entry x:Name="ConfirmarContrasenaEntry"
+                                           Text="{Binding ConfirmarContrasena}"
+                                           Placeholder="Confirma tu contraseña"
+                                           IsPassword="True"
+                                           PlaceholderColor="#A0A0A0"
+                                           TextColor="Black"
+                                           IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                           Margin="10,0"/>
+                                </HorizontalStackLayout>
+                            </Frame>
+
+                            <!-- Mensaje de validación en tiempo real -->
+                            <Label Text="{Binding MensajeValidacion}"
+                                   FontSize="12"
+                                   HorizontalOptions="Start"
+                                   Margin="10,0">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" 
+                                               Binding="{Binding MensajeValidacion}" 
+                                               Value="✓ Las contraseñas coinciden">
+                                        <Setter Property="TextColor" Value="Green"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" 
+                                               Binding="{Binding MensajeValidacion}" 
+                                               Value="Las contraseñas no coinciden">
+                                        <Setter Property="TextColor" Value="Red"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" 
+                                               Binding="{Binding MensajeValidacion}" 
+                                               Value="Mínimo 6 caracteres">
+                                        <Setter Property="TextColor" Value="Orange"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </VerticalStackLayout>
+
+                        <!-- Botón para cambiar contraseña -->
+                        <Button Text="Actualizar contraseña"
+                                Command="{Binding RestablecerContrasenaCommand}"
+                                FontSize="16"
+                                BackgroundColor="#3B71FF"
+                                TextColor="White"
+                                CornerRadius="12"
+                                HeightRequest="50"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="Text" Value="Actualizando..." />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </VerticalStackLayout>
+
+                    <!-- BOTONES INFERIORES -->
+                    <VerticalStackLayout Spacing="10" Margin="0,10,0,0">
+
+                        <!-- Divider -->
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#E0E0E0"/>
+
+                        <!-- Botón Volver/Atrás (solo visible en el paso 2) -->
+                        <Button Text="← Volver atrás"
+                                Command="{Binding VolverAtrasCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="#3B71FF"
+                                FontSize="14"
+                                IsVisible="{Binding EstaCambiandoContrasena}"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
+
+                        <!-- Botón Cancelar -->
+                        <Button Text="Cancelar"
+                                Command="{Binding CerrarModalCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="Gray"
+                                FontSize="14"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
+
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </Frame>
+    </Grid>
+</ContentPage>

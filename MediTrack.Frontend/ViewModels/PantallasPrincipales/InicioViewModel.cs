@@ -1,10 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Models.Model;
+using MediTrack.Frontend.Models.Request;
+using MediTrack.Frontend.Models.Response;
+using MediTrack.Frontend.Popups;
+using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Services.Interfaces;
+using MediTrack.Frontend.ViewModels;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
@@ -20,6 +26,15 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         private ObservableCollection<HabitoSaludable> habitosSaludables = new();
 
         [ObservableProperty]
+        private ObservableCollection<RecomendacionesIA> recomendaciones = new();
+
+        [ObservableProperty]
+        private ObservableCollection<Interaccion> interacciones = new();
+
+        [ObservableProperty]
+        private ObservableCollection<AlertaSalud> alertas = new();
+
+        [ObservableProperty]
         private ObservableCollection<SintomaUsuario> sintomasUsuario = new();
 
         [ObservableProperty]
@@ -32,10 +47,16 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         private bool hayMedicamentos = false;
 
         [ObservableProperty]
-        private bool hayEscaneos = false;
+        private bool hayHabitos = false;
 
         [ObservableProperty]
-        private bool hayHabitos = false;
+        private bool hayRecomendaciones = false;
+
+        [ObservableProperty]
+        private bool hayInteracciones = false;
+
+        [ObservableProperty]
+        private bool hayAlertas = false;
 
         [ObservableProperty]
         private bool haySintomas = false;
@@ -44,10 +65,22 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         private readonly CultureInfo _culturaEspañola = new("es-ES");
         private readonly int _idUsuarioActual = 1; // TODO: Obtener del servicio de autenticación
 
-        public InicioViewModel()
+        private readonly IApiService _apiService;
+        public IAsyncRelayCommand CargarHabitosCommand { get; }
+        public IAsyncRelayCommand CargarRecomendacionesCommand { get; }
+        public IAsyncRelayCommand CargarInteraccionesCommand { get; }
+        public IAsyncRelayCommand CargarAlertasCommand { get; }
+
+        public InicioViewModel(IApiService apiService)
         {
             try
             {
+                _apiService = apiService;
+                CargarHabitosCommand = new AsyncRelayCommand(CargarHabitosSaludables);
+                CargarRecomendacionesCommand = new AsyncRelayCommand(CargarRecomendaciones);
+                CargarInteraccionesCommand = new AsyncRelayCommand(CargarInteracciones);
+                CargarAlertasCommand = new AsyncRelayCommand(CargarAlertasSalud);
+
                 // Usar servicios
                 _eventosService = EventosService.Instance;
 
@@ -59,7 +92,9 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 CultureInfo.CurrentUICulture = _culturaEspañola;
 
                 ActualizarFechaHoy();
-                _ = CargarDatosIniciales();
+
+                // NO cargar datos inmediatamente para evitar bloquear la UI
+                System.Diagnostics.Debug.WriteLine("InicioViewModel inicializado - datos se cargarán en OnAppearing");
             }
             catch (Exception ex)
             {
@@ -72,17 +107,21 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             try
             {
                 IsLoading = true;
+                System.Diagnostics.Debug.WriteLine("Iniciando carga de datos...");
 
-                // Cargar todos los datos en paralelo
-                var tareas = new List<Task>
-                {
-                    CargarMedicamentosHoy(),
-                    CargarEscaneosRecientes(),
-                    CargarHabitosSaludables(),
-                    CargarSintomasUsuario()
-                };
+                // Cargar datos en el orden deseado: Medicamentos -> Síntomas -> resto
+                await CargarMedicamentosHoy();
+                await CargarSintomasUsuario();
 
-                await Task.WhenAll(tareas);
+                // Pequeña pausa antes de cargar datos de IA
+                await Task.Delay(100);
+
+                await CargarHabitosSaludables();
+                await CargarRecomendaciones();
+                await CargarInteracciones();
+                await CargarAlertasSalud();
+
+                System.Diagnostics.Debug.WriteLine("Todos los datos cargados exitosamente");
             }
             catch (Exception ex)
             {
@@ -152,102 +191,174 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
         }
 
-        private async Task CargarEscaneosRecientes()
-        {
-            try
-            {
-                // Limpiar lista
-                EscaneosRecientes.Clear();
-
-                // TODO: Conectar con backend real
-                // Por ahora, datos de ejemplo
-                var escaneosEjemplo = new List<EscaneoReciente>
-                {
-                    new EscaneoReciente
-                    {
-                        NombreComercial = "Divalproato Sódico 250mg",
-                        FechaEscaneo = DateTime.Now.AddDays(-2),
-                        Fabricante = "Laboratorio ABC"
-                    },
-                    new EscaneoReciente
-                    {
-                        NombreComercial = "Amoxicilina 500mg",
-                        FechaEscaneo = DateTime.Now.AddDays(-3),
-                        Fabricante = "Pharma XYZ"
-                    },
-                    new EscaneoReciente
-                    {
-                        NombreComercial = "Ibuprofeno 400mg",
-                        FechaEscaneo = DateTime.Now.AddDays(-5),
-                        Fabricante = "Medicina S.A."
-                    }
-                };
-
-                foreach (var escaneo in escaneosEjemplo)
-                {
-                    EscaneosRecientes.Add(escaneo);
-                }
-
-                HayEscaneos = EscaneosRecientes.Any();
-
-                System.Diagnostics.Debug.WriteLine($"Cargados {EscaneosRecientes.Count} escaneos recientes");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error cargando escaneos recientes: {ex.Message}");
-                HayEscaneos = false;
-            }
-        }
-
         private async Task CargarHabitosSaludables()
         {
             try
             {
-                // Limpiar lista
                 HabitosSaludables.Clear();
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                Debug.WriteLine($"[VM] user_id en SecureStorage: {userIdStr}");
 
-                // TODO: Conectar con endpoint de IA para hábitos
-                // var response = await _apiService.ObtenerHabitosAsync(_idUsuarioActual);
-
-                // Por ahora, datos de ejemplo
-                var habitosEjemplo = new List<HabitoSaludable>
+                if (!int.TryParse(userIdStr, out var idUsuario))
                 {
-                    new HabitoSaludable
+                    Debug.WriteLine("[VM] Usuario no autenticado para hábitos");
+                    HayHabitos = false;
+                    return;
+                }
+
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Enviando ReqObtenerUsuario.IdUsuario = {req.IdUsuario}");
+
+                var res = await _apiService.ObtenerHabitosAsync(req);
+                Debug.WriteLine($"[VM] Respuesta hábitos: resultado={res?.resultado} count={res?.Habitos?.Count}");
+
+                if (res?.Habitos != null)
+                {
+                    foreach (var texto in res.Habitos)
                     {
-                        Titulo = "Beber al menos 8 vasos de agua al día",
-                        Descripcion = "Mantenerte hidratado ayuda a tu organismo a funcionar mejor.",
-                        Icono = "💧",
-                        Prioridad = 1
-                    },
-                    new HabitoSaludable
-                    {
-                        Titulo = "Caminar 30 minutos diarios",
-                        Descripcion = "El ejercicio ligero mejora tu salud cardiovascular.",
-                        Icono = "🚶",
-                        Prioridad = 2
-                    },
-                    new HabitoSaludable
-                    {
-                        Titulo = "Dormir 7-8 horas cada noche",
-                        Descripcion = "Un buen descanso es fundamental para tu recuperación.",
-                        Icono = "😴",
-                        Prioridad = 3
+                        Debug.WriteLine($"[VM] Añadiendo hábito: {texto}");
+                        HabitosSaludables.Add(new HabitoSaludable
+                        {
+                            Titulo = "",
+                            Descripcion = texto,
+                        });
                     }
-                };
-
-                foreach (var habito in habitosEjemplo)
+                }
+                else
                 {
-                    HabitosSaludables.Add(habito);
+                    Debug.WriteLine("[VM] No se encontraron hábitos saludables.");
                 }
 
                 HayHabitos = HabitosSaludables.Any();
-
-                System.Diagnostics.Debug.WriteLine($"Cargados {HabitosSaludables.Count} hábitos saludables");
+                Debug.WriteLine($"[VM] HayHabitos = {HayHabitos}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error cargando hábitos saludables: {ex.Message}");
+                Debug.WriteLine($"Error al cargar hábitos: {ex.Message}");
                 HayHabitos = false;
+            }
+        }
+
+        private async Task CargarRecomendaciones()
+        {
+            try
+            {
+                Recomendaciones.Clear();
+
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                Debug.WriteLine($"[VM] user_id para recomendaciones: {userIdStr}");
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                {
+                    Debug.WriteLine("[VM] Usuario no autenticado para recomendaciones");
+                    HayRecomendaciones = false;
+                    return;
+                }
+
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Solicitando recomendaciones para {idUsuario}");
+                var res = await _apiService.ObtenerRecomendacionesAsync(req);
+                Debug.WriteLine($"[VM] Respuesta recomendaciones: resultado={res?.resultado} count={res?.Recomendaciones?.Count}");
+
+                if (res?.Recomendaciones != null)
+                {
+                    foreach (var texto in res.Recomendaciones)
+                    {
+                        Debug.WriteLine($"[VM] Agregando recomendación: {texto}");
+                        Recomendaciones.Add(new RecomendacionesIA
+                        {
+                            Titulo = "",
+                            Descripcion = texto
+                        });
+                    }
+                }
+
+                HayRecomendaciones = Recomendaciones.Any();
+                Debug.WriteLine($"[VM] HayRecomendaciones = {HayRecomendaciones}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[VM] Error al cargar recomendaciones: {ex}");
+                HayRecomendaciones = false;
+            }
+        }
+
+        private async Task CargarInteracciones()
+        {
+            try
+            {
+                Interacciones.Clear();
+
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                {
+                    Debug.WriteLine("[VM] Usuario no autenticado para interacciones");
+                    HayInteracciones = false;
+                    return;
+                }
+
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Solicitando interacciones para {idUsuario}");
+                var res = await _apiService.ObtenerInteraccionesAsync(req);
+                Debug.WriteLine($"[VM] Respuesta interacciones: resultado={res?.resultado} count={res?.Interacciones?.Count}");
+
+                if (res?.Interacciones != null)
+                {
+                    foreach (var texto in res.Interacciones)
+                    {
+                        Debug.WriteLine($"[VM] Agregando interacción: {texto}");
+                        Interacciones.Add(new Interaccion
+                        {
+                            Titulo = "",
+                            Descripcion = texto
+                        });
+                    }
+                }
+
+                HayInteracciones = Interacciones.Any();
+                Debug.WriteLine($"[VM] HayInteracciones = {HayInteracciones}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[VM] Error al cargar interacciones: {ex}");
+                HayInteracciones = false;
+            }
+        }
+
+        private async Task CargarAlertasSalud()
+        {
+            try
+            {
+                Alertas.Clear();
+
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                if (!int.TryParse(userIdStr, out var idUsuario))
+                {
+                    Debug.WriteLine("[VM] Usuario no autenticado para alertas");
+                    HayAlertas = false;
+                    return;
+                }
+
+                var req = new ReqObtenerUsuario { IdUsuario = idUsuario };
+                Debug.WriteLine($"[VM] Solicitando alertas de salud para {idUsuario}");
+                var res = await _apiService.ObtenerAlertasSaludAsync(req);
+                Debug.WriteLine($"[VM] Respuesta alertas: resultado={res?.resultado} count={res?.Alertas?.Count}");
+
+                if (res?.Alertas != null)
+                {
+                    foreach (var a in res.Alertas)
+                    {
+                        Debug.WriteLine($"[VM] Agregando alerta: Riesgo={a.Riesgo}");
+                        Alertas.Add(a);
+                    }
+                }
+
+                HayAlertas = Alertas.Any();
+                Debug.WriteLine($"[VM] HayAlertas = {HayAlertas}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[VM] Error al cargar alertas: {ex}");
+                HayAlertas = false;
             }
         }
 
@@ -255,50 +366,79 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             try
             {
-                // Limpiar lista
-                SintomasUsuario.Clear();
+                sintomasUsuario.Clear();
+                Debug.WriteLine("[VM] Iniciando carga de síntomas...");
 
-                // TODO: Conectar con backend real para síntomas del usuario
-                // var response = await _apiService.ObtenerSintomasUsuarioAsync(_idUsuarioActual);
+                var userIdStr = await SecureStorage.GetAsync("user_id");
+                Debug.WriteLine($"[VM] user_id para síntomas: {userIdStr}");
 
-                // Por ahora, datos de ejemplo
-                var sintomasEjemplo = new List<SintomaUsuario>
+                if (!int.TryParse(userIdStr, out var userId))
                 {
-                    new SintomaUsuario
-                    {
-                        IdSintoma = 1,
-                        Nombre = "Dolor de cabeza",
-                        FechaReporte = DateTime.Today.AddDays(-1),
-                        EsManual = false
-                    },
-                    new SintomaUsuario
-                    {
-                        IdSintoma = 2,
-                        Nombre = "Fiebre",
-                        FechaReporte = DateTime.Today.AddDays(-2),
-                        EsManual = false
-                    },
-                    new SintomaUsuario
-                    {
-                        IdSintoma = 3,
-                        Nombre = "Náuseas",
-                        FechaReporte = DateTime.Today,
-                        EsManual = true
-                    }
-                };
-
-                foreach (var sintoma in sintomasEjemplo)
-                {
-                    SintomasUsuario.Add(sintoma);
+                    Debug.WriteLine("[VM] Usuario no autenticado para síntomas");
+                    HaySintomas = false;
+                    return;
                 }
 
-                HaySintomas = SintomasUsuario.Any();
+                var request = new ReqObtenerUsuario { IdUsuario = userId };
+                Debug.WriteLine($"[VM] Enviando request síntomas para userId: {userId}");
 
-                System.Diagnostics.Debug.WriteLine($"Cargados {SintomasUsuario.Count} síntomas del usuario");
+                var response = await _apiService.ObtenerSintomasUsuarioAsync(request);
+                Debug.WriteLine($"[VM] Respuesta síntomas: resultado={response?.resultado} count={response?.Sintomas?.Count}");
+
+                if (response?.resultado == true && response.Sintomas != null && response.Sintomas.Any())
+                {
+                    foreach (var sintoma in response.Sintomas)
+                    {
+                        Debug.WriteLine($"[VM] Agregando síntoma: {sintoma.Sintoma} - {sintoma.FechaReporte}");
+                        sintomasUsuario.Add(new SintomaUsuario
+                        {
+                            IdSintoma = 0,
+                            Nombre = sintoma.Sintoma,
+                            FechaReporte = sintoma.FechaReporte,
+                            EsManual = false
+                        });
+                    }
+
+                    Debug.WriteLine($"[VM] Cargados {sintomasUsuario.Count} síntomas desde backend");
+                }
+                else
+                {
+                    Debug.WriteLine("[VM] No se encontraron síntomas del usuario en el backend");
+
+                    // Agregar síntomas de ejemplo para poder probar la funcionalidad
+                    var sintomasEjemplo = new List<SintomaUsuario>
+                    {
+                        new SintomaUsuario
+                        {
+                            IdSintoma = 1, 
+                            Nombre = "Dolor de cabeza",
+                            FechaReporte = DateTime.Today.AddDays(-1),
+                            EsManual = false
+                        },
+                        new SintomaUsuario
+                        {
+                            IdSintoma = 2,
+                            Nombre = "Fatiga",
+                            FechaReporte = DateTime.Today.AddDays(-2),
+                            EsManual = false
+                        }
+                    };
+
+                    foreach (var sintoma in sintomasEjemplo)
+                    {
+                        sintomasUsuario.Add(sintoma);
+                    }
+
+                    Debug.WriteLine($"[VM] Agregados {sintomasEjemplo.Count} síntomas de ejemplo");
+                }
+
+                HaySintomas = sintomasUsuario.Any();
+                Debug.WriteLine($"[VM] HaySintomas = {HaySintomas} - Total síntomas: {sintomasUsuario.Count}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error cargando síntomas del usuario: {ex.Message}");
+                Debug.WriteLine($"[VM] Error cargando síntomas del usuario: {ex.Message}");
+                Debug.WriteLine($"[VM] StackTrace: {ex.StackTrace}");
                 HaySintomas = false;
             }
         }
@@ -389,12 +529,24 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             try
             {
-                // TODO: Navegar a pantalla de gestión de síntomas
-                await Shell.Current.DisplayAlert("Función", "Gestionar síntomas", "OK");
+                Debug.WriteLine("[VM] Abriendo popup de gestión de síntomas...");
+
+                // Crear y mostrar el popup de gestión de síntomas
+                var viewModel = new GestionarSintomasViewModel(_apiService);
+                var popup = new ModalGestionarSintomas(viewModel);
+
+                // Mostrar el popup y esperar resultado
+                var result = await Application.Current?.MainPage?.ShowPopupAsync(popup);
+
+                Debug.WriteLine("[VM] Popup de síntomas cerrado");
+
+                // Recargar síntomas después de cerrar el modal
+                await CargarSintomasUsuario();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error navegando a síntomas: {ex.Message}");
+                Debug.WriteLine($"[VM] Error abriendo popup de síntomas: {ex.Message}");
+                await Shell.Current.DisplayAlert("Error", "No se pudo abrir la gestión de síntomas", "OK");
             }
         }
 
@@ -414,6 +566,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         // Método público para ser llamado desde OnAppearing
         public async Task RecargarDatos()
         {
+            Debug.WriteLine("[VM] RecargarDatos llamado desde OnAppearing");
             await CargarDatosIniciales();
         }
 
@@ -440,8 +593,18 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
     {
         public string Titulo { get; set; } = "";
         public string Descripcion { get; set; } = "";
-        public string Icono { get; set; } = "";
-        public int Prioridad { get; set; }
+    }
+
+    public class RecomendacionesIA
+    {
+        public string Titulo { get; set; } = "";
+        public string Descripcion { get; set; } = "";
+    }
+
+    public class Interaccion
+    {
+        public string Titulo { get; set; } = "";
+        public string Descripcion { get; set; } = "";
     }
 
     public class SintomaUsuario

@@ -21,7 +21,7 @@
 
         <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
 
-            <Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#3b71ff">
+            <Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#007AFF">
                 <StackLayout Padding="15,25,15,20" HeightRequest="150">
                     <Grid ColumnDefinitions="Auto,*,Auto" VerticalOptions="Center">
                         <Button Grid.Column="0"

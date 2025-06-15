@@ -111,13 +111,13 @@
 	  
 	  <Compile Include="Models\Model\ProgramacionRecordatorio.cs" />
 	  
-	  <Compile Include="Models\Model\RecomendacionesIA.cs" />
-	  
 	  <Compile Include="Models\Model\RecordatoriosMedicacion.cs" />
 	  
 	  <Compile Include="Models\Model\Sesiones.cs" />
 	  
 	  <Compile Include="Models\Model\SeveridadEnum.cs" />
+	  
+	  <Compile Include="Models\Model\SintomasEnum.cs" />
 	  
 	  <Compile Include="Models\Model\UsuarioAlergias.cs" />
 	  
@@ -188,6 +188,8 @@
 	  <Compile Include="Models\Request\Recordatorios\ReqMarcarEstadoRecordatorio.cs" />
 	  
 	  <Compile Include="Models\Request\Recordatorios\ReqObtenerRecordatorio.cs" />
+	  
+	  <Compile Include="Models\Request\Sintomas\ReqObtenerSintomasEnum.cs" />
 	  
 	  <Compile Include="Models\Request\Usuarios\ReqRegister.cs" />
 	  
@@ -301,6 +303,8 @@
 	  
 	  <Compile Include="Models\Response\Recordatorios\ResObtenerRecordatorio.cs" />
 	  
+	  <Compile Include="Models\Response\Sintomas\ResObtenerSintomasEnum.cs" />
+	  
 	  <Compile Include="Models\Response\Usuarios\ResRegister.cs" />
 	  
 	  <Compile Include="Models\Response\Sintomas\ResAgregarSintomasSeleccionados.cs" />
@@ -335,7 +339,7 @@
 	  
 	  <Compile Include="Models\Response\Usuarios\ResSolicitarResetPassword.cs" />
 	  
-	  <Compile Include="Services\AuthHandler.cs" />
+	  <Compile Include="Services\Implementaciones\AuthHandler.cs" />
 	  
 	  <Compile Include="Services\DevHttpsConnectionHelper.cs" />
 	  
@@ -367,13 +371,15 @@
 		
 	</ItemGroup>
 	
-	<ItemGroup>
-	  <Compile Update="Popups\InformacionMedicamentoPopup.xaml.cs">
-	    <DependentUpon>InformacionMedicamentoPopup.xaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
+
 	
 	<ItemGroup>
+		<Compile Update="Popups\InformacionMedicamentoPopup.xaml.cs">
+	    	<DependentUpon>InformacionMedicamentoPopup.xaml</DependentUpon>
+	  	</Compile>
+		<MauiXaml Update="Popups\ActualizarPerfilPopup.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>					
 	  <MauiXaml Update="Popups\DetalleMedicamentoGuardadoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -386,13 +392,19 @@
 	  <MauiXaml Update="Popups\InstruccionesEscaneoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Popups\ModalCodigoVerificacion.xaml">
+	  <MauiXaml Update="Popups\GestionAlergiasPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\GestionCondicionesMedicasPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\InstruccionesEscaneoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popups\ModalGestionarSintomas.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Popups\ModalNuevaContrasena.xaml">
+	  <MauiXaml Update="Popups\ModalRecuperarContrasena.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\Styles.xaml">

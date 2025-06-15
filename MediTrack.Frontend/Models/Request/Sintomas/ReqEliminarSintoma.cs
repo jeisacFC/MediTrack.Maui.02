@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Request
 {
-    public class ReqEliminarSintoma : ResBase
+    public class ReqEliminarSintoma : ReqBase
     {
         public int IdUsuario { get; set; }
         public int? IdSintomaManual { get; set; }

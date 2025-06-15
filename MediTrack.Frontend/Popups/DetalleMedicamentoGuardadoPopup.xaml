@@ -13,7 +13,7 @@
     <Border BackgroundColor="White" 
             StrokeThickness="0"
             WidthRequest="360"
-            HeightRequest="750">
+            HeightRequest="650">
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="20"/>
         </Border.StrokeShape>
