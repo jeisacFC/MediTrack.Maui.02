@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using MediTrack.Frontend.Popups;
+using MediTrack.Frontend.Services;
 using MediTrack.Frontend.Services.Implementaciones;
 using MediTrack.Frontend.Services.Interfaces;
 using MediTrack.Frontend.ViewModels;
@@ -7,11 +8,11 @@ using MediTrack.Frontend.ViewModels.PantallasInicio;
 using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 using MediTrack.Frontend.Vistas.PantallasInicio;
 using MediTrack.Frontend.Vistas.PantallasPrincipales;
-using MediTrack.Frontend.Services;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
 using System.Globalization;
 using System.Net.Http.Headers;
+using ZXing.Net.Maui.Controls;
 
 namespace MediTrack.Frontend;
 
@@ -27,6 +28,7 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .ConfigureSyncfusionCore() // ✅ DEBE ESTAR AQUÍ - NO EN BACKGROUND
             .UseMauiCommunityToolkit()
+            .UseBarcodeReader()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
