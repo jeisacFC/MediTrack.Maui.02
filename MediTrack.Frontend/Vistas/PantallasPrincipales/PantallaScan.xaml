@@ -21,81 +21,185 @@
 
         <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
 
-            <Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#007AFF">
-                <StackLayout Padding="15,25,15,20" HeightRequest="150">
-                    <Grid ColumnDefinitions="Auto,*,Auto" VerticalOptions="Center">
-                        <Button Grid.Column="0"
-                                Text=" Cancelar"
-                                Command="{Binding CancelarEscaneoCommand}"
-                                TextColor="White"
-                                BackgroundColor="Transparent"
-                                HorizontalOptions="Start"
-                                FontSize="Body"
-                                FontAttributes="Bold"
-                                Padding="0">
-                            <Button.ImageSource>
-                                <FontImageSource FontFamily="MaterialIcons" Glyph="&#xe5cb;" Color="White"
-                                                 Size="22"/>
-                            </Button.ImageSource>
-                        </Button>
-                        <Label Grid.Column="1" Text="Escanear código"
-                               TextColor="White" FontSize="22" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+            <!-- Header -->
+            <Border Grid.Row="0" StrokeThickness="0" BackgroundColor="#3B71FF">
+                <StackLayout Padding="15,25,15,20" HeightRequest="180">
+                    <Grid ColumnDefinitions="Auto,*,Auto" VerticalOptions="Start">
+
+                        <Frame CornerRadius="50" 
+                               WidthRequest="25" 
+                               HeightRequest="25" 
+                               BackgroundColor="#701b48f5" 
+                               HorizontalOptions="Start"
+                               Padding="0"
+                               Margin="10,0">
+                            <Button x:Name="CancelButton"
+                                    Command="{Binding CancelarEscaneoCommand}"
+                                    BackgroundColor="Transparent"
+                                    WidthRequest="50"
+                                    HeightRequest="50"
+                                    Padding="0">
+                                <Button.ImageSource>
+                                    <FontImageSource FontFamily="MaterialIcons" 
+                                                     Glyph="&#xe5cd;" 
+                                                     Color="White" 
+                                                     Size="20"/>
+                                </Button.ImageSource>
+                            </Button>
+                        </Frame>
+
+                        <Label Grid.Column="1" 
+                               Text="Buscar medicamento" 
+                               TextColor="White" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="Center"/>
+                        
+                        <BoxView Grid.Column="2" 
+                                WidthRequest="{Binding Source={x:Reference CancelButton}, Path=Width}" />
                     </Grid>
-                    <Label Text="Alinea el código de barras para identificar tu medicamento"
-                           TextColor="White" Opacity="0.9" FontSize="14" HorizontalTextAlignment="Center" Margin="0,8,0,0"/>
-                    <!-- Añadir indicador de estado -->
-                    <Label Text="{Binding ScanResultText}"
-                           TextColor="White" Opacity="0.8" FontSize="12" 
-                           HorizontalTextAlignment="Center" Margin="0,4,0,0"/>
+
+                    <Label HorizontalTextAlignment="Center"
+                           LineHeight="1.4"
+                           Opacity="0.85"
+                           TextColor="#dcdcdc"
+                           Margin="0,45,0,0">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Alinea el código de barras para identificar" FontSize="15"/>
+                                <Span Text="&#10;"/>
+                                <Span Text="tu medicamento" FontSize="15"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
                 </StackLayout>
             </Border>
 
-            <Border Grid.Row="1"
-                    Stroke="White" 
-                    StrokeThickness="2"
-                    WidthRequest="300" 
-                    HeightRequest="200"
-                    HorizontalOptions="Center" 
-                    VerticalOptions="Center"
-                    Opacity="0.3">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <!-- Añadir texto de ayuda dentro del marco -->
-                <Label Text="Coloca el código aquí"
-                       TextColor="White"
-                       FontSize="14"
-                       HorizontalTextAlignment="Center"
-                       VerticalTextAlignment="Center"
-                       Opacity="1"/>
-            </Border>
 
+            <!-- Scanning Area -->
+            <Grid Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center">
 
-            <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#3b71ff">
-                <StackLayout Padding="15,55,15,25" HeightRequest="150">
-                    <Button Text="Buscar medicamento manualmente"
-                            Command="{Binding BuscarManualCommand}" 
-                            TextColor="White"
-                            FontSize="Body"
-                            FontAttributes="Bold"
-                            BackgroundColor="Transparent"
-                            HorizontalOptions="Center"/>
+                <!-- Marco de escaneo con esquinas -->
+                <Grid WidthRequest="280" HeightRequest="280">
+                    <!-- Esquina superior izquierda -->
+                    <Border HorizontalOptions="Start" VerticalOptions="Start"
+                            WidthRequest="40" HeightRequest="40"
+                            Stroke="White" StrokeThickness="3"
+                            BackgroundColor="Transparent">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8,0,0,0" />
+                        </Border.StrokeShape>
+                    </Border>
+
+                    <!-- Esquina superior derecha -->
+                    <Border HorizontalOptions="End" VerticalOptions="Start"
+                            WidthRequest="40" HeightRequest="40"
+                            Stroke="White" StrokeThickness="3"
+                            BackgroundColor="Transparent">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="0,8,0,0" />
+                        </Border.StrokeShape>
+                    </Border>
+
+                    <!-- Esquina inferior izquierda -->
+                    <Border HorizontalOptions="Start" VerticalOptions="End"
+                            WidthRequest="40" HeightRequest="40"
+                            Stroke="White" StrokeThickness="3"
+                            BackgroundColor="Transparent">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="0,0,0,8" />
+                        </Border.StrokeShape>
+                    </Border>
+
+                    <!-- Esquina inferior derecha -->
+                    <Border HorizontalOptions="End" VerticalOptions="End"
+                            WidthRequest="40" HeightRequest="40"
+                            Stroke="White" StrokeThickness="3"
+                            BackgroundColor="Transparent">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="0,0,8,0" />
+                        </Border.StrokeShape>
+                    </Border>
+
+                    <!-- Texto de ayuda -->
+                    <Label Text="Coloca el código aquí"
+                           TextColor="White"
+                           FontSize="14"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           Opacity="0.7"/>
+                </Grid>
+
+                <!-- Indicador de escaneo -->
+                <StackLayout IsVisible="{Binding IsScanning}" 
+                             HorizontalOptions="Center" 
+                             VerticalOptions="Center"
+                             Margin="0,320,0,0">
+
+                    <!-- Animación de escaneo -->
+                    <ActivityIndicator IsRunning="{Binding IsScanning}"
+                                       Color="#3B71FF"
+                                       WidthRequest="30"
+                                       HeightRequest="30"/>
+
+                    <Label x:Name="ScanningLabel" 
+                           Text="Escaneando..."
+                           TextColor="White"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           Margin="0,8,0,0"
+                           Opacity="0.9"/>
                 </StackLayout>
-               
+            </Grid>
 
+
+            <!-- Footer -->
+            <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#3B71FF">
+                <StackLayout Padding="15,45,15,25" HeightRequest="180">
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="5">
+                        <!-- Botón circular con lupa -->
+                        <Frame CornerRadius="30" 
+                               WidthRequest="50" 
+                               HeightRequest="50" 
+                               BackgroundColor="#701b48f5"
+                               HorizontalOptions="Center">
+                            <Button Command="{Binding BuscarManualCommand}"
+                                    BackgroundColor="Transparent"
+                                    Padding="0"
+                                    WidthRequest="60"
+                                    HeightRequest="60">
+                                <Button.ImageSource>
+                                    <FontImageSource FontFamily="MaterialIcons" 
+                                       Glyph="" 
+                                       Color="#FFFFFF" 
+                                       Size="24"/>
+                                </Button.ImageSource>
+                            </Button>
+                        </Frame>
+
+                        <!-- Texto debajo -->
+                        <Label Text="Búsqueda manual"
+                   TextColor="#FFFFFF"
+                   FontSize="14"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </StackLayout>
             </Border>
+
         </Grid>
 
+        <!-- Loading overlay -->
         <Border IsVisible="{Binding IsBusy}"
                 BackgroundColor="#80000000"
                 StrokeThickness="0">
-
             <ActivityIndicator IsRunning="{Binding IsBusy}"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"
                                Color="White"/>
         </Border>
-
 
     </Grid>
 </ContentPage>

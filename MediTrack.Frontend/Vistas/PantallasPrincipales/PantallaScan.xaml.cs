@@ -5,14 +5,17 @@ using System.Diagnostics;
 using ZXing.Net.Maui; 
 using MediTrack.Frontend.Models.Response; 
 using MediTrack.Frontend.Vistas.Base;
-
+using System.ComponentModel;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales;
 
 public partial class PantallaScan : ContentPage
 {
-
     private ScanViewModel _viewModel;
+    private bool _isAnimating = false;
+
+
+
     public PantallaScan(ScanViewModel viewModel)
     {
         InitializeComponent();
@@ -22,7 +25,10 @@ public partial class PantallaScan : ContentPage
         // SUSCRIBIRSE A LOS EVENTOS DEL VIEWMODEL
         viewModel.MostrarResultado += OnMostrarResultado;
         viewModel.MostrarError += OnMostrarError;
+
+        viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
+
 
 
     protected override async void OnAppearing()
@@ -37,6 +43,50 @@ public partial class PantallaScan : ContentPage
             _viewModel.ReactivarEscaneo();
         }
     }
+
+
+
+    // Manejador para cambios en el ViewModel (para la animación)
+    private async void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ScanViewModel.IsScanning))
+        {
+            var viewModel = sender as ScanViewModel;
+            if (viewModel?.IsScanning == true)
+            {
+                await StartScanningAnimation();
+            }
+            else
+            {
+                StopScanningAnimation();
+            }
+        }
+    }
+
+    // Método para iniciar la animación
+    private async Task StartScanningAnimation()
+    {
+        _isAnimating = true;
+
+        while (_isAnimating)
+        {
+            await ScanningLabel.FadeTo(0.3, 500);
+            if (!_isAnimating) break;
+            await ScanningLabel.FadeTo(1.0, 500);
+        }
+    }
+
+    // Método para detener la animación
+    private void StopScanningAnimation()
+    {
+        _isAnimating = false;
+        if (ScanningLabel != null)
+        {
+            ScanningLabel.Opacity = 0.9;
+        }
+    }
+
+
 
     // MANEJAR EVENTOS DEL VIEWMODEL
     private async void OnMostrarResultado(object sender, ResEscanearMedicamento medicamento)
@@ -62,7 +112,6 @@ public partial class PantallaScan : ContentPage
         _viewModel?.ReactivarEscaneo();
 
     }
-
     private async void OnMostrarError(object sender, string mensaje)
     {
         await DisplayAlert("Error", mensaje, "OK");
@@ -70,6 +119,7 @@ public partial class PantallaScan : ContentPage
         // REACTIVAR ESCANEO DESPUÉS DEL ERROR
         _viewModel?.ReactivarEscaneo();
     }
+
 
    
     // MANEJADOR MEJORADO PARA DETECCIÓN DE CÓDIGOS
@@ -98,6 +148,13 @@ public partial class PantallaScan : ContentPage
 
         Debug.WriteLine($"Código detectado: {barcode.Value}");
 
+        // Activar estado de escaneo cuando se detecta un código
+        if (_viewModel.IsScanning != true)
+        {
+            _viewModel.IsScanning = true;
+        }
+
+
         // DETENER DETECCIÓN ANTES DE PROCESAR
         _viewModel.DetenerEscaneo();
 
@@ -107,21 +164,22 @@ public partial class PantallaScan : ContentPage
             if (_viewModel.ProcesarCodigosDetectadosCommand.CanExecute(e))
             {
                 await _viewModel.ProcesarCodigosDetectadosCommand.ExecuteAsync(e);
+                // Desactivar estado de escaneo después del procesamiento
+                _viewModel.IsScanning = false;
             }
             else
             {
                 Debug.WriteLine("No se puede ejecutar el comando de procesamiento");
+
+                // Desactivar estado de escaneo si no se pudo procesar
+                _viewModel.IsScanning = false;
                 _viewModel.ReactivarEscaneo(); // Reactivar si no se pudo procesar
             }
         });
     }
 
 
-
-
-
-
-
+   
     // MANEJADOR PARA EL BOTÓN CANCELAR EN EL HEADER
     private async void Cancelar_Clicked_Header(object sender, EventArgs e)
     {
@@ -154,6 +212,8 @@ public partial class PantallaScan : ContentPage
         _viewModel?.ReactivarEscaneo();
     }
 
+
+
     // LIMPIAR EVENTOS AL SALIR
     protected override void OnDisappearing()
     {
@@ -162,6 +222,7 @@ public partial class PantallaScan : ContentPage
             _viewModel.DetenerEscaneo();
             _viewModel.MostrarResultado -= OnMostrarResultado;
             _viewModel.MostrarError -= OnMostrarError;
+            _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         }
         base.OnDisappearing();
     }

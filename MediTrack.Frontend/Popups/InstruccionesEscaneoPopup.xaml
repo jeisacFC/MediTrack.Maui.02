@@ -5,21 +5,24 @@
                x:Class="MediTrack.Frontend.Popups.InstruccionesEscaneoPopup"
                Color="Transparent">
 
-    <Frame CornerRadius="20" Padding="25" Margin="25" BackgroundColor="White"
-           VerticalOptions="Center" HorizontalOptions="Center"
-           WidthRequest="320">
+    <Frame CornerRadius="10" Padding="10" Margin="30" BackgroundColor="White"
+           VerticalOptions="Center" 
+           HorizontalOptions="Center"
+           WidthRequest="280">
 
         <VerticalStackLayout Spacing="10">
-            <Image Source="barcode_scan_icon.png" HeightRequest="210"
-                   WidthRequest="210"
+            <Image Source="barcode_scan_icon.png" 
+                   HeightRequest="180"
+                   WidthRequest="150"
                    HorizontalOptions="Center"/>
-            <Label Text="Alinea el código de barras dentro del recuadro para identificar tu medicamento."
-                   HorizontalTextAlignment="Center"
-                   TextColor="{StaticResource ColorTextoSecundario}"
-                   FontSize="Body"/>
+
             <Button Text="Entendido"
+                    FontAttributes="Bold"
                     Clicked="Entendido_Clicked"
-                    BackgroundColor="{StaticResource ColorPrimario}" />
+                    Padding="15, 10"
+                    Margin="15, 5"
+                    BackgroundColor="#FF8C3B"/>
+
         </VerticalStackLayout>
 
     </Frame>

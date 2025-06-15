@@ -15,6 +15,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [ObservableProperty] private bool _isProcessingResult;
         [ObservableProperty] private string _scanResultText;
         [ObservableProperty] private bool _isBusy;
+        [ObservableProperty] private bool _isScanning = false;
 
         public BarcodeReaderOptions BarcodeReaderOptions { get; private set; }
         private readonly INavigationService _navigationService;
@@ -130,6 +131,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             Debug.WriteLine("Reactivando escaneo...");
             IsProcessingResult = false; // Asegurar que no esté bloqueado
             IsDetecting = true;
+            IsScanning = false;
             ScanResultText = "Apunte la cámara al código de barras...";
         }
 
@@ -138,6 +140,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             Debug.WriteLine("Deteniendo escaneo...");
             IsDetecting = false;
+            IsScanning = false;
         }
 
         private async Task EjecutarCancelarEscaneo()
