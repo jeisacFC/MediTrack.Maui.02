@@ -10,7 +10,7 @@
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
     Shell.TabBarBackgroundColor="#FFFFFF"
-    Shell.TabBarForegroundColor="#ed7843"
+    Shell.TabBarForegroundColor="#0E42C8"
     Shell.TabBarUnselectedColor="#007AFF"
     Title="MediTrack">
 
