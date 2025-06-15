@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Model
 {
-    public class SeveridadEnum
+    public class TiposRecurrencia
     {
-        public int id_severidad { get; set; }
-        public string descripcion { get; set; }
+        public int id_tipo_recurrencia { get; set; }
+        public string nombre { get; set; }
+        public int intervalo { get; set; }
     }
 }

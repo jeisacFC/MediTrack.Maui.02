@@ -11,7 +11,12 @@ namespace MediTrack.Frontend.Models.Request
         public int IdUsuario { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
-        public DateTime FechaEvento { get; set; }
-        public DateTime? FechaRecordatorio { get; set; }
+        public DateTime FechaInicio { get; set; }
+        public DateTime FechaFin { get; set; }
+        public bool EsRecurrente { get; set; }
+        public int IdTipoEvento { get; set; }
+        public int? IdTipoRecurrencia { get; set; }
+        public string EstadoEvento { get; set; } = "pendiente";
+        public int? IdMedicamento { get; set; }
     }
 }

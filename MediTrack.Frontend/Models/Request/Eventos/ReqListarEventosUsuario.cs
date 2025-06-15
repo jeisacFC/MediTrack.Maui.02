@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Request
 {
-    public class ReqListarRecordatorios : ReqBase
+    public class ReqListarEventosUsuario : ReqBase
     {
         public int IdUsuario { get; set; }
-        public bool? Activo { get; set; }
+        public DateTime? FechaInicio { get; set; }
+        public DateTime? FechaFin { get; set; }
     }
 }

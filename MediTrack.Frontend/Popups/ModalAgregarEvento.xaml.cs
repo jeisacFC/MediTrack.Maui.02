@@ -1,42 +1,51 @@
-﻿using MediTrack.Frontend.ViewModels.PantallasPrincipales;
-using MediTrack.Frontend.Models.Model;
+﻿using MediTrack.Frontend.Models.Model;
+using MediTrack.Frontend.ViewModels.PantallasPrincipales;
+using MediTrack.Frontend.Services.Interfaces;
 
 namespace MediTrack.Frontend.Vistas.PantallasPrincipales
 {
     public partial class ModalAgregarEvento : ContentPage
     {
-        public EventoAgenda? EventoCreado => ViewModel?.EventoCreado;
-        public bool EventoGuardado => ViewModel?.EventoGuardado ?? false;
+        private AgregarEventoViewModel _viewModel;
 
-        private AgregarEventoViewModel? ViewModel => BindingContext as AgregarEventoViewModel;
+        public bool EventoGuardado => _viewModel?.EventoGuardado ?? false;
+        public EventoMedicoUsuario? EventoCreado => _viewModel?.EventoCreado;
 
-        public ModalAgregarEvento(DateTime fechaSeleccionada)
+        // Constructor para CREAR evento nuevo
+        public ModalAgregarEvento(DateTime fechaSeleccionada, IApiService apiService)
         {
             InitializeComponent();
-            BindingContext = new AgregarEventoViewModel(fechaSeleccionada);
+            _viewModel = new AgregarEventoViewModel(fechaSeleccionada, apiService);
+            BindingContext = _viewModel;
+        }
+
+        // Constructor para EDITAR evento existente
+        public ModalAgregarEvento(EventoMedicoUsuario eventoExistente, IApiService apiService)
+        {
+            InitializeComponent();
+            _viewModel = new AgregarEventoViewModel(eventoExistente, apiService);
+            BindingContext = _viewModel;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-
-            if (ViewModel != null)
+            if (_viewModel != null)
             {
-                await ViewModel.InitializeAsync();
+                await _viewModel.InitializeAsync();
             }
         }
 
         // Método para manejar el botón de retroceso del dispositivo
         protected override bool OnBackButtonPressed()
         {
-            if (ViewModel != null)
+            if (_viewModel != null)
             {
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    await ViewModel.OnBackButtonPressed();
+                    await _viewModel.OnBackButtonPressed();
                 });
             }
-
             return true; // Prevenir el comportamiento por defecto
         }
     }

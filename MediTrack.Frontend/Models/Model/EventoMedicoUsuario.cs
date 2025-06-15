@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediTrack.Frontend.Models.Request
+namespace MediTrack.Frontend.Models.Model
 {
-    public class ReqActualizarEventoMedico : ReqBase
+    public class EventoMedicoUsuario
     {
         public int IdEventoMedico { get; set; }
+        public int IdUsuario { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public DateTime FechaInicio { get; set; }
@@ -18,5 +19,9 @@ namespace MediTrack.Frontend.Models.Request
         public int? IdTipoRecurrencia { get; set; }
         public string EstadoEvento { get; set; }
         public int? IdMedicamento { get; set; }
+        public Guid? GrupoRecurrencia { get; set; }
+        public string NombreMedicamento { get; set; }
+        public string TipoEvento { get; set; }
+        public string TipoRecurrencia { get; set; }
     }
 }

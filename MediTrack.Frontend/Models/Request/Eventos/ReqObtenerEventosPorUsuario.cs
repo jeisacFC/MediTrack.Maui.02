@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Request
 {
-    public class ReqEliminarRecordatorio : ReqBase
+    public class ReqObtenerEventosPorUsuario : ReqBase
     {
-        public int IdRecordatorio { get; set; }
+        public int IdUsuario { get; set; }
     }
 }

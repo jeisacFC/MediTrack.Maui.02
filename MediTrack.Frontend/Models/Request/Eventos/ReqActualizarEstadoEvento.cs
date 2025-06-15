@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Request
 {
-    public class ReqObtenerRecordatorio : ReqBase
+    public class ReqActualizarEstadoEvento : ReqBase
     {
-        public int IdRecordatorio { get; set; }
+        public int IdEventoMedico { get; set; }
+        public string EstadoEvento { get; set; }
     }
 }

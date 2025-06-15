@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MediTrack.Frontend.Models.Request
 {
-    public class ReqEvento : ReqBase
+    public class ReqEliminarEventoMedico : ReqBase
     {
-        public int IdEvento { get; set; }
-        public int IdUsuario { get; set; }
+        private int id_evento_medico;
+
+        public int IdEventoMedico { get; set; }
     }
 }

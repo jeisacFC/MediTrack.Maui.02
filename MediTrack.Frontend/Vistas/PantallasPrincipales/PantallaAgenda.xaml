@@ -12,7 +12,7 @@
 
         <!-- Contenedor azul estilo iOS -->
         <Frame Grid.Row="0" 
-               BackgroundColor="#007AFF" 
+               BackgroundColor="#6084F2" 
                CornerRadius="20" 
                HasShadow="True" 
                Margin="20,10,20,0"
@@ -55,7 +55,9 @@
                                    SelectedDate="{Binding FechaSeleccionada}"
                                    HeightRequest="300"
                                    BackgroundColor="Transparent"
-                                   SelectionChanged="OnCalendarSelectionChanged">
+                                   SelectionChanged="OnCalendarSelectionChanged"
+                                   SelectionBackground="#435CA9"
+                                   TodayHighlightBrush="#435CA9"  >
 
                     <!-- Ocultar SOLO el header -->
                     <calendar:SfCalendar.HeaderView>
@@ -64,7 +66,7 @@
 
                     <!-- Vista del mes con RECURSOS DE ESTILO -->
                     <calendar:SfCalendar.MonthView>
-                        <calendar:CalendarMonthView Background="Transparent">
+                        <calendar:CalendarMonthView Background="Transparent" >
                             <!-- Intentar configurar TextStyle -->
                             <calendar:CalendarMonthView.TextStyle>
                                 <calendar:CalendarTextStyle TextColor="White" FontSize="16" />
