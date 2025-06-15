@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediTrack.Frontend.Models.Request.Eventos
+namespace MediTrack.Frontend.Models.Request
 {
     public class ReqListarEventosUsuario : ReqBase
     {

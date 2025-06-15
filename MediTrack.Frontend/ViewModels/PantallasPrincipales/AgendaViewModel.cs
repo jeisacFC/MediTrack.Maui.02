@@ -15,9 +15,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         private DateTime fechaSeleccionada = DateTime.Today;
 
         [ObservableProperty]
-        private ObservableCollection<EventoAgenda> eventosDelDia = new();
-
-        [ObservableProperty]
         private string mesActual = "";
 
         [ObservableProperty]
@@ -35,7 +32,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [ObservableProperty]
         private string estadisticasTexto = "";
 
-        private readonly EventosService _eventosService;
         private readonly CultureInfo _culturaEspañola = new("es-ES");
 
         public AgendaViewModel()
@@ -43,14 +39,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             try
             {
                 Title = "Agenda";
-
-                // Usar servicio compartido
-                _eventosService = EventosService.Instance;
-
-                // Suscribirse a cambios
-                _eventosService.EventoActualizado += OnEventoActualizado;
-                _eventosService.EventoAgregado += OnEventoAgregado;
-                _eventosService.EventoEliminado += OnEventoEliminado;
 
                 //  CONFIGURAR CULTURA ESPAÑOLA
                 CultureInfo.CurrentCulture = _culturaEspañola;
@@ -75,33 +63,6 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 CargarEventosDelDia();
                 await Task.CompletedTask;
             });
-        }
-
-        private void OnEventoActualizado(object sender, EventoAgenda evento)
-        {
-            // Recargar eventos si el cambio afecta la fecha actual
-            if (evento.FechaHora.Date == FechaSeleccionada.Date)
-            {
-                CargarEventosDelDia();
-            }
-        }
-
-        private void OnEventoAgregado(object sender, EventoAgenda evento)
-        {
-            // Recargar eventos si el nuevo evento afecta la fecha actual
-            if (evento.FechaHora.Date == FechaSeleccionada.Date)
-            {
-                CargarEventosDelDia();
-            }
-        }
-
-        private void OnEventoEliminado(object sender, EventoAgenda evento)
-        {
-            // Recargar eventos si la eliminación afecta la fecha actual
-            if (evento.FechaHora.Date == FechaSeleccionada.Date)
-            {
-                CargarEventosDelDia();
-            }
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -219,16 +180,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     await Task.Delay(100);
                 }
 
-                // Si se guardó un evento, ya está agregado automáticamente por el ViewModel del modal
-                // Solo necesitamos confirmar que se guardó
-                if (modal.EventoGuardado && modal.EventoCreado != null)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Evento guardado exitosamente: {modal.EventoCreado.Titulo}");
 
-                    // Los eventos se recargarán automáticamente por la notificación del EventosService
-                    // El AgregarEventoViewModel ya agregó el evento al servicio
-                    // No necesitamos duplicar la lógica aquí
-                }
             }
             catch (Exception ex)
             {

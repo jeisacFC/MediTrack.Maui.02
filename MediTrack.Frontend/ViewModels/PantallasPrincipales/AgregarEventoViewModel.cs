@@ -5,241 +5,215 @@ using MediTrack.Frontend.Services.Implementaciones;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using MediTrack.Frontend.Models.Model;
+using MediTrack.Frontend.Models.Request;
+using System.Diagnostics;
+using MediTrack.Frontend.Services.Interfaces;
 
 namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
 {
     public partial class AgregarEventoViewModel : BaseViewModel
     {
+        private readonly IApiService _apiService;
+        private readonly int _userId;
+
+        // Propiedades del formulario
         [ObservableProperty]
-        private string nombreEvento = string.Empty;
+        private string titulo = string.Empty;
 
         [ObservableProperty]
-        private string descripcionEvento = string.Empty;
+        private string descripcion = string.Empty;
 
         [ObservableProperty]
-        private TimeSpan horaEvento = new(9, 0, 0);
+        private DateTime fechaInicio = DateTime.Now;
 
         [ObservableProperty]
-        private string tipoSeleccionado = "Medicamento";
+        private DateTime fechaFin = DateTime.Now.AddHours(1);
 
         [ObservableProperty]
-        private string fechaFormateada = string.Empty;
+        private bool esRecurrente = false;
 
         [ObservableProperty]
-        private bool eventoGuardado = false;
+        private int idTipoEvento;
 
-        public ObservableCollection<string> TiposEvento { get; } = new()
+        [ObservableProperty]
+        private int? idTipoRecurrencia;
+
+        // EstadoEvento se inicializa por defecto a "pendiente", pero podríamos dejar la propiedad para permitir modificar si se desea.
+        [ObservableProperty]
+        private string estadoEvento = "pendiente";
+
+        [ObservableProperty]
+        private int? idMedicamento;
+
+
+
+        [ObservableProperty]
+        private ObservableCollection<TiposEvento> tiposEvento = new ObservableCollection<TiposEvento>();
+
+        [ObservableProperty]
+        private TiposEvento selectedTipoEvento;
+
+        partial void OnSelectedTipoEventoChanged(TiposEvento value)
         {
-            "Medicamento",
-            "Cita médica",
-            "Análisis",
-            "Recordatorio",
-            "Ejercicio",
-            "Otro"
-        };
+            if (value != null)
+                idTipoEvento = value.id_tipo_evento; // Ajusta la propiedad del modelo request
+        }
 
-        public EventoAgenda? EventoCreado { get; private set; }
+        [ObservableProperty]
+        private ObservableCollection<TiposRecurrencia> tiposRecurrencia = new ObservableCollection<TiposRecurrencia>();
 
-        private readonly DateTime _fechaSeleccionada;
-        private readonly EventosService _eventosService;
-        private readonly CultureInfo _culturaEspañola = new("es-ES");
+        [ObservableProperty]
+        private TiposRecurrencia selectedTipoRecurrencia;
 
-        public AgregarEventoViewModel(DateTime fechaSeleccionada)
+        partial void OnSelectedTipoRecurrenciaChanged(TiposRecurrencia value)
         {
-            _fechaSeleccionada = fechaSeleccionada;
-            _eventosService = EventosService.Instance;
+            if (value != null)
+                idTipoRecurrencia = value.id_tipo_recurrencia;
+            else
+                idTipoRecurrencia = null;
+        }
 
-            Title = "Nuevo Evento";
-            ConfigurarFecha();
-            ConfigurarHoraInicial();
+        [ObservableProperty]
+        private ObservableCollection<UsuarioMedicamentos> medicamentosUsuario = new ObservableCollection<UsuarioMedicamentos>();
+
+        [ObservableProperty]
+        private UsuarioMedicamentos selectedMedicamentoUsuario;
+
+        partial void OnSelectedMedicamentoUsuarioChanged(UsuarioMedicamentos value)
+        {
+            if (value != null)
+                idMedicamento = value.id_medicamento;
+            else
+                idMedicamento = null;
+        }
+
+
+        // Si quieres listas para pickers (tipos de evento, tipos de recurrencia, medicamentos),
+        // podrías cargar aquí ObservableCollection de opciones al inicializar.
+        // Por simplicidad, no incluyo carga de listas, pero abajo muestro dónde encajaría:
+        // [ObservableProperty]
+        // private ObservableCollection<TipoEvento> tiposEvento;
+        // [ObservableProperty]
+        // private ObservableCollection<TipoRecurrencia> tiposRecurrencia;
+
+        public AgregarEventoViewModel(IApiService apiService, int userId)
+        {
+            _apiService = apiService;
+            _userId = userId;
+            Title = "Crear Evento Médico";
+
+            // Si necesitas cargar listas para pickers:
+            tiposEvento = new ObservableCollection<TiposEvento>();
+            tiposRecurrencia = new ObservableCollection<TiposRecurrencia>();
         }
 
         public override async Task InitializeAsync()
         {
-            await Task.CompletedTask;
-        }
-
-        private void ConfigurarFecha()
-        {
-            try
-            {
-                // Formatear la fecha en español
-                var fechaFormateadaTemp = _fechaSeleccionada.ToString("dddd, dd 'de' MMMM 'de' yyyy", _culturaEspañola);
-
-                // Capitalizar primera letra
-                if (!string.IsNullOrEmpty(fechaFormateadaTemp))
-                {
-                    FechaFormateada = char.ToUpper(fechaFormateadaTemp[0]) + fechaFormateadaTemp[1..];
-                }
-
-                System.Diagnostics.Debug.WriteLine($"Modal configurado para fecha: {FechaFormateada}");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error configurando fecha: {ex.Message}");
-                FechaFormateada = _fechaSeleccionada.ToString("dd/MM/yyyy");
-            }
-        }
-
-        private void ConfigurarHoraInicial()
-        {
-            try
-            {
-                // Si es la fecha de hoy, usar la hora actual + 1 hora
-                if (_fechaSeleccionada.Date == DateTime.Today)
-                {
-                    var horaSugerida = DateTime.Now.AddHours(1);
-                    HoraEvento = new TimeSpan(horaSugerida.Hour, 0, 0);
-                }
-                else
-                {
-                    // Si es otra fecha, usar las 9:00 AM por defecto
-                    HoraEvento = new TimeSpan(9, 0, 0);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error configurando hora inicial: {ex.Message}");
-                HoraEvento = new TimeSpan(9, 0, 0);
-            }
-        }
-
-        [RelayCommand]
-        private async Task Guardar()
-        {
             await ExecuteAsync(async () =>
             {
-                // Validaciones básicas
-                if (string.IsNullOrWhiteSpace(NombreEvento))
-                {
-                    await ShowAlertAsync("❌ Error", "Por favor ingresa un nombre para el evento");
-                    return;
-                }
-
-                if (NombreEvento.Trim().Length < 3)
-                {
-                    await ShowAlertAsync("❌ Error", "El nombre del evento debe tener al menos 3 caracteres");
-                    return;
-                }
-
-                // Validar que la hora no sea en el pasado (solo para el día de hoy)
-                if (_fechaSeleccionada.Date == DateTime.Today)
-                {
-                    var fechaHoraCompleta = _fechaSeleccionada.Date.Add(HoraEvento);
-                    if (fechaHoraCompleta < DateTime.Now)
-                    {
-                        bool continuar = await ShowConfirmAsync(
-                            "⚠️ Advertencia",
-                            "La hora seleccionada ya pasó. ¿Deseas crear el evento de todas formas?",
-                            "Sí", "No");
-
-                        if (!continuar) return;
-                    }
-                }
-
-                // Crear el evento
-                await CrearEvento();
+                // Aquí podrías cargar listas para pickers (tipos de evento, recurrencia, medicamentos del usuario, etc.)
+                // await CargarTiposEventoAsync();
+                // await CargarTiposRecurrenciaAsync();
+                // await CargarMedicamentosUsuarioAsync();
             });
         }
 
-        private async Task CrearEvento()
-        {
-            try
-            {
-                // Crear fecha y hora completa
-                var fechaHoraCompleta = _fechaSeleccionada.Date.Add(HoraEvento);
-
-                // Determinar color según el tipo
-                var color = ObtenerColorPorTipo(TipoSeleccionado);
-
-                // Crear el evento
-                EventoCreado = new EventoAgenda
-                {
-                    Titulo = NombreEvento.Trim(),
-                    Descripcion = string.IsNullOrWhiteSpace(DescripcionEvento) ? "" : DescripcionEvento.Trim(),
-                    FechaHora = fechaHoraCompleta,
-                    Tipo = TipoSeleccionado,
-                    Color = color,
-                    Completado = false
-                };
-
-                // Agregar al servicio y verificar resultado
-                bool exitoso = _eventosService.AgregarEvento(EventoCreado);
-
-                if (exitoso)
-                {
-                    EventoGuardado = true;
-
-                    // Mostrar confirmación
-                    await ShowAlertAsync(" Éxito", $"Evento '{NombreEvento}' creado para las {HoraEvento:hh\\:mm}");
-
-                    // Cerrar modal
-                    await CerrarModal();
-
-                    System.Diagnostics.Debug.WriteLine($"Evento creado exitosamente: {NombreEvento} - {fechaHoraCompleta:yyyy-MM-dd HH:mm}");
-                }
-                else
-                {
-                    await ShowAlertAsync("❌ Error", "No se pudo guardar el evento. Inténtalo de nuevo.");
-                    System.Diagnostics.Debug.WriteLine($"Error: No se pudo agregar el evento al servicio");
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error creando evento: {ex.Message}");
-                await ShowAlertAsync("❌ Error", "Ocurrió un error inesperado al guardar el evento");
-            }
-        }
-
         [RelayCommand]
-        private async Task Cancelar()
+        private async Task CrearEventoAsync()
         {
-            bool confirmar = await ShowConfirmAsync("❓ Confirmar", "¿Deseas salir sin guardar?", "Sí", "No");
-
-            if (confirmar)
+            // Validaciones básicas
+            if (string.IsNullOrWhiteSpace(titulo))
             {
-                EventoGuardado = false;
-                await CerrarModal();
+                await ShowAlertAsync("Error", "El título es requerido.");
+                return;
             }
-        }
-
-        private async Task CerrarModal()
-        {
-            try
+            if (fechaInicio == default || fechaFin == default)
             {
-                await Shell.Current.Navigation.PopModalAsync();
+                await ShowAlertAsync("Error", "Las fechas son requeridas.");
+                return;
             }
-            catch (Exception ex)
+            if (fechaFin < fechaInicio)
             {
-                System.Diagnostics.Debug.WriteLine($"Error cerrando modal: {ex.Message}");
+                await ShowAlertAsync("Error", "La fecha fin debe ser posterior o igual a la fecha inicio.");
+                return;
             }
-        }
-
-        private string ObtenerColorPorTipo(string tipo)
-        {
-            return tipo switch
+            if (idTipoEvento <= 0)
             {
-                "Medicamento" => "#2196F3",    // Azul
-                "Cita médica" => "#FF5722",    // Rojo-naranja
-                "Análisis" => "#E91E63",       // Rosa
-                "Recordatorio" => "#9C27B0",   // Morado
-                "Ejercicio" => "#4CAF50",      // Verde
-                _ => "#607D8B"                 // Gris por defecto
+                await ShowAlertAsync("Error", "Selecciona un tipo de evento válido.");
+                return;
+            }
+            if (esRecurrente && (!idTipoRecurrencia.HasValue || idTipoRecurrencia.Value <= 0))
+            {
+                await ShowAlertAsync("Error", "Selecciona un tipo de recurrencia válido para un evento recurrente.");
+                return;
+            }
+            // Otras validaciones: por ejemplo, si el evento no es recurrente, podrías forzar IdTipoRecurrencia = null.
+            // También validar estadoEvento si permites otros estados.
+            // Validar idMedicamento si aplica.
+
+            // Crear request
+            var request = new ReqInsertarEventoMedico
+            {
+                IdUsuario = _userId,
+                Titulo = titulo.Trim(),
+                Descripcion = string.IsNullOrWhiteSpace(descripcion) ? null : descripcion.Trim(),
+                FechaInicio = fechaInicio,
+                FechaFin = fechaFin,
+                EsRecurrente = esRecurrente,
+                IdTipoEvento = idTipoEvento,
+                IdTipoRecurrencia = esRecurrente ? idTipoRecurrencia : null,
+                EstadoEvento = estadoEvento, // "pendiente" o el que uses
+                IdMedicamento = idMedicamento
             };
+
+            await ExecuteAsync(async () =>
+            {
+                try
+                {
+                    Debug.WriteLine($"=== CREANDO EVENTO: {request.Titulo}, Usuario: {request.IdUsuario} ===");
+                    var response = await _apiService.InsertarEventoMedicoAsync(request);
+                    if (response != null && response.resultado)
+                    {
+                        // Éxito: limpiar formulario o navegar atrás
+                        await ShowAlertAsync("Éxito", "Evento médico creado correctamente.");
+                        Debug.WriteLine("Evento creado exitosamente.");
+
+                        // Limpiar campos si deseas permitir más inserciones:
+                        titulo = string.Empty;
+                        descripcion = string.Empty;
+                        fechaInicio = DateTime.Now;
+                        fechaFin = DateTime.Now.AddHours(1);
+                        esRecurrente = false;
+                        idTipoEvento = 0;
+                        idTipoRecurrencia = null;
+                        estadoEvento = "pendiente";
+                        idMedicamento = null;
+
+                        // Opcional: notificar a otra ViewModel o recargar lista de eventos
+                        // MessagingCenter.Send(this, "EventoCreado");  // o CommunityToolkit.Mvvm Messenger
+                    }
+                    else
+                    {
+                        // Manejar errores devueltos
+                        var mensaje = response?.Mensaje ?? "Error al crear evento médico.";
+                        if (response?.errores != null && response.errores.Any())
+                        {
+                            var detalles = string.Join("; ", response.errores.Select(e => e.mensaje));
+                            mensaje += $"\nDetalles: {detalles}";
+                        }
+                        await ShowAlertAsync("Error", mensaje);
+                        Debug.WriteLine($"Error al crear evento: {mensaje}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Excepción en CrearEventoAsync: {ex.Message}");
+                    await ShowAlertAsync("Error", "Ocurrió un error al crear el evento médico.");
+                }
+            });
         }
 
-        // Comando para manejar el tap en el fondo (cerrar modal)
-        [RelayCommand]
-        private async Task FondoTapped()
-        {
-            await Cancelar();
-        }
 
-        // Método para ser llamado cuando se cierra con el botón de retroceso
-        public async Task<bool> OnBackButtonPressed()
-        {
-            await Cancelar();
-            return true; // Prevenir el comportamiento por defecto
-        }
+
     }
 }

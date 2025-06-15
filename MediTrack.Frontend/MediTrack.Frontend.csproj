@@ -105,6 +105,10 @@
 	  
 	  <Compile Include="Models\Model\Sesiones.cs" />
 	  
+	  <Compile Include="Models\Model\TiposEvento.cs" />
+	  
+	  <Compile Include="Models\Model\TiposRecurrencia.cs" />
+	  
 	  <Compile Include="Models\Model\UsuarioAlergias.cs" />
 	  
 	  <Compile Include="Models\Model\UsuarioMedicamentos.cs" />

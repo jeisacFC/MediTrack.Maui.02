@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MediTrack.Frontend.Models.Response.Eventos
+namespace MediTrack.Frontend.Models.Response
 {
     public class ResActualizarEstadoEvento : ResBase
     {

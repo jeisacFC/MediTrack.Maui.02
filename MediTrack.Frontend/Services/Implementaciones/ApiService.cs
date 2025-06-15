@@ -415,6 +415,162 @@ public class ApiService : IApiService
 
     #endregion
 
+    #region EVENTOS
+
+    public async Task<ResInsertarEventoMedico> InsertarEventoMedicoAsync(ReqInsertarEventoMedico request)
+    {
+        var endpoint = "api/eventos/crear";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                // Deserialize con case-insensitive
+                var result = JsonSerializer.Deserialize<ResInsertarEventoMedico>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return result ?? new ResInsertarEventoMedico
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = "Respuesta vacía del servidor." } }
+                };
+            }
+            else
+            {
+                return new ResInsertarEventoMedico
+                {
+                    resultado = false,
+                    errores = new List<Errores>
+                    {
+                        new Errores
+                        {
+                            mensaje = $"Error del servidor: {response.StatusCode}"
+                        }
+                    },
+                    Mensaje = $"Status code: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errores de conexión en InsertarEventoMedicoAsync: {ex.Message}");
+            return new ResInsertarEventoMedico
+            {
+                resultado = false,
+                errores = new List<Errores>
+                {
+                    new Errores { mensaje = "No se pudo conectar con el servidor." }
+                }
+            };
+        }
+    }
+
+    public async Task<ResObtenerEventosPorUsuario> ObtenerEventosPorUsuarioAsync(ReqObtenerEventosPorUsuario request)
+    {
+        var endpoint = "api/eventos/obtener-usuario"; 
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<ResObtenerEventosPorUsuario>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return result ?? new ResObtenerEventosPorUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = "Respuesta vacía del servidor." } }
+                };
+            }
+            else
+            {
+                return new ResObtenerEventosPorUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores>
+                    {
+                        new Errores { mensaje = $"Error del servidor: {response.StatusCode}" }
+                    },
+                    Mensaje = $"Status code: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en ObtenerEventosPorUsuarioAsync: {ex.Message}");
+            return new ResObtenerEventosPorUsuario
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } }
+            };
+        }
+    }
+
+    public async Task<ResListarEventosUsuario> ListarEventosUsuarioAsync(ReqListarEventosUsuario request)
+    {
+        var endpoint = "api/eventos/listar"; 
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<ResListarEventosUsuario>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return result ?? new ResListarEventosUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = "Respuesta vacía del servidor." } }
+                };
+            }
+            else
+            {
+                return new ResListarEventosUsuario
+                {
+                    resultado = false,
+                    errores = new List<Errores>
+                    {
+                        new Errores { mensaje = $"Error del servidor: {response.StatusCode}" }
+                    },
+                    Mensaje = $"Status code: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en ListarEventosUsuarioAsync: {ex.Message}");
+            return new ResListarEventosUsuario
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } }
+            };
+        }
+    }
+
+
+    #endregion
+
     #region AUTENTICACIÓN USUARIOS
     public async Task<ResLogin> LoginAsync(ReqLogin request)
     {
@@ -1042,6 +1198,7 @@ public class ApiService : IApiService
         }
     }
     #endregion
+
     #region AuxAutenticacion
     private void MapProperty(JsonElement element, string propertyName, Action<JsonElement> setValue)
     {
