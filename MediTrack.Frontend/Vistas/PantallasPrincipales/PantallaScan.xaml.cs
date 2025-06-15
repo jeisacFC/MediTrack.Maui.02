@@ -13,6 +13,7 @@ public partial class PantallaScan : ContentPage
 {
     private ScanViewModel _viewModel;
     private bool _isAnimating = false;
+    private bool _isLoadingAnimating = false;
 
 
 
@@ -25,7 +26,6 @@ public partial class PantallaScan : ContentPage
         // SUSCRIBIRSE A LOS EVENTOS DEL VIEWMODEL
         viewModel.MostrarResultado += OnMostrarResultado;
         viewModel.MostrarError += OnMostrarError;
-
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
@@ -34,7 +34,6 @@ public partial class PantallaScan : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
         var instruccionesPopup = new InstruccionesEscaneoPopup();
         await this.ShowPopupAsync(instruccionesPopup);
 
@@ -61,18 +60,29 @@ public partial class PantallaScan : ContentPage
                 StopScanningAnimation();
             }
         }
+        else if (e.PropertyName == nameof(ScanViewModel.IsBusy))
+        {
+            var viewModel = sender as ScanViewModel;
+            if (viewModel?.IsBusy == true)
+            {
+                await StartLoadingAnimation();
+            }
+            else
+            {
+                StopLoadingAnimation();
+            }
+        }
     }
 
     // Método para iniciar la animación
     private async Task StartScanningAnimation()
     {
         _isAnimating = true;
-
         while (_isAnimating)
         {
-            await ScanningLabel.FadeTo(0.3, 500);
+            await ScanLine.TranslateTo(0, 200, 1000, Easing.Linear); // Mueve la línea de arriba a abajo
+            await ScanLine.TranslateTo(0, 0, 0); // Regresa al inicio
             if (!_isAnimating) break;
-            await ScanningLabel.FadeTo(1.0, 500);
         }
     }
 
@@ -80,13 +90,31 @@ public partial class PantallaScan : ContentPage
     private void StopScanningAnimation()
     {
         _isAnimating = false;
-        if (ScanningLabel != null)
+        ScanLine.TranslationY = 0;
+    }
+
+    private async Task StartLoadingAnimation()
+    {
+        _isLoadingAnimating = true;
+        while (_isLoadingAnimating)
         {
-            ScanningLabel.Opacity = 0.9;
+            await Dot1.ScaleTo(1.5, 500);
+            await Dot2.ScaleTo(1.5, 500);
+            await Dot3.ScaleTo(1.5, 500);
+            await Dot1.ScaleTo(1.0, 500);
+            await Dot2.ScaleTo(1.0, 500);
+            await Dot3.ScaleTo(1.0, 500);
+            if (!_isLoadingAnimating) break;
         }
     }
 
-
+    private void StopLoadingAnimation()
+    {
+        _isLoadingAnimating = false;
+        Dot1.Scale = 1.0;
+        Dot2.Scale = 1.0;
+        Dot3.Scale = 1.0;
+    }
 
     // MANEJAR EVENTOS DEL VIEWMODEL
     private async void OnMostrarResultado(object sender, ResEscanearMedicamento medicamento)

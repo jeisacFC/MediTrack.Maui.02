@@ -79,38 +79,51 @@
 
             <!-- Scanning Area -->
             <Grid Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center">
+                
                 <!-- Marco de escaneo con esquinas -->
-                <Border WidthRequest="330" 
+                <Border x:Name="ScanBorder"
+                        WidthRequest="330" 
                         HeightRequest="200"
                         Stroke="White"
                         StrokeThickness="2"
                         Opacity="0.5"
                         BackgroundColor="Transparent">
                     <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="20,20,20,20" />  <!-- Esquinas redondeadas en los 4 lados -->
-
+                        <RoundRectangle CornerRadius="20,20,20,20" />
                     </Border.StrokeShape>
                     
-                    <!-- Texto de ayuda -->
-                    <Label Text="Coloca el código aquí"
-                           TextColor="White"
-                           FontSize="14"
-                           HorizontalTextAlignment="Center"
-                           VerticalTextAlignment="Center"/>
+                    <!-- Simulación de escaneo -->
+                    <Grid>
+                        <!-- Texto de ayuda -->
+                        <Label Text="Coloca el código aquí"
+                               TextColor="White"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"/>
+                        
+                        <!-- Barrido de escaneo -->
+                        <BoxView x:Name="ScanLine"
+                                 Color="#00FF00"
+                                 HeightRequest="2"
+                                 WidthRequest="330"
+                                 VerticalOptions="Start"
+                                 IsVisible="{Binding IsScanning}"
+                                 Opacity="0.7"/>
+                    </Grid>
                 </Border>
 
                 <!-- Indicador de escaneo -->
-                <StackLayout IsVisible="{Binding IsScanning}" 
-                             HorizontalOptions="Center" 
+                <StackLayout x:Name="ScanningIndicator"
+                             IsVisible="{Binding IsScanning}"
+                             HorizontalOptions="Center"
                              VerticalOptions="Center"
                              Margin="0,320,0,0">
                     
-                    <!-- Animación de escaneo -->
                     <ActivityIndicator IsRunning="{Binding IsScanning}"
-                           Color="#3B71FF"
+                           Color="Yellow"
                            WidthRequest="30"
                            HeightRequest="30"/>
-
+                    
                     <Label x:Name="ScanningLabel" 
                            Text="Escaneando..."
                            TextColor="White"
@@ -118,7 +131,7 @@
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"
                            Margin="0,8,0,0"
-                           Opacity="0.9"/>          
+                           Opacity="0.9"/>
                 </StackLayout>
             </Grid>
             
@@ -158,14 +171,17 @@
 
         </Grid>
 
-        <!-- Loading overlay -->
+        <!-- Loading overlay con animación de puntos -->
         <Border IsVisible="{Binding IsBusy}"
-                BackgroundColor="#80000000"
-                StrokeThickness="0">
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               Color="White"/>
+        BackgroundColor="#80000000"
+        StrokeThickness="0">
+            <Grid HorizontalOptions="Center" VerticalOptions="Center">
+                <StackLayout x:Name="LoadingDots" Spacing="5">
+                    <Label x:Name="Dot1" Text="•" TextColor="White" FontSize="20" Opacity="0.7"/>
+                    <Label x:Name="Dot2" Text="•" TextColor="White" FontSize="20" Opacity="0.7"/>
+                    <Label x:Name="Dot3" Text="•" TextColor="White" FontSize="20" Opacity="0.7"/>
+                </StackLayout>
+            </Grid>
         </Border>
 
     </Grid>
