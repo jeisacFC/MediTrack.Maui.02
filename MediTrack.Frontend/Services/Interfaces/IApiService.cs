@@ -29,6 +29,11 @@ namespace MediTrack.Frontend.Services.Interfaces
         Task<ResInsertarEventoMedico> InsertarEventoMedicoAsync(ReqInsertarEventoMedico request);
         Task<ResObtenerEventosPorUsuario> ObtenerEventosPorUsuarioAsync(ReqObtenerEventosPorUsuario request);
         Task<ResListarEventosUsuario> ListarEventosUsuarioAsync(ReqListarEventosUsuario request);
+        Task<ResActualizarEventoMedico> ActualizarEventoMedicoAsync(ReqActualizarEventoMedico request);
+        Task<ResEliminarEventoMedico> EliminarEventoMedicoAsync(ReqEliminarEventoMedico request);
+        Task<ResActualizarEventosPorGrupo> ActualizarEventosPorGrupoRecurrenciaAsync(ReqActualizarEventosPorGrupo request);
+        Task<ResEliminarEventosPorGrupo> EliminarEventosPorGrupoRecurrenciaAsync(ReqEliminarEventosPorGrupo request);
+        Task<ResActualizarEstadoEvento> ActualizarEstadoEventoAsync(ReqActualizarEstadoEvento request);
 
         // Autenticación
         Task<ResLogin> LoginAsync(ReqLogin request);

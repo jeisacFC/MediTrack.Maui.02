@@ -166,7 +166,6 @@ public class ApiService : IApiService
         }
     }
 
-
     public async Task<ResListarMedicamentosUsuario> ListarMedicamentosUsuarioAsync(ReqObtenerUsuario request)
     {
         var endpoint = "api/medicamentos/listar/usuario";
@@ -568,6 +567,250 @@ public class ApiService : IApiService
         }
     }
 
+    public async Task<ResActualizarEventoMedico> ActualizarEventoMedicoAsync(ReqActualizarEventoMedico request)
+    {
+        var endpoint = "api/eventos/actualizar";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<ResActualizarEventoMedico>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return result ?? new ResActualizarEventoMedico
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = "Respuesta vacía del servidor." } }
+                };
+            }
+            else
+            {
+                return new ResActualizarEventoMedico
+                {
+                    resultado = false,
+                    errores = new List<Errores>
+                {
+                    new Errores { mensaje = $"Error del servidor: {response.StatusCode}" }
+                },
+                    Mensaje = $"Status code: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en ActualizarEventoMedicoAsync: {ex.Message}");
+            return new ResActualizarEventoMedico
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } }
+            };
+        }
+    }
+
+    public async Task<ResActualizarEventosPorGrupo> ActualizarEventosPorGrupoRecurrenciaAsync(ReqActualizarEventosPorGrupo request)
+    {
+        var endpoint = "api/eventos/actualizar-grupo";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<ResActualizarEventosPorGrupo>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return result ?? new ResActualizarEventosPorGrupo
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = "Respuesta vacía del servidor." } }
+                };
+            }
+            else
+            {
+                return new ResActualizarEventosPorGrupo
+                {
+                    resultado = false,
+                    errores = new List<Errores>
+                {
+                    new Errores { mensaje = $"Error del servidor: {response.StatusCode}" }
+                },
+                    Mensaje = $"Status code: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en ActualizarEventosPorGrupoRecurrenciaAsync: {ex.Message}");
+            return new ResActualizarEventosPorGrupo
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } }
+            };
+        }
+    }
+
+    public async Task<ResEliminarEventosPorGrupo> EliminarEventosPorGrupoRecurrenciaAsync(ReqEliminarEventosPorGrupo request)
+    {
+        var endpoint = "api/eventos/eliminar-grupo";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<ResEliminarEventosPorGrupo>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return result ?? new ResEliminarEventosPorGrupo
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = "Respuesta vacía del servidor." } }
+                };
+            }
+            else
+            {
+                return new ResEliminarEventosPorGrupo
+                {
+                    resultado = false,
+                    errores = new List<Errores>
+                {
+                    new Errores { mensaje = $"Error del servidor: {response.StatusCode}" }
+                },
+                    Mensaje = $"Status code: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en EliminarEventosPorGrupoRecurrenciaAsync: {ex.Message}");
+            return new ResEliminarEventosPorGrupo
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } }
+            };
+        }
+    }
+
+    public async Task<ResActualizarEstadoEvento> ActualizarEstadoEventoAsync(ReqActualizarEstadoEvento request)
+    {
+        var endpoint = "api/eventos/actualizar-estado";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<ResActualizarEstadoEvento>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return result ?? new ResActualizarEstadoEvento
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = "Respuesta vacía del servidor." } }
+                };
+            }
+            else
+            {
+                return new ResActualizarEstadoEvento
+                {
+                    resultado = false,
+                    errores = new List<Errores>
+                {
+                    new Errores { mensaje = $"Error del servidor: {response.StatusCode}" }
+                },
+                    Mensaje = $"Status code: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en ActualizarEstadoEventoAsync: {ex.Message}");
+            return new ResActualizarEstadoEvento
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } }
+            };
+        }
+    }
+
+    public async Task<ResEliminarEventoMedico> EliminarEventoMedicoAsync(ReqEliminarEventoMedico request)
+    {
+        var endpoint = "api/eventos/eliminar";
+        try
+        {
+            var jsonRequest = JsonSerializer.Serialize(request, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = JsonSerializer.Deserialize<ResEliminarEventoMedico>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return result ?? new ResEliminarEventoMedico
+                {
+                    resultado = false,
+                    errores = new List<Errores> { new Errores { mensaje = "Respuesta vacía del servidor." } }
+                };
+            }
+            else
+            {
+                return new ResEliminarEventoMedico
+                {
+                    resultado = false,
+                    errores = new List<Errores>
+                {
+                    new Errores { mensaje = $"Error del servidor: {response.StatusCode}" }
+                },
+                    Mensaje = $"Status code: {response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error en EliminarEventoMedicoAsync: {ex.Message}");
+            return new ResEliminarEventoMedico
+            {
+                resultado = false,
+                errores = new List<Errores> { new Errores { mensaje = "No se pudo conectar con el servidor." } }
+            };
+        }
+    }
 
     #endregion
 

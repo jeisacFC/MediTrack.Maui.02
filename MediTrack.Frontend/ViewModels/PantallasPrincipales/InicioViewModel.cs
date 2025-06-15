@@ -17,7 +17,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
     public partial class InicioViewModel : ObservableObject
     {
         [ObservableProperty]
-        private ObservableCollection<EventoAgenda> medicamentosHoy = new();
+        private ObservableCollection<EventosMedicos> medicamentosHoy = new();
 
         [ObservableProperty]
         private ObservableCollection<EscaneoReciente> escaneosRecientes = new();
@@ -64,7 +64,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         [ObservableProperty]
         private bool haySintomas = false;
 
-        private readonly EventosService _eventosService;
+        private readonly ApiService _eventosService;
         private readonly CultureInfo _culturaEspañola = new("es-ES");
         private readonly int _idUsuarioActual = 1; // TODO: Obtener del servicio de autenticación
 
@@ -85,10 +85,10 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 CargarAlertasCommand = new AsyncRelayCommand(CargarAlertasSalud);
 
                 // Usar servicios
-                _eventosService = EventosService.Instance;
+                _apiService = apiService;
 
-                // Suscribirse a cambios en medicamentos
-                _eventosService.EventoActualizado += OnEventoActualizado;
+                // Suscribirse a cambios en medicamentos REVISAR
+                //_eventosService.EventoActualizado += OnEventoActualizado;
 
                 // Configurar cultura española
                 CultureInfo.CurrentCulture = _culturaEspañola;
@@ -113,7 +113,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 System.Diagnostics.Debug.WriteLine("Iniciando carga de datos...");
 
                 // Cargar datos en el orden deseado: Medicamentos -> Síntomas -> resto
-                await CargarMedicamentosHoy();
+                //await CargarMedicamentosHoy();
                 await CargarSintomasUsuario();
                 await CargarEscaneosRecientes();
 
@@ -137,12 +137,13 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
         }
 
-        private void OnEventoActualizado(object sender, EventoAgenda evento)
+        private void OnEventoActualizado(object sender, EventosMedicos evento)
         {
             // Recargar medicamentos cuando hay cambios
-            if (evento.Tipo == "Medicamento" && evento.FechaHora.Date == DateTime.Today)
+            if (evento.id_evento_medico == 2 && (evento.fecha_inicio == DateTime.Today || evento.fecha_fin == DateTime.Today))
             {
-                _ = CargarMedicamentosHoy();
+                System.Diagnostics.Debug.WriteLine($"Evento actualizado: {evento.titulo} - recargando medicamentos");
+                //_ = CargarMedicamentosHoy();
             }
         }
 
@@ -165,7 +166,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
         }
 
-        private async Task CargarMedicamentosHoy()
+        /*private async Task CargarMedicamentosHoy()
         {
             try
             {
@@ -193,7 +194,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                 System.Diagnostics.Debug.WriteLine($"Error cargando medicamentos: {ex.Message}");
                 HayMedicamentos = false;
             }
-        }
+        }*/
 
         private async Task CargarEscaneosRecientes()
         {
@@ -463,7 +464,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
                     {
                         new SintomaUsuario
                         {
-                            IdSintoma = 1, 
+                            IdSintoma = 1,
                             Nombre = "Dolor de cabeza",
                             FechaReporte = DateTime.Today.AddDays(-1),
                             EsManual = false
@@ -496,7 +497,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             }
         }
 
-        [RelayCommand]
+        /*[RelayCommand]
         private void MarcarTomado(EventoAgenda medicamento)
         {
             try
@@ -515,7 +516,7 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
             {
                 System.Diagnostics.Debug.WriteLine($"Error marcando medicamento: {ex.Message}");
             }
-        }
+        }*/
 
         [RelayCommand]
         private async Task IrAAgenda()
@@ -624,10 +625,11 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         {
             if (_eventosService != null)
             {
-                _eventosService.EventoActualizado -= OnEventoActualizado;
+                //_eventosService.EventoActualizado -= OnEventoActualizado;
             }
         }
-    }
+    } 
+
 
     // Modelos para la vista
     public class EscaneoReciente
@@ -664,4 +666,5 @@ namespace MediTrack.Frontend.ViewModels.PantallasPrincipales
         public bool EsManual { get; set; }
         public string FechaFormateada => FechaReporte.ToString("dd/MM", new CultureInfo("es-ES"));
     }
+
 }

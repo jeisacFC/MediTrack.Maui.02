@@ -8,6 +8,8 @@ namespace MediTrack.Frontend.Models.Request
 {
     public class ReqEliminarEventoMedico : ReqBase
     {
+        private int id_evento_medico;
+
         public int IdEventoMedico { get; set; }
     }
 }

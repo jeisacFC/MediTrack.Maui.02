@@ -1,4 +1,5 @@
-﻿using MediTrack.Frontend.ViewModels.PantallasPrincipales;
+﻿using MediTrack.Frontend.Models.Model;
+using MediTrack.Frontend.ViewModels.PantallasPrincipales;
 using Microsoft.Maui.Controls;
 using Syncfusion.Maui.Calendar;
 
@@ -8,18 +9,19 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
     {
         private AgendaViewModel _viewModel;
 
-        public PantallaAgenda()
+        public PantallaAgenda(AgendaViewModel viewModel)
         {
             try
             {
                 InitializeComponent();
 
                 // Crear ViewModel
-                _viewModel = new AgendaViewModel();
+                _viewModel = viewModel;
                 BindingContext = _viewModel;
 
                 //  CONFIGURACIÓN SIMPLE
                 ConfigurarCalendario();
+                SuscribirseAMensajes();
 
                 System.Diagnostics.Debug.WriteLine("PantallaAgenda con Syncfusion inicializada");
             }
@@ -129,13 +131,13 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
             try
             {
                 base.OnAppearing();
-
+                var apiService = _viewModel.GetApiService();
                 // Asegurar que el calendario esté en el mes correcto
                 if (_viewModel != null)
                 {
                     CalendarioSync.DisplayDate = _viewModel.FechaSeleccionada;
                     CalendarioSync.SelectedDate = _viewModel.FechaSeleccionada;
-                    _viewModel.CargarEventosDelDia();
+                    //_viewModel.CargarEventosDelDia();
                 }
 
                 System.Diagnostics.Debug.WriteLine("PantallaAgenda OnAppearing");
@@ -145,5 +147,65 @@ namespace MediTrack.Frontend.Vistas.PantallasPrincipales
                 System.Diagnostics.Debug.WriteLine($"Error en OnAppearing: {ex.Message}");
             }
         }
+
+        private void SuscribirseAMensajes()
+        {
+            // Mensaje para abrir modal de agregar evento
+            MessagingCenter.Subscribe<AgendaViewModel>(this, "AbrirModalAgregarEvento", async (sender) =>
+            {
+                await AbrirModalAgregarEvento();
+            });
+
+            // Mensaje para abrir modal de editar evento
+            MessagingCenter.Subscribe<AgendaViewModel, EventoMedicoUsuario>(this, "AbrirModalEditarEvento", async (sender, evento) =>
+            {
+                await AbrirModalEditarEvento(evento);
+            });
+        }
+
+        private async Task AbrirModalAgregarEvento()
+        {
+            try
+            {
+                var apiService = _viewModel.GetApiService();
+                var modal = new ModalAgregarEvento(_viewModel.FechaSeleccionada, apiService);
+
+                await Navigation.PushModalAsync(modal);
+
+                // Opcional: Recargar eventos después de cerrar el modal
+                //await _viewModel.CargarEventosDelDia();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error abriendo modal: {ex.Message}");
+                await DisplayAlert("Error", "No se pudo abrir el formulario", "OK");
+            }
+        }
+
+        private async Task AbrirModalEditarEvento(EventoMedicoUsuario evento)
+        {
+            try
+            {
+                var apiService = _viewModel.GetApiService();
+                var modal = new ModalAgregarEvento(evento, apiService);
+
+                await Navigation.PushModalAsync(modal);
+                //await _viewModel.CargarEventosDelDia();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error editando evento: {ex.Message}");
+                await DisplayAlert("Error", "No se pudo abrir el editor", "OK");
+            }
+        }
+
+        // No olvides desuscribirse en OnDisappearing
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<AgendaViewModel>(this, "AbrirModalAgregarEvento");
+            MessagingCenter.Unsubscribe<AgendaViewModel, EventoMedicoUsuario>(this, "AbrirModalEditarEvento");
+        }
+
     }
 }
