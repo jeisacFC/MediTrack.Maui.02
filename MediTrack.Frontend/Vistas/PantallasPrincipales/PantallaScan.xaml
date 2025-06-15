@@ -79,69 +79,37 @@
 
             <!-- Scanning Area -->
             <Grid Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center">
-
                 <!-- Marco de escaneo con esquinas -->
-                <Grid WidthRequest="280" HeightRequest="280">
-                    <!-- Esquina superior izquierda -->
-                    <Border HorizontalOptions="Start" VerticalOptions="Start"
-                            WidthRequest="40" HeightRequest="40"
-                            Stroke="White" StrokeThickness="3"
-                            BackgroundColor="Transparent">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="8,0,0,0" />
-                        </Border.StrokeShape>
-                    </Border>
+                <Border WidthRequest="330" 
+                        HeightRequest="200"
+                        Stroke="White"
+                        StrokeThickness="2"
+                        Opacity="0.5"
+                        BackgroundColor="Transparent">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20,20,20,20" />  <!-- Esquinas redondeadas en los 4 lados -->
 
-                    <!-- Esquina superior derecha -->
-                    <Border HorizontalOptions="End" VerticalOptions="Start"
-                            WidthRequest="40" HeightRequest="40"
-                            Stroke="White" StrokeThickness="3"
-                            BackgroundColor="Transparent">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="0,8,0,0" />
-                        </Border.StrokeShape>
-                    </Border>
-
-                    <!-- Esquina inferior izquierda -->
-                    <Border HorizontalOptions="Start" VerticalOptions="End"
-                            WidthRequest="40" HeightRequest="40"
-                            Stroke="White" StrokeThickness="3"
-                            BackgroundColor="Transparent">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="0,0,0,8" />
-                        </Border.StrokeShape>
-                    </Border>
-
-                    <!-- Esquina inferior derecha -->
-                    <Border HorizontalOptions="End" VerticalOptions="End"
-                            WidthRequest="40" HeightRequest="40"
-                            Stroke="White" StrokeThickness="3"
-                            BackgroundColor="Transparent">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="0,0,8,0" />
-                        </Border.StrokeShape>
-                    </Border>
-
+                    </Border.StrokeShape>
+                    
                     <!-- Texto de ayuda -->
                     <Label Text="Coloca el código aquí"
                            TextColor="White"
                            FontSize="14"
                            HorizontalTextAlignment="Center"
-                           VerticalTextAlignment="Center"
-                           Opacity="0.7"/>
-                </Grid>
+                           VerticalTextAlignment="Center"/>
+                </Border>
 
                 <!-- Indicador de escaneo -->
                 <StackLayout IsVisible="{Binding IsScanning}" 
                              HorizontalOptions="Center" 
                              VerticalOptions="Center"
                              Margin="0,320,0,0">
-
+                    
                     <!-- Animación de escaneo -->
                     <ActivityIndicator IsRunning="{Binding IsScanning}"
-                                       Color="#3B71FF"
-                                       WidthRequest="30"
-                                       HeightRequest="30"/>
+                           Color="#3B71FF"
+                           WidthRequest="30"
+                           HeightRequest="30"/>
 
                     <Label x:Name="ScanningLabel" 
                            Text="Escaneando..."
@@ -150,11 +118,10 @@
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"
                            Margin="0,8,0,0"
-                           Opacity="0.9"/>
+                           Opacity="0.9"/>          
                 </StackLayout>
             </Grid>
-
-
+            
             <!-- Footer -->
             <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#3B71FF">
                 <StackLayout Padding="15,45,15,25" HeightRequest="180">
