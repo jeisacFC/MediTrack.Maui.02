@@ -115,7 +115,7 @@
                             <Button.ImageSource>
                                 <FontImageSource FontFamily="MaterialIcons" 
                                                  Glyph="&#xe5cd;" 
-                                                 Color="#007AFF" 
+                                                 Color="#FF9500" 
                                                  Size="18"/>
                             </Button.ImageSource>
                         </Button>
